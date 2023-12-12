@@ -9,7 +9,7 @@ public class SimulationTest {
 
     private static final Vector2d UPPER_RIGHT = new Vector2d(4, 4);
     private static final Vector2d LOWER_LEFT = new Vector2d(0, 0);
-    private static final RectangularMap worldMap = new RectangularMap(5, 5, 1);
+    private static final RectangularMap worldMap = new RectangularMap(5, 5);
     @Test
     public void shouldSimulationWorkCorrect() {
         List<Vector2d> positions = List.of(

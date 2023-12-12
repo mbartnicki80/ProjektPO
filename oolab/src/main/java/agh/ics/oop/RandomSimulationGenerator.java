@@ -35,7 +35,7 @@ public class RandomSimulationGenerator implements Iterable<Simulation> {
                 int randWidth = rand.nextInt(50)+1;
                 int randHeight = rand.nextInt(50)+1;
                 int animalsQuantity = rand.nextInt(randHeight+randWidth)+1;
-                RectangularMap worldMap = new RectangularMap(randWidth, randHeight, i);
+                RectangularMap worldMap = new RectangularMap(randWidth, randHeight);
                 worldMap.addObserver(consoleMapDisplay);
                 List<Vector2d> positions = generatePositions(randWidth, randHeight, animalsQuantity);
                 simulations.add(new Simulation(positions, directions, worldMap));
@@ -43,7 +43,7 @@ public class RandomSimulationGenerator implements Iterable<Simulation> {
             else {
                 int randomGrass = rand.nextInt(50)+1;
                 int animalsQuantity = rand.nextInt(2*randomGrass)+1;
-                GrassField worldMap = new GrassField(randomGrass, i);
+                GrassField worldMap = new GrassField(randomGrass);
                 worldMap.addObserver(consoleMapDisplay);
                 List<Vector2d> positions = generatePositions((int) (Math.sqrt(randomGrass*10)+1), (int) (Math.sqrt(randomGrass*10)+1), animalsQuantity);
                 simulations.add(new Simulation(positions, directions, worldMap));

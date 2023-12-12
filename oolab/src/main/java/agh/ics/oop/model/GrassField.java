@@ -7,8 +7,8 @@ public class GrassField extends AbstractWorldMap {
     private Vector2d lowerLeft;
     private Vector2d upperRight;
 
-    public GrassField(int grassQuantity, int ID) {
-        super(ID);
+    public GrassField(int grassQuantity) {
+        super();
         generateGrass(grassQuantity);
     }
 

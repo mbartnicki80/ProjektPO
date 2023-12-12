@@ -29,16 +29,17 @@ public class Simulation implements Runnable {
                 System.out.println(e.getMessage());
             }
         }
-
     }
 
     public void run() {
         int animalsSize = animals.size();
-
+        try {
         for (int i=0; i<moves.size(); i++) {
             Animal animal = animals.get(i % animalsSize);
             worldMap.move(animal, moves.get(i));
+            Thread.sleep(500);
         }
+        } catch (InterruptedException ignored) {}
     }
 
 }

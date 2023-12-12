@@ -1,6 +1,7 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.MoveDirection;
+import agh.ics.oop.model.ConsoleMapDisplay;
+import agh.ics.oop.model.GrassField;
 import agh.ics.oop.presenter.SimulationPresenter;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,29 +9,23 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+
 
 public class SimulationApp extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("simulation.fxml"));
-        BorderPane viewRoot = loader.load();
-        configureStage(primaryStage, viewRoot);
-        primaryStage.show();
+        BorderPane viewRoot = loader.load(); //s
         SimulationPresenter presenter = loader.getController();
-
-        List<String> rawParams = getParameters().getRaw();
-        List<MoveDirection> directions;
-        directions = OptionsParser.convertStringToMoveDirection(rawParams);
-        RandomSimulationGenerator generatedSimulations = new RandomSimulationGenerator(directions, 1);
-        List<Simulation> simulations = new ArrayList<>();
-        for (Simulation generatedSimulation : generatedSimulations)
-            simulations.add(generatedSimulation);
-        SimulationEngine multipleSimulations = new SimulationEngine(simulations);
-        multipleSimulations.runAsyncInThreadPool();
-        multipleSimulations.awaitSimulationsEnd();
+        configureStage(primaryStage, viewRoot);
+        GrassField worldMap = new GrassField(10);
+        ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
+        worldMap.addObserver(consoleMapDisplay);
+        worldMap.addObserver(presenter);
+        presenter.setWorldMap(worldMap);
+        primaryStage.show();
     }
 
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {
