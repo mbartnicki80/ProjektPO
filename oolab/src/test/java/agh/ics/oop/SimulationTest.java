@@ -19,14 +19,14 @@ public class SimulationTest {
         );
         String [] moves = {"f", "b", "f", "l", "l", "r", "f", "f"};
         List<MoveDirection> expectedMoves = List.of(
-                MoveDirection.FORWARD,
-                MoveDirection.BACKWARD,
-                MoveDirection.FORWARD,
-                MoveDirection.LEFT,
-                MoveDirection.LEFT,
-                MoveDirection.RIGHT,
-                MoveDirection.FORWARD,
-                MoveDirection.FORWARD
+                MoveDirection.FORWARD, //1 na 3,4
+                MoveDirection.BACKWARD, //2 na 0,0
+                MoveDirection.FORWARD, //3 na 2,3
+                MoveDirection.LEFT, //1 na NW
+                MoveDirection.LEFT, //2 na NW
+                MoveDirection.RIGHT, //3 na NE
+                MoveDirection.FORWARD, //1 na 3,4
+                MoveDirection.FORWARD //2 na 0,0
         );
         List<MoveDirection> convertedMoves = OptionsParser.convertStringToMoveDirection(moves);
         assertIterableEquals(expectedMoves, convertedMoves);
@@ -34,10 +34,13 @@ public class SimulationTest {
         Simulation simulation = new Simulation(positions, convertedMoves, worldMap);
         simulation.run();
         List<Animal> animalsList = simulation.getAnimalsList();
-        List<MapDirection> expectedOrientations = List.of(MapDirection.WEST,MapDirection.WEST,MapDirection.EAST);
-        List<Vector2d> expectedPositions = List.of(new Vector2d(2, 4), new Vector2d(0, 0), new Vector2d(2, 3));
-        assertNull(worldMap.objectAt(new Vector2d(3, 4)));
+        List<MapDirection> expectedOrientations = List.of(MapDirection.NORTH_WEST ,MapDirection.NORTH_WEST, MapDirection.NORTH_EAST);
+        List<Vector2d> expectedPositions = List.of(new Vector2d(3, 4), new Vector2d(0, 0), new Vector2d(2, 3));
+        assertNull(worldMap.objectAt(new Vector2d(4, 4)));
         assertNull(worldMap.objectAt(new Vector2d(2, 2)));
+        for (int i=0; i<3; i++) {
+            System.out.println(animalsList.get(i).getPosition());
+        }
 
         for(int i=0; i<expectedOrientations.size(); i++) {
             assertEquals(expectedOrientations.get(i), animalsList.get(i).getOrientation());

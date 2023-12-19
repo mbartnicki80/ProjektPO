@@ -36,11 +36,11 @@ public class RectangularMapTest {
         Animal animal4 = new Animal(new Vector2d(2, 0));
         Vector2d expectedAnimal1 = new Vector2d(0, 1);
         Vector2d notExpectedAnimal1 = new Vector2d(-1, 1);
-        Vector2d expectedAnimal2 = new Vector2d(1, 4);
+        Vector2d expectedAnimal2 = new Vector2d(2, 4);
         Vector2d notExpectedAnimal2 = new Vector2d(1, 5);
-        Vector2d expectedAnimal3 = new Vector2d(3, 4);
+        Vector2d expectedAnimal3 = new Vector2d(3, 3);
         Vector2d notExpectedAnimal3 = new Vector2d(4, 4);
-        Vector2d expectedAnimal4 = new Vector2d(2, 0);
+        Vector2d expectedAnimal4 = new Vector2d(1, 1);
         Vector2d notExpectedAnimal4 = new Vector2d(2, -1);
         RectangularMap worldMap = new RectangularMap(5, 5);
         List<Animal> animals = List.of(animal1, animal2, animal3, animal4);
@@ -52,7 +52,6 @@ public class RectangularMapTest {
                 assertEquals("Position " + currAnimal.getPosition() + " is already occupied", e.getMessage());
             }
         }
-
         worldMap.move(animal1, MoveDirection.LEFT);
         worldMap.move(animal1, MoveDirection.FORWARD);
         worldMap.move(animal1, MoveDirection.RIGHT);
@@ -67,6 +66,8 @@ public class RectangularMapTest {
         worldMap.move(animal3, MoveDirection.BACKWARD);
 
         worldMap.move(animal4, MoveDirection.BACKWARD);
+        worldMap.move(animal4, MoveDirection.LEFT);
+        worldMap.move(animal4, MoveDirection.FORWARD);
 
         assertEquals(expectedAnimal1, animal1.getPosition());
         assertNotEquals(notExpectedAnimal1, animal1.getPosition());
