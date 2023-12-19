@@ -19,13 +19,13 @@ public class Simulation implements Runnable {
         return Collections.unmodifiableList(animals);
     }
 
-    public Simulation(List<Vector2d> positions, List<MoveDirection> moves, WorldMap worldMap, int energy) {
+    public Simulation(List<Vector2d> positions, List<MoveDirection> moves, WorldMap worldMap, int energy, int genomeLength) {
         this.moves = moves;
         this.worldMap = worldMap;
         animals = new ArrayList<>();
         for (Vector2d position : positions) {
             int random_orientation = random.nextInt(8);
-            Animal newAnimal = new Animal(position, directions[random_orientation], energy, 0, 5);
+            Animal newAnimal = new Animal(position, directions[random_orientation], energy, 0, genomeLength);
             try {
                 worldMap.place(newAnimal);
                 animals.add(newAnimal);

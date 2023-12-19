@@ -49,6 +49,10 @@ public class Animal implements WorldElement {
         return dayOfBirth;
     }
 
+    public void eatPlant(int plantEnergy) {
+        this.energy += plantEnergy;
+    }
+
     public String toString() {
         return orientation.toString();
     }

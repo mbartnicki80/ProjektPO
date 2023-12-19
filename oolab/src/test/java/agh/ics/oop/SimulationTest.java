@@ -31,7 +31,7 @@ public class SimulationTest {
         List<MoveDirection> convertedMoves = OptionsParser.convertStringToMoveDirection(moves);
         assertIterableEquals(expectedMoves, convertedMoves);
 
-        Simulation simulation = new Simulation(positions, convertedMoves, worldMap, 10);
+        Simulation simulation = new Simulation(positions, convertedMoves, worldMap, 10, 10);
         simulation.run();
         List<Animal> animalsList = simulation.getAnimalsList();
         List<MapDirection> expectedOrientations = List.of(MapDirection.NORTH_WEST ,MapDirection.NORTH_WEST, MapDirection.NORTH_EAST);
