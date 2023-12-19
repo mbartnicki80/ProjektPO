@@ -1,12 +1,25 @@
 package agh.ics.oop.model;
 
+import java.util.Random;
+
 public class Animal implements WorldElement {
     private MapDirection orientation;
     private Vector2d position;
+    private int[] genome;
+    private int energy;
+    private int childrenCounter;
+    private int dayOfBirth;
 
-    public Animal(Vector2d position, MapDirection orientation) {
+    public Animal(Vector2d position, MapDirection orientation, int energy, int dayOfBirth, int genomeLength) {
         this.position = position;
         this.orientation = orientation;
+        this.energy = energy;
+        this.childrenCounter = 0;
+        this.dayOfBirth = dayOfBirth;
+        genome = new int[genomeLength];
+        Random random = new Random();
+        for (int i = 0; i<genomeLength; i++)
+            genome[i] = random.nextInt(8); //czy dobra deklaracja dla genome
     }
 
     public Animal(Vector2d position) {
@@ -24,6 +37,16 @@ public class Animal implements WorldElement {
 
     public Vector2d getPosition() {
         return position;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+    public int getChildrenCount() {
+        return childrenCounter;
+    }
+    public int getDayOfBirth() {
+        return dayOfBirth;
     }
 
     public String toString() {

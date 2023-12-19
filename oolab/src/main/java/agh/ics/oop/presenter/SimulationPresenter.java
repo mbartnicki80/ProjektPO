@@ -38,7 +38,8 @@ public class SimulationPresenter {
         worldMap.addObserver(presenter);
         worldMap.addObserver(consoleMapDisplay);
         presenter.setWorldMap(worldMap);
-        Simulation simulation = new Simulation(positions, directions, worldMap);
+        int energy = 10; //przerobic na kontrolke
+        Simulation simulation = new Simulation(positions, directions, worldMap, energy);
         ArrayList<Simulation> simulations = new ArrayList<>(List.of(simulation));
         SimulationEngine multipleSimulations = new SimulationEngine(simulations);
         multipleSimulations.runAsync();
