@@ -4,6 +4,10 @@ public class Animal implements WorldElement {
     private MapDirection orientation;
     private Vector2d position;
 
+    public Animal(Vector2d position, MapDirection orientation) {
+        this.position = position;
+        this.orientation = orientation;
+    }
 
     public Animal(Vector2d position) {
         this.orientation = MapDirection.NORTH;
