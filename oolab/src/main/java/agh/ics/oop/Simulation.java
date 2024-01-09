@@ -36,6 +36,11 @@ public class Simulation implements Runnable {
     }
 
     public void run() {
+        //1. Usunięcie martwych zwierzaków z mapy.
+        //2. Skręt i przemieszczenie każdego zwierzaka.
+        //3. Konsumpcja roślin, na których pola weszły zwierzaki.
+        //4. Rozmnażanie się najedzonych zwierzaków znajdujących się na tym samym polu.
+        //5. Wzrastanie nowych roślin na wybranych polach mapy.
         int animalsSize = animals.size();
         try {
         for (int i=0; i<moves.size(); i++) {

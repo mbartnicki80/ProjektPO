@@ -38,8 +38,19 @@ public class SimulationPresenter {
         worldMap.addObserver(presenter);
         worldMap.addObserver(consoleMapDisplay);
         presenter.setWorldMap(worldMap);
-        int energy = 10; //przerobic na kontrolke
+        //kontrolka wysokość i szerokość mapy
+        //kontrolka startowa liczba roślin,
+        //kontrolka energia zapewniana przez zjedzenie jednej rośliny,
+        //liczba roślin wyrastająca każdego dnia,
+        //wariant wzrostu roślin !!kontrolka rozwijana
+        //startowa liczba zwierzaków
+        int energy = 10; //przerobic na kontrolke jako startowa energia zwierzakow
+        //energia konieczna, by uznać zwierzaka za najedzonego (i gotowego do rozmnażania),
+        //energia rodziców zużywana by stworzyć potomka,
+        //minimalna i maksymalna liczba mutacji u potomków (może być równa 0)
+        //wariant mutacji !!kontrolka rozwijana
         int genomeLength = 10; //przerobic na kontrolke
+
         Simulation simulation = new Simulation(positions, directions, worldMap, energy, genomeLength);
         ArrayList<Simulation> simulations = new ArrayList<>(List.of(simulation));
         SimulationEngine multipleSimulations = new SimulationEngine(simulations);
