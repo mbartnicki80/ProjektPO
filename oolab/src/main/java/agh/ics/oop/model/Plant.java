@@ -2,7 +2,6 @@ package agh.ics.oop.model;
 
 public class Plant implements WorldElement {
     private final Vector2d position;
-    private static final int ENERGY = 10;
 
     public Plant(Vector2d position) {
         this.position = position;

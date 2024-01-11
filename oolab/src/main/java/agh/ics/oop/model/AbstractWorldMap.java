@@ -27,11 +27,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
-    @Override
-    public boolean canMoveTo(Vector2d position) {
-        return !(objectAt(position) instanceof Animal);
-    }
-
     public void move(Animal animal, MoveDirection direction) {
         Vector2d oldPosition = animal.getPosition();
         MapDirection oldDirection = animal.getOrientation();

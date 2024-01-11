@@ -1,6 +1,5 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.OptionsParser;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
@@ -13,57 +12,78 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SimulationPresenter {
     @FXML
-    private TextField movementsListTextField;
+    private TextField mapHeightTextField;
+    @FXML
+    private TextField mapWidthTextField;
+    @FXML
+    private TextField numOfPlantsTextField;
+    @FXML
+    private TextField plantEnergyTextField;
+    @FXML
+    private TextField plantsPerDayTextField;
+    @FXML
+    private TextField numOfAnimalsTextField;
+    @FXML
+    private TextField animalEnergyTextField;
+    @FXML
+    private TextField reproductionReadyEnergyTextField;
+    @FXML
+    private TextField usedReproductionEnergyTextField;
+    @FXML
+    private TextField minimalMutationsTextField;
+    @FXML
+    private TextField maximalMutationsTextField;
+    @FXML
+    private TextField genomeLengthTextField;
+
     private final ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
 
-    public void onSimulationStartClicked() throws IOException {
+    public void onSimulationStartClicked() throws IOException, NumberFormatException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("simulation_view.fxml"));
-
         BorderPane viewRoot = loader.load();
         SimulationViewPresenter presenter = loader.getController();
-
         Stage stage = new Stage();
         configureStage(stage, viewRoot);
 
-        String[] moves = movementsListTextField.getText().split("");
-        ArrayList<Vector2d> positions = new ArrayList<>(Arrays.asList(new Vector2d(2, 2), new Vector2d(3, 4)));
+        int mapHeight = Integer.parseInt(mapHeightTextField.getText());
+        int mapWidth = Integer.parseInt(mapWidthTextField.getText());
+        int numberOfPlants = Integer.parseInt(numOfPlantsTextField.getText());
+        int plantEnergy = Integer.parseInt(plantEnergyTextField.getText());
+        int plantsPerDay = Integer.parseInt(plantsPerDayTextField.getText());
+        //wariant wzrostu roślin !!checkbox
+        int numberOfAnimals = Integer.parseInt(numOfAnimalsTextField.getText());
+        int animalEnergy = Integer.parseInt(animalEnergyTextField.getText());
+        int reproductionReadyEnergy = Integer.parseInt(reproductionReadyEnergyTextField.getText());
+        int usedReproductionEnergy = Integer.parseInt(usedReproductionEnergyTextField.getText());
+        int minimalMutations = Integer.parseInt(minimalMutationsTextField.getText());
+        int maximalMutations = Integer.parseInt(maximalMutationsTextField.getText());
+        int genomeLength = Integer.parseInt(genomeLengthTextField.getText());
+        //wariant mutacji !!checkbox
 
-        /* Co robimy z animalsami, czy tworzymy pozycje najpierw i dodajemy jako parametr do konstruktora w mapie czy
-        * generujemy randomowo w mapie?
-        * */
-
-        EarthGlobe worldMap = new EarthGlobe(5, 5, 3);
+        EarthGlobe worldMap = new EarthGlobe(
+                mapWidth,
+                mapHeight,
+                numberOfPlants
+        );
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
         presenter.setWorldMap(worldMap);
-
-        //kontrolka wysokość i szerokość mapy
-        //kontrolka startowa liczba roślin,
-        //kontrolka energia zapewniana przez zjedzenie jednej rośliny,
-        //liczba roślin wyrastająca każdego dnia,
-        //wariant wzrostu roślin !!kontrolka rozwijana
-        //startowa liczba zwierzaków
-
-        int energy = 10; //przerobic na kontrolke jako startowa energia zwierzakow
-        //energia konieczna, by uznać zwierzaka za najedzonego (i gotowego do rozmnażania),
-        //energia rodziców zużywana by stworzyć potomka,
-        //minimalna i maksymalna liczba mutacji u potomków (może być równa 0)
-        //wariant mutacji !!kontrolka rozwijana
-
-        int genomeLength = 10; //przerobic na kontrolke
-
         Simulation simulation = new Simulation(
-                positions,
-                OptionsParser.convertStringToMoveDirection(moves),
                 worldMap,
-                energy,
+                numberOfAnimals,
+                animalEnergy,
+                plantEnergy,
+                plantsPerDay,
+                reproductionReadyEnergy,
+                usedReproductionEnergy,
+                minimalMutations,
+                maximalMutations,
                 genomeLength
         );
 

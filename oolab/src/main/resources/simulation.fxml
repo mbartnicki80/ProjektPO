@@ -6,8 +6,6 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.GridPane?>
-
 
 
 <BorderPane xmlns="http://javafx.com/javafx"
@@ -16,21 +14,43 @@
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
 
     <top>
-        <VBox spacing="10" alignment="CENTER">
-            <HBox spacing="10" alignment="CENTER">
-                <TextField fx:id="movementsListTextField"> </TextField>
+        <VBox spacing="10" alignment="BASELINE_LEFT">
+            <HBox spacing="10">
+                <Label fx:id="Wysokość mapy" textAlignment="CENTER"/>
+                <TextField fx:id="mapHeightTextField"> </TextField>
+                <Label fx:id="Szerokość mapy" textAlignment="CENTER"/>
+                <TextField fx:id="mapWidthTextField"> </TextField>
+                <Label fx:id="Liczba roślin na start" textAlignment="CENTER"/>
+                <TextField fx:id="numOfPlantsTextField"> </TextField>
+                <Label fx:id="Energia dostarczana przez rośliny" textAlignment="CENTER"/>
+                <TextField fx:id="plantEnergyTextField"> </TextField>
+                <Label fx:id="Liczba rosnących dziennie roślin" textAlignment="CENTER"/>
+                <TextField fx:id="plantsPerDayTextField"> </TextField>
+                <!-- wariant roślin -->
             </HBox>
-            <Label fx:id="movementsDescriptionLabel" textAlignment="CENTER"/>
+        </VBox>
+        <VBox spacing="10" alignment="BASELINE_RIGHT">
+            <HBox spacing="10">
+                <Label fx:id="Liczba zwierząt na start" textAlignment="CENTER"/>
+                <TextField fx:id="numOfAnimalsTextField"> </TextField>
+                <Label fx:id="Startowa energia zwierząt" textAlignment="CENTER"/>
+                <TextField fx:id="animalEnergyTextField"> </TextField>
+                <Label fx:id="Energia potrzebna do gotowości do rozmnażania" textAlignment="CENTER"/>
+                <TextField fx:id="reproductionReadyEnergyTextField"> </TextField>
+                <Label fx:id="Energia zużywana podczas rozmnażania" textAlignment="CENTER"/>
+                <TextField fx:id="usedReproductionEnergyTextField"> </TextField>
+                <Label fx:id="Minimalna liczba mutacji u potomków" textAlignment="CENTER"/>
+                <TextField fx:id="minimalMutationsTextField"> </TextField>
+                <Label fx:id="Maksymalna liczba mutacji u potomków" textAlignment="CENTER"/>
+                <TextField fx:id="maximalMutationsTextField"> </TextField>
+
+                <!-- wariant roślin -->
+
+                <Label fx:id="Długość genomu zwierząt" textAlignment="CENTER"/>
+                <TextField fx:id="genomeLengthTextField"> </TextField>
+            </HBox>
         </VBox>
     </top>
-
-    <center>
-        <VBox spacing="10" alignment="CENTER">
-            <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"/>
-            <Label fx:id="infoLabel" text="All animals will be living here!" textAlignment="CENTER"/>
-        </VBox>
-    </center>
-
     <bottom>
         <HBox spacing="10" alignment="CENTER">
             <Button text="Start" onAction="#onSimulationStartClicked"/>

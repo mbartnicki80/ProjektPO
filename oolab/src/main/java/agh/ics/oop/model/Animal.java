@@ -1,32 +1,20 @@
 package agh.ics.oop.model;
 
-import java.util.Comparator;
-import java.util.Random;
-
 public class Animal implements WorldElement {
     private MapDirection orientation;
     private Vector2d position;
-    private Genome genome;
+    private final Genome genome;
     private int energy;
-    private int childrenCounter;
-    private int dayOfBirth;
+    private int childrenCounter; //zrobic jako liste potomkow
+    private final int dayOfBirth;
 
     public Animal(Vector2d position, MapDirection orientation, int energy, int dayOfBirth, int genomeLength) {
         this.position = position;
-        this.orientation = orientation;
+        this.orientation = orientation; //zrobic randomowa orientacje chyba przy inicjowaniu tutaj
         this.energy = energy;
-        this.childrenCounter = 0;
+        this.childrenCounter = 0; //jako pusta lista
         this.dayOfBirth = dayOfBirth;
         this.genome = new Genome(genomeLength);
-    }
-
-    public Animal(Vector2d position) {
-        this.orientation = MapDirection.NORTH;
-        this.position = position;
-    }
-
-    public Animal() {
-        this(new Vector2d(2, 2));
     }
 
     public MapDirection getOrientation() {
@@ -37,9 +25,10 @@ public class Animal implements WorldElement {
         return position;
     }
 
-    public int getCurrentMove(int i) {
-        return genome.getCurrentGenome(i);
+    public int useCurrentAnimalGene() {
+        return genome.useCurrentGene();
     }
+    public boolean isDead() {return energy<=0;}
 
     public int getEnergy() {
         return energy;
@@ -55,6 +44,7 @@ public class Animal implements WorldElement {
         this.energy += plantEnergy;
     }
 
+    //zamienić toString na jakieś ładne obrazki, np strzałki czy coś
     public String toString() {
         return orientation.toString();
     }
@@ -62,7 +52,6 @@ public class Animal implements WorldElement {
     public boolean isAt(Vector2d position) {
         return this.position.equals(position);
     }
-
 
     public void move(MoveDirection direction, MoveValidator moveValidator) {
         switch (direction) {

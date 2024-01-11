@@ -5,14 +5,15 @@ import java.util.Map;
 
 public class EarthGlobe extends AbstractWorldMap {
     private final Boundary bounds;
-    private final Map<Vector2d, WorldElement> grass = new HashMap<>();
+    private final Map<Vector2d, WorldElement> plant = new HashMap<>();
 
-    public EarthGlobe(int width, int height, int grassCount) {
+    public EarthGlobe(int mapWidth, int mapHeight, int numOfPlants) {
         super();
 
-        this.bounds = new Boundary(new Vector2d(0, 0), new Vector2d(width - 1, height - 1));
+        this.bounds = new Boundary(new Vector2d(0, 0), new Vector2d(mapWidth - 1, mapHeight - 1));
 
-        randomlyPlaceGrass(width, height, grassCount);
+        randomlyPlaceGrass(mapWidth, mapHeight, numOfPlants);
+        //generowanie zwierzakow z pozostalymi parametrami
     }
 
 
@@ -31,21 +32,18 @@ public class EarthGlobe extends AbstractWorldMap {
         return bounds;
     }
 
-    private void randomlyPlaceGrass(int width, int height, int grassCount) {
-        ForestedEquators grassPositions = new ForestedEquators(width, height, grassCount);
-        for(Vector2d grassPosition : grassPositions) {
-            grass.put(grassPosition, new Plant(grassPosition));
+    private void randomlyPlaceGrass(int width, int height, int plantCount) {
+        ForestedEquators plantPositions = new ForestedEquators(width, height, plantCount);
+        for(Vector2d plantPosition : plantPositions) {
+            plant.put(plantPosition, new Plant(plantPosition));
         }
     }
 
-
-    public boolean isOccupiedByGrass(Vector2d position) {
-        return grass.containsKey(position);
+    public boolean isOccupiedByPlant(Vector2d position) {
+        return plant.containsKey(position);
     }
 
-    public void eatGrass(Vector2d position) {
-        grass.remove(position);
+    public void eatPlantFromPosition(Vector2d position) {
+        plant.remove(position);
     }
-
-
 }
