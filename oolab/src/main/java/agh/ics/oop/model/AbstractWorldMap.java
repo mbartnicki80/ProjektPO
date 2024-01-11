@@ -4,10 +4,14 @@ import agh.ics.oop.MapVisualizer;
 import java.util.*;
 
 public abstract class AbstractWorldMap implements WorldMap {
-    protected Map<Vector2d, WorldElement> animals = new HashMap<>();
     protected final UUID ID;
+    protected Map<Vector2d, WorldElement> animals = new HashMap<>();
     private final List<MapChangeListener> observers = new ArrayList<>();
     private final MapVisualizer mapVisualizer = new MapVisualizer(this);
+
+    protected AbstractWorldMap() {
+        this.ID = UUID.randomUUID();
+    }
 
     public void addObserver(MapChangeListener observer) {
         observers.add(observer);
@@ -15,10 +19,6 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public void removeObserver(MapChangeListener observer) {
         observers.remove(observer);
-    }
-
-    protected AbstractWorldMap() {
-        this.ID = UUID.randomUUID();
     }
 
     protected void mapChanged(String message) {

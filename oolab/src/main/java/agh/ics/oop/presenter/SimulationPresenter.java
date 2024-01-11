@@ -34,7 +34,9 @@ public class SimulationPresenter {
         List<MoveDirection> directions;
         directions = OptionsParser.convertStringToMoveDirection(moves);
         ArrayList<Vector2d> positions = new ArrayList<>(Arrays.asList(new Vector2d(2, 2), new Vector2d(3, 4)));
-        GrassField worldMap = new GrassField(10);
+
+        EarthGlobe worldMap = new EarthGlobe(5, 5, 3);
+
         worldMap.addObserver(presenter);
         worldMap.addObserver(consoleMapDisplay);
         presenter.setWorldMap(worldMap);
@@ -53,8 +55,8 @@ public class SimulationPresenter {
 
         Simulation simulation = new Simulation(positions, directions, worldMap, energy, genomeLength);
         ArrayList<Simulation> simulations = new ArrayList<>(List.of(simulation));
-        SimulationEngine multipleSimulations = new SimulationEngine(simulations);
-        multipleSimulations.runAsync();
+        SimulationEngine simulationEngine = new SimulationEngine(simulations);
+        simulationEngine.runAsync();
 
         stage.show();
     }

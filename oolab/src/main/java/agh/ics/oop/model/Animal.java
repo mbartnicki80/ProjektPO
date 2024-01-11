@@ -1,5 +1,6 @@
 package agh.ics.oop.model;
 
+import java.util.Comparator;
 import java.util.Random;
 
 public class Animal implements WorldElement {
@@ -74,4 +75,6 @@ public class Animal implements WorldElement {
             case LEFT -> orientation = orientation.previous();
         }
     }
+
+
 }

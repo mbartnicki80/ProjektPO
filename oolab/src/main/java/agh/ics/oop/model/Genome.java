@@ -5,7 +5,7 @@ import java.util.Random;
 public class Genome {
 
     private final int[] genome;
-     public Genome(int genomeLength) {
+    public Genome(int genomeLength) {
         this.genome = generateGenome(genomeLength);
     }
 

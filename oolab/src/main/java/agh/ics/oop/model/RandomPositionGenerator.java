@@ -1,32 +1,56 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.Vector2d;
+
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public class RandomPositionGenerator implements Iterable<Vector2d> {
-    private List<Vector2d> positions;
-    private final int maxWidth;
-    private final int maxHeight;
-    private final int grassCount;
+public class RandomPositionGenerator implements Iterable<Vector2d>, Iterator<Vector2d> {
 
-    public RandomPositionGenerator(int maxWidth, int maxHeight, int grassCount) {
-        this.maxWidth = maxWidth;
-        this.maxHeight = maxHeight;
-        this.grassCount = grassCount;
-        generateGrass();
-    }
+    private final Iterator<Vector2d> iterator;
 
-    private void generateGrass() {
-        List<Vector2d> allPositions = new ArrayList<>();
-        for (int i=0; i<maxWidth; i++)
-            for (int j=0; j<maxHeight; j++)
-                allPositions.add(new Vector2d(i, j));
+    public RandomPositionGenerator(int width, int height, int grassCount) {
 
-        Collections.shuffle(allPositions);
-        positions = allPositions.subList(0, grassCount);
+        /* width <- sqrt(10 * N) + 1, height <- sqrt(10 * N) + 1
+         * => width * height -> 10 * N  => O(N) complexity
+         * where N = grassCount */
+        List<Vector2d> positions = IntStream.range(0, height)
+                .boxed()
+                .flatMap(i -> IntStream.range(0, width).mapToObj(j -> new Vector2d(j, i)))
+                .collect(Collectors.toList());
+
+        /* Fisher-Yates shuffle */
+        Collections.shuffle(positions, new Random());
+
+        positions = positions.subList(0, grassCount);
+
+        this.iterator = positions.iterator();
     }
 
     @Override
     public Iterator<Vector2d> iterator() {
-        return positions.iterator();
+        return this.iterator;
+    }
+
+    @Override
+    public void forEach(Consumer<? super Vector2d> action) {
+        Iterable.super.forEach(action);
+    }
+
+    @Override
+    public Spliterator<Vector2d> spliterator() {
+        return Iterable.super.spliterator();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return iterator.hasNext();
+    }
+
+    @Override
+    public Vector2d next() {
+        return iterator.next();
     }
 }
