@@ -13,22 +13,22 @@ public enum MapDirection {
 
     public String toString() {
         String[] directions = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
-        return directions[(this.ordinal())%(directions.length)];
+        return directions[(this.ordinal()) % (directions.length)];
     }
 
     public MapDirection next() {
         MapDirection[] directions = MapDirection.values();
-        return directions[(this.ordinal()+1)%(directions.length)];
+        return directions[(this.ordinal() + 1) % (directions.length)];
     }
 
     public MapDirection previous() {
         MapDirection[] directions = MapDirection.values();
-        return directions[(this.ordinal()+directions.length-1)%(directions.length)];
+        return directions[(this.ordinal() + directions.length - 1) % (directions.length)];
     }
 
     public MapDirection rotate(int rotation) {
         MapDirection[] directions = MapDirection.values();
-        return directions[(this.ordinal()+rotation)%(directions.length)];
+        return directions[(this.ordinal() + rotation) % (directions.length)];
     }
 
     public Vector2d toUnitVector() {

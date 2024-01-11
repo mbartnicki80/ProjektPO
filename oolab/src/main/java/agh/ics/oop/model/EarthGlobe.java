@@ -34,7 +34,18 @@ public class EarthGlobe extends AbstractWorldMap {
     private void randomlyPlaceGrass(int width, int height, int grassCount) {
         ForestedEquators grassPositions = new ForestedEquators(width, height, grassCount);
         for(Vector2d grassPosition : grassPositions) {
-            grass.put(grassPosition, new Grass(grassPosition));
+            grass.put(grassPosition, new Plant(grassPosition));
         }
     }
+
+
+    public boolean isOccupiedByGrass(Vector2d position) {
+        return grass.containsKey(position);
+    }
+
+    public void eatGrass(Vector2d position) {
+        grass.remove(position);
+    }
+
+
 }

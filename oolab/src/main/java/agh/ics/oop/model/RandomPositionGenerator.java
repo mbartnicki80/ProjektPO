@@ -13,9 +13,6 @@ public class RandomPositionGenerator implements Iterable<Vector2d>, Iterator<Vec
 
     public RandomPositionGenerator(int width, int height, int grassCount) {
 
-        /* width <- sqrt(10 * N) + 1, height <- sqrt(10 * N) + 1
-         * => width * height -> 10 * N  => O(N) complexity
-         * where N = grassCount */
         List<Vector2d> positions = IntStream.range(0, height)
                 .boxed()
                 .flatMap(i -> IntStream.range(0, width).mapToObj(j -> new Vector2d(j, i)))
