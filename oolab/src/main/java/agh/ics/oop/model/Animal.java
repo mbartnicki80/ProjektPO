@@ -1,8 +1,24 @@
 package agh.ics.oop.model;
 
+import java.util.Comparator;
+import java.util.Random;
+
 public class Animal implements WorldElement {
-    public MapDirection orientation;
-    public Vector2d position;
+    private MapDirection orientation;
+    private Vector2d position;
+    private Genome genome;
+    private int energy;
+    private int childrenCounter;
+    private int dayOfBirth;
+
+    public Animal(Vector2d position, MapDirection orientation, int energy, int dayOfBirth, int genomeLength) {
+        this.position = position;
+        this.orientation = orientation;
+        this.energy = energy;
+        this.childrenCounter = 0;
+        this.dayOfBirth = dayOfBirth;
+        this.genome = new Genome(genomeLength);
+    }
 
     public Animal(Vector2d position) {
         this.orientation = MapDirection.NORTH;
@@ -19,6 +35,24 @@ public class Animal implements WorldElement {
 
     public Vector2d getPosition() {
         return position;
+    }
+
+    public int getCurrentMove(int i) {
+        return genome.getCurrentGenome(i);
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+    public int getChildrenCount() {
+        return childrenCounter;
+    }
+    public int getDayOfBirth() {
+        return dayOfBirth;
+    }
+
+    public void eatPlant(int plantEnergy) {
+        this.energy += plantEnergy;
     }
 
     public String toString() {
@@ -41,4 +75,6 @@ public class Animal implements WorldElement {
             case LEFT -> orientation = orientation.previous();
         }
     }
+
+
 }

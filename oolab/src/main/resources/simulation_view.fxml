@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            minHeight="550.0" minWidth="850.0"
+            fx:controller="agh.ics.oop.presenter.SimulationViewPresenter">
+    <top>
+        <VBox spacing="10" alignment="CENTER">
+            <Label fx:id="movementsDescriptionLabel" textAlignment="CENTER"/>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="10" alignment="CENTER">
+            <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"/>
+        </VBox>
+    </center>
+</BorderPane>

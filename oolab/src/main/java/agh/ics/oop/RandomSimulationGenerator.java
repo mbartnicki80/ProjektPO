@@ -29,8 +29,10 @@ public class RandomSimulationGenerator implements Iterable<Simulation> {
         Random rand = new Random();
         ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
 
-        for (int i=1; i<=simulationsQuantity; i++) {
+        /*for (int i=1; i<=simulationsQuantity; i++) {
             int map = rand.nextInt(2);  // 0 - RectangularMap, 1 - GrassField
+            int energy = rand.nextInt(10)+5; //energy bedzie chyba ustalone
+            int genomeLength = rand.nextInt(10)+5;
             if (map==0) {
                 int randWidth = rand.nextInt(50)+1;
                 int randHeight = rand.nextInt(50)+1;
@@ -38,7 +40,7 @@ public class RandomSimulationGenerator implements Iterable<Simulation> {
                 RectangularMap worldMap = new RectangularMap(randWidth, randHeight);
                 worldMap.addObserver(consoleMapDisplay);
                 List<Vector2d> positions = generatePositions(randWidth, randHeight, animalsQuantity);
-                simulations.add(new Simulation(positions, directions, worldMap));
+                simulations.add(new Simulation(positions, directions, worldMap, energy, genomeLength));
             }
             else {
                 int randomGrass = rand.nextInt(50)+1;
@@ -46,9 +48,9 @@ public class RandomSimulationGenerator implements Iterable<Simulation> {
                 GrassField worldMap = new GrassField(randomGrass);
                 worldMap.addObserver(consoleMapDisplay);
                 List<Vector2d> positions = generatePositions((int) (Math.sqrt(randomGrass*10)+1), (int) (Math.sqrt(randomGrass*10)+1), animalsQuantity);
-                simulations.add(new Simulation(positions, directions, worldMap));
+                simulations.add(new Simulation(positions, directions, worldMap, energy, genomeLength));
             }
-        }
+        }*/
     }
 
     @Override
