@@ -26,6 +26,7 @@ public class Simulation implements Runnable {
     public Simulation(WorldMap worldMap, int numberOfAnimals, int animalEnergy, int plantEnergy,
                       int plantsPerDay, int reproductionReadyEnergy, int usedReproductionEnergy,
                       int minimalMutations, int maximalMutations, int genomeLength) {
+
         this.worldMap = worldMap;
         this.plantEnergy = plantEnergy;
         this.plantsPerDay = plantsPerDay;
@@ -35,6 +36,7 @@ public class Simulation implements Runnable {
         this.maximalMutations = maximalMutations;
         this.genomeLength = genomeLength;
         animals = new ArrayList<>(); //tutaj generowanie
+
         for (Vector2d position : positions) {
             int random_orientation = random.nextInt(8);
             Animal newAnimal = new Animal(position, directions[random_orientation], energy, 0, genomeLength);
@@ -48,14 +50,15 @@ public class Simulation implements Runnable {
     }
 
     public void run() {
-        for (Animal animal : animals) {
-            if (animal.isDead()) {
-                animals.remove(animal);
-                continue;
-            }
-            MapDirection currentAnimalMove = directions[animal.useCurrentAnimalGene()];
-            animal.move(currentAnimalMove, worldMap);
-        }
+//        for (Animal animal : animals) {
+//            if (animal.isDead()) {
+//                animals.remove(animal);
+//                continue;
+//            }
+//            MapDirection currentAnimalMove = directions[animal.useCurrentAnimalGene()];
+//            animal.move(currentAnimalMove, worldMap);
+//        }
+
         //3. Konsumpcja roślin, na których pola weszły zwierzaki.
         /* Tutaj jest pytanie, czy kilka zwierzakow moze zjesc te rosline?
         Jesli nie, mozna to zjadanie dorzucic zaraz po move
