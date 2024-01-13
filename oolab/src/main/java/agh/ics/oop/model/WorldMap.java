@@ -1,9 +1,6 @@
 package agh.ics.oop.model;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * The interface responsible for interacting with the map of the world.
@@ -54,7 +51,8 @@ public interface WorldMap extends MoveValidator {
 
     void consumption(int plantEnergy);
 
-    void copulateAnimals();
+    List<Animal> reproduceAnimals(int day, int genomeLength, int minimalMutations, int maximalMutations,
+                                  int reproductionReadyEnergy, int usedReproductionEnergy);
 
     void growNewPlants(int n);
 

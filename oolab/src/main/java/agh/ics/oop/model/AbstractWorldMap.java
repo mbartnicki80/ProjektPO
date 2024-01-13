@@ -13,6 +13,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     protected final List<MapChangeListener> observers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
+    private final AnimalComparator animalComparator = new AnimalComparator();
 
     protected AbstractWorldMap(int mapWidth, int mapHeight) {
         this.ID = UUID.randomUUID();
@@ -22,6 +23,9 @@ public abstract class AbstractWorldMap implements WorldMap {
         /* Brucik trochę
         * Można się zastanowić jak to najładniej zastąpić,
         * bo tworzyć zbędnie n^2 obiektów trochę szkoda */
+
+        //myślę że bez znaczenia bo jest spora szansa i tak że każda komórka będzie odwiedzona chociaż raz więc
+        //i tak się kiedyś wygeneruje to cos
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++){
                 Vector2d position = new Vector2d(i, j);
@@ -55,12 +59,14 @@ public abstract class AbstractWorldMap implements WorldMap {
         Vector2d currentPosition = animal.getPosition();
         MapDirection currentOrientation = animal.getOrientation();
 
-        MapDirection newOrientation = currentOrientation.rotate(animal.getGenome().useCurrentGene());
+        MapDirection newOrientation = currentOrientation.rotate(animal.useCurrentAnimalGene());
         Vector2d newPosition = currentPosition.add(newOrientation.toUnitVector());
 
         animal.move(newPosition, newOrientation, this);
+        animal.useEnergy(1);
 
         animals.get(currentPosition).remove(animal);
+
 
         /* Tu wyrzuca null ptr, dlaczegooo? */
         animals.get(newPosition).add(animal);
@@ -78,6 +84,11 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public void place(Animal animal) {
+        //wydaje mi sie ze wystarczy
+        if (canMoveTo(animal.getPosition()))
+            animals.get(animal.getPosition()).add(animal);
+
+        /*
         if (isOccupied(animal.getPosition())) {
             animals.get(animal.getPosition()).add(animal);
         }
@@ -85,7 +96,7 @@ public abstract class AbstractWorldMap implements WorldMap {
             Set<WorldElement> elements = new HashSet<>();
             elements.add(animal);
             animals.put(animal.getPosition(), elements);
-        }
+        }*/
     }
 
     public boolean isOccupied(Vector2d position) {
@@ -127,7 +138,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                         .map(animal -> (Animal) animal)
                         .toList();
 
-                Animal dominantAnimal = Collections.max(animalsAtPosition, new AnimalComparator());
+                Animal dominantAnimal = Collections.max(animalsAtPosition, animalComparator);
 
                 dominantAnimal.eatPlant(plantEnergy);
                 remove(plants.get(plantPosition));
@@ -137,8 +148,29 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public void copulateAnimals() {
+    public ArrayList<Animal> reproduceAnimals(int day, int genomeLength, int minimalMutations, int maximalMutations,
+                                             int reproductionReadyEnergy, int usedReproductionEnergy) {
+        ArrayList<Animal> newbornAnimals = new ArrayList<>();
 
+        animals.forEach((position, animalsAtPosition) -> {
+            if (animalsAtPosition.size() > 1) {
+                List<Animal> sortedAnimalsAtPosition = animalsAtPosition
+                        .stream()
+                        .map(animal -> (Animal) animal)
+                        .sorted(animalComparator)
+                        .toList();
+
+                Animal dominantAnimal = sortedAnimalsAtPosition.get(0);
+                Animal reproductionPartner = sortedAnimalsAtPosition.get(1);
+                if (dominantAnimal.getEnergy() > reproductionReadyEnergy && reproductionPartner.getEnergy() > reproductionReadyEnergy) {
+                    Animal newbornAnimal = dominantAnimal.reproduce(reproductionPartner, day, genomeLength,
+                                                                    minimalMutations, maximalMutations, usedReproductionEnergy * 2);
+                    dominantAnimal.useEnergy(usedReproductionEnergy); reproductionPartner.useEnergy(usedReproductionEnergy);
+                    newbornAnimals.add(newbornAnimal);
+                }
+            }
+        });
+        return newbornAnimals;
     }
 
     @Override

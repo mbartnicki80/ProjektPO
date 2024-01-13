@@ -7,38 +7,23 @@ import java.util.stream.Stream;
 
 public class Simulation implements Runnable {
 
-    private final List<Animal> aliveAnimals;
+    private final List<Animal> aliveAnimals = new ArrayList<>();
+    private final HashMap<Vector2d, Animal> deadAnimals = new HashMap<>(); //przerobilem na hashmape, bo przydadza sie pozycje do zyciodajnych truchl
     private final WorldMap worldMap;
-
     private final int plantsPerDay;
-
     private final int reproductionReadyEnergy;
     private final int usedReproductionEnergy;
     private final int minimalMutations;
     private final int maximalMutations;
     private final int genomeLength;
     private static final MapDirection[] directions = MapDirection.values();
+    private final int plantEnergy;
 
-    private int animalCount;
-    private int startAnimalEnergy;
-
-    private int plantEnergy;
-
-    public Simulation(
-            WorldMap worldMap,
-            int numberOfAnimals,
-            int startAnimalEnergy,
-            int plantEnergy,
-            int plantsPerDay,
-            int reproductionReadyEnergy,
-            int usedReproductionEnergy,
-            int minimalMutations,
-            int maximalMutations,
-            int genomeLength) {
+    public Simulation(WorldMap worldMap, int numberOfAnimals, int startAnimalEnergy,
+            int plantEnergy, int plantsPerDay, int reproductionReadyEnergy,
+            int usedReproductionEnergy, int minimalMutations, int maximalMutations, int genomeLength) {
 
         this.worldMap = worldMap;
-        this.animalCount = numberOfAnimals;
-        this.startAnimalEnergy = startAnimalEnergy;
         this.plantEnergy = plantEnergy;
         this.plantsPerDay = plantsPerDay;
         this.reproductionReadyEnergy = reproductionReadyEnergy;
@@ -47,14 +32,6 @@ public class Simulation implements Runnable {
         this.maximalMutations = maximalMutations;
         this.genomeLength = genomeLength;
 
-        aliveAnimals = new ArrayList<>(animalCount);
-    }
-
-    public void run() {
-
-        /* 1. Wygenerowanie początkowych zwierzaków
-        * (rośliny już są generowane przy tworzeniu mapy
-        *  */
         Random random = new Random();
         Boundary boundary = worldMap.getCurrentBounds();
 
@@ -64,7 +41,7 @@ public class Simulation implements Runnable {
                                 random.nextInt(boundary.upperRight().getYValue())
                         )
                 )
-                .limit(animalCount)
+                .limit(numberOfAnimals)
                 .toList();
 
         for (Vector2d position : positions) {
@@ -76,48 +53,41 @@ public class Simulation implements Runnable {
         }
 
         MapVisualizer visualizer = new MapVisualizer(worldMap);
-        for (int i = 0; i < 10; i++) {
-            //1. Usunięcie martwych zwierzaków z mapy.
-            removeDeadAnimals();
-
-            //2. Skręt i przemieszczenie każdego zwierzaka.
-            moveAnimals();
-
-            //3. Konsumpcja roślin, na których pola weszły zwierzaki.
-            consumption();
-
-            //4. Rozmnażanie się najedzonych zwierzaków znajdujących się na tym samym polu.
-            copulateAnimals();
-
-            //5. Wzrastanie nowych roślin na wybranych polach mapy.
-            growNewPlants();
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        //3. Konsumpcja roślin, na których pola weszły zwierzaki.
-        /* Tutaj jest pytanie, czy kilka zwierzakow moze zjesc te rosline?
-        Jesli nie, mozna to zjadanie dorzucic zaraz po move
-        Jesli tak, trzeba przechowywac gdzies te planty do usuniecia i usunac je na koncu
-         */
-        //4. Rozmnażanie się najedzonych zwierzaków znajdujących się na tym samym polu.
-        // Tutaj trzeba przejść po mapie i zobaczyć, czy na jakimś polu jest >=2 zwierzaków i odpalić komparator
-        // Stworzyć też jakąś logikę tworzenia dzieci i dziedziczenia genów
-
-        //5. Wzrastanie nowych roślin na wybranych polach mapy.
-        //Tak samo gdzies trzeba usypiać wątek tam wyżej, żeby symulacja jednak trwała chwile
     }
-    
-    void removeDeadAnimals() {
-        Set<Animal> deadAnimals = new HashSet<>();
 
+    public void run() {
+        /* 1. Wygenerowanie początkowych zwierzaków
+        * (rośliny już są generowane przy tworzeniu mapy
+        *  */
+        //przeniosłem do inicjalizacji - wydaje mi sie, ze tam bardziej pasuje, gdyz zwierzaki
+        //powstaja w momencie tworzenia symulacji, a run odpowiada tylko za kolejne kroki symulacji
+
+        //trzeba tutaj dorobic jakis licznik, aktualnie i przeksztalcilem na day
+        try {
+            for (int day = 0; day < 10; day++) {
+                removeDeadAnimals();
+                moveAnimals();
+                consumption();
+                reproduceAnimals(day);
+                //5. Wzrastanie nowych roślin na wybranych polach mapy.
+                growNewPlants();
+
+                Thread.sleep(500);
+
+            }
+        } catch (InterruptedException ignored) {}
+    }
+
+        // #TODO
+        //5. Wzrastanie nowych roślin na wybranych polach mapy.
+
+
+    //nie dajemy tutaj zadnych private/public? zostawiamy package-private?
+
+    void removeDeadAnimals() {
         for (Animal animal : aliveAnimals) {
-            if (animal.getEnergy() <= 0) {
-                deadAnimals.add(animal);
+            if (animal.isDead()) {
+                deadAnimals.put(animal.getPosition(), animal);
                 worldMap.remove(animal);
             }
         }
@@ -133,8 +103,10 @@ public class Simulation implements Runnable {
         worldMap.consumption(this.plantEnergy);
     }
 
-    void copulateAnimals() {
-        worldMap.copulateAnimals();
+    void reproduceAnimals(int day) {
+        List<Animal> newbornAnimals = worldMap.reproduceAnimals(day, genomeLength, minimalMutations, maximalMutations,
+                                                                reproductionReadyEnergy, usedReproductionEnergy);
+        aliveAnimals.addAll(newbornAnimals);
     }
 
     void growNewPlants() {
