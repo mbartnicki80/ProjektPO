@@ -30,7 +30,11 @@ public class Vector2d {
     }
 
     public Vector2d add(Vector2d other) {
-        return new Vector2d(x+other.x, y+other.y);
+        return new Vector2d(x + other.x, y + other.y);
+    }
+
+    public Vector2d addModuloX(Vector2d other, int width) {
+        return new Vector2d((width + x + other.x) % width, y + other.y);
     }
 
     public Vector2d subtract(Vector2d other) {
@@ -46,7 +50,7 @@ public class Vector2d {
     }
 
     public Vector2d opposite() {
-        return new Vector2d(x*(-1), y*(-1));
+        return new Vector2d(-x, -y);
     }
 
     public boolean equals(Object other) {

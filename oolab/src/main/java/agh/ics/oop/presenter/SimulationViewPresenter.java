@@ -66,7 +66,7 @@ public class SimulationViewPresenter implements MapChangeListener {
         int upperRightX = bounds.upperRight().getXValue();
         int upperRightY = bounds.upperRight().getYValue();
 
-        for (int i = lowerLeftX; i <= upperRightX; i++) {
+        /*for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
                 WorldElement worldElement = worldMap.objectAt(new Vector2d(i, j));
                 if (worldElement != null) {
@@ -75,7 +75,7 @@ public class SimulationViewPresenter implements MapChangeListener {
                     GridPane.setHalignment(elemLabel, HPos.CENTER);
                 }
             }
-        }
+        }*/
     }
 
     @Override

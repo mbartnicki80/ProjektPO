@@ -1,6 +1,7 @@
 package agh.ics.oop.model;
 
 import java.util.Random;
+import java.util.stream.IntStream;
 
 public class Genome {
 
@@ -14,10 +15,9 @@ public class Genome {
     }
 
     private int[] generateGenome(int genomeLength) {
-        int[] random_genome = new int[genomeLength];
-        for (int i=0; i<genomeLength; i++)
-            random_genome[i] = random.nextInt(8);
-        return random_genome;
+        return IntStream.generate(() -> random.nextInt(8))
+                .limit(genomeLength)
+                .toArray();
     }
 
     public int useCurrentGene() {

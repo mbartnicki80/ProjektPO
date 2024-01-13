@@ -1,6 +1,8 @@
 package agh.ics.oop.model;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -16,13 +18,13 @@ public interface WorldMap extends MoveValidator {
      *
      * @param animal The animal to place on the map.
      */
-    void place(Animal animal) throws PositionAlreadyOccupiedException;
+    void place(Animal animal);
 
     /**
      * Moves an animal (if it is present on the map) according to specified direction.
      * If the move is not possible, this method has no effect.
      */
-    void move(Animal animal, MoveDirection direction);
+    void move(Animal animal);
 
     /**
      * Return true if given position on the map is occupied. Should not be
@@ -40,11 +42,23 @@ public interface WorldMap extends MoveValidator {
      * @param position The position of the animal.
      * @return animal or null if the position is not occupied.
      */
-    WorldElement objectAt(Vector2d position);
+    Set<WorldElement> objectAt(Vector2d position);
 
     Boundary getCurrentBounds();
 
     List<WorldElement> getElements();
 
     UUID getID();
+
+    void remove(WorldElement worldElement);
+
+    void consumption(int plantEnergy);
+
+    void copulateAnimals();
+
+    void growNewPlants(int n);
+
+    void registerObserver(MapChangeListener observer);
+
+    void unregisterObserver(MapChangeListener observer);
 }

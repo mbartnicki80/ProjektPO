@@ -53,17 +53,16 @@ public class Animal implements WorldElement {
         return this.position.equals(position);
     }
 
-    public void move(MoveDirection direction, MoveValidator moveValidator) {
-        switch (direction) {
-            case FORWARD, BACKWARD -> {
-                Vector2d newPosition = direction == MoveDirection.FORWARD ? position.add(orientation.toUnitVector()) : position.subtract(orientation.toUnitVector());
-                if (moveValidator.canMoveTo(newPosition))
-                    position = newPosition;
-            }
-            case RIGHT -> orientation = orientation.next();
-            case LEFT -> orientation = orientation.previous();
+    public void move(Vector2d newPosition, MapDirection newOrientation, MoveValidator moveValidator) {
+
+        if (moveValidator.canMoveTo(newPosition)) {
+            this.position = newPosition;
+            this.orientation = newOrientation;
         }
+
     }
 
-
+    public Genome getGenome() {
+        return genome;
+    }
 }

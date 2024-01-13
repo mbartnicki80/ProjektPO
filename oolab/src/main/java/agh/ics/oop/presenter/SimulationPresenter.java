@@ -56,6 +56,7 @@ public class SimulationPresenter {
         int plantEnergy = Integer.parseInt(plantEnergyTextField.getText());
         int plantsPerDay = Integer.parseInt(plantsPerDayTextField.getText());
         //wariant wzrostu roślin !!checkbox
+
         int numberOfAnimals = Integer.parseInt(numOfAnimalsTextField.getText());
         int animalEnergy = Integer.parseInt(animalEnergyTextField.getText());
         int reproductionReadyEnergy = Integer.parseInt(reproductionReadyEnergyTextField.getText());
@@ -74,6 +75,7 @@ public class SimulationPresenter {
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
         presenter.setWorldMap(worldMap);
+
         Simulation simulation = new Simulation(
                 worldMap,
                 numberOfAnimals,
