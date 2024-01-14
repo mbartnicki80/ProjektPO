@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Animal implements WorldElement {
+
     private MapDirection orientation;
     private Vector2d position;
     private final Genome genome;
@@ -86,6 +87,11 @@ public class Animal implements WorldElement {
         return this.position.equals(position);
     }
 
+    @Override
+    public Vector2d position() {
+        return this.position;
+    }
+
     public void move(Vector2d newPosition, MapDirection newOrientation, MoveValidator moveValidator) {
 
         if (moveValidator.canMoveTo(newPosition)) {
@@ -107,4 +113,10 @@ public class Animal implements WorldElement {
         // #TODO
         return genome;
     }
+
+
+    public void setOrientation(MapDirection orientation) {
+        this.orientation = orientation;
+    }
+
 }

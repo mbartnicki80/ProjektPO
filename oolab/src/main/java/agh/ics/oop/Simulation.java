@@ -7,8 +7,8 @@ import java.util.stream.Stream;
 
 public class Simulation implements Runnable {
 
-    private final List<Animal> aliveAnimals = new ArrayList<>();
-    private final HashMap<Vector2d, Animal> deadAnimals = new HashMap<>(); //przerobilem na hashmape, bo przydadza sie pozycje do zyciodajnych truchl
+    private final Set<Animal> aliveAnimals = new HashSet<>();
+    private final Map<Vector2d, Animal> deadAnimals = new HashMap<>();
     private final WorldMap worldMap;
     private final int plantsPerDay;
     private final int reproductionReadyEnergy;
@@ -51,29 +51,33 @@ public class Simulation implements Runnable {
             worldMap.place(animal);
             aliveAnimals.add(animal);
         }
-
-        MapVisualizer visualizer = new MapVisualizer(worldMap);
     }
 
     public void run() {
-        /* 1. Wygenerowanie początkowych zwierzaków
-        * (rośliny już są generowane przy tworzeniu mapy
-        *  */
-        //przeniosłem do inicjalizacji - wydaje mi sie, ze tam bardziej pasuje, gdyz zwierzaki
-        //powstaja w momencie tworzenia symulacji, a run odpowiada tylko za kolejne kroki symulacji
 
         //trzeba tutaj dorobic jakis licznik, aktualnie i przeksztalcilem na day
         try {
-            for (int day = 0; day < 10; day++) {
+            int day = 0;
+            while (!aliveAnimals.isEmpty()) {
+
+                /* Done */
                 removeDeadAnimals();
+
+                /* Done */
                 moveAnimals();
+
+                /* Done */
                 consumption();
+
+                /* Done */
                 reproduceAnimals(day);
-                //5. Wzrastanie nowych roślin na wybranych polach mapy.
+
+                /* Done */
                 growNewPlants();
 
                 Thread.sleep(500);
 
+                day++;
             }
         } catch (InterruptedException ignored) {}
     }
@@ -85,10 +89,14 @@ public class Simulation implements Runnable {
     //nie dajemy tutaj zadnych private/public? zostawiamy package-private?
 
     void removeDeadAnimals() {
-        for (Animal animal : aliveAnimals) {
+        Iterator<Animal> iterator = aliveAnimals.iterator();
+
+        while (iterator.hasNext()) {
+            Animal animal = iterator.next();
             if (animal.isDead()) {
                 deadAnimals.put(animal.position(), animal);
                 worldMap.remove(animal);
+                iterator.remove();
             }
         }
     }
@@ -104,8 +112,14 @@ public class Simulation implements Runnable {
     }
 
     void reproduceAnimals(int day) {
-        List<Animal> newbornAnimals = worldMap.reproduceAnimals(day, genomeLength, minimalMutations, maximalMutations,
-                                                                reproductionReadyEnergy, usedReproductionEnergy);
+        List<Animal> newbornAnimals = worldMap
+                .reproduceAnimals(
+                        day,
+                        genomeLength,
+                        minimalMutations,
+                        maximalMutations,
+                        reproductionReadyEnergy,
+                        usedReproductionEnergy);
         aliveAnimals.addAll(newbornAnimals);
     }
 

@@ -64,21 +64,44 @@ public abstract class AbstractWorldMap implements WorldMap {
         MapDirection newOrientation = currentOrientation.rotate(animal.useCurrentAnimalGene());
         Vector2d newPosition = currentPosition.add(newOrientation.toUnitVector());
 
+
+        /* Na razie brzydko ale żeby działalo */
+        if (newPosition.getXValue() < 0)
+            newPosition = new Vector2d(bounds.lowerLeft().getXValue(), newPosition.getYValue());
+
+        if (newPosition.getXValue() > bounds.upperRight().getXValue())
+            newPosition = new Vector2d(bounds.upperRight().getXValue(), newPosition.getYValue());
+
+        if (newPosition.getYValue() < 0) {
+            newPosition = new Vector2d(newPosition.getXValue(), bounds.lowerLeft().getYValue());
+            animal.setOrientation(animal.getOrientation().rotate(4));
+        }
+
+        if (newPosition.getYValue() > bounds.upperRight().getYValue()) {
+            newPosition = new Vector2d(newPosition.getXValue(), bounds.upperRight().getYValue());
+            animal.setOrientation(animal.getOrientation().rotate(4));
+        }
+
         animal.move(newPosition, newOrientation, this);
         animal.useEnergy(1);
 
         animals.get(currentPosition).remove(animal);
 
 
-        /* Tu wyrzuca null ptr, dlaczegooo? */
+        /* Tu wyrzuca null ptr, dlaczegooo?
+        * TODO
+        *  jeszcze nie ma pozycji modulo, więc wywala nullptr bo
+        *  szuka mapie pozycji spoza mapy
+        * */
+
         animals.get(newPosition).add(animal);
+
         /*Exception in thread "main" java.lang.NullPointerException: Cannot invoke "java.util.Set.add(Object)" because the return value of "java.util.Map.get(Object)" is null
             at agh.ics.oop.model.AbstractWorldMap.move(AbstractWorldMap.java:64)
             at agh.ics.oop.Simulation.moveAnimals(Simulation.java:128)
             at agh.ics.oop.Simulation.run(Simulation.java:84)
             at agh.ics.oop.WorldConsole.main(WorldConsole.java:27)
         */
-
 
         mapChanged("Animal was moved from " + currentPosition + " " + " to " + newPosition);
 
@@ -132,19 +155,19 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         Collection<Vector2d> plantPositions = plants.keySet();
 
-        for (Vector2d plantPosition : plantPositions) {
-            if (animals.containsKey(plantPosition)) {
-                List<Animal> animalsAtPosition = animals.get(plantPosition)
-                        .stream()
-                        .map(animal -> (Animal) animal)
-                        .toList();
-
-                Animal dominantAnimal = Collections.max(animalsAtPosition, animalComparator);
-
-                dominantAnimal.eatPlant(plantEnergy);
-                remove(plants.get(plantPosition));
-            }
-        }
+//        for (Vector2d plantPosition : plantPositions) {
+//            if (animals.containsKey(plantPosition)) {
+//                List<Animal> animalsAtPosition = animals.get(plantPosition)
+//                        .stream()
+//                        .map(animal -> (Animal) animal)
+//                        .toList();
+//
+//                Animal dominantAnimal = Collections.max(animalsAtPosition, animalComparator);
+//
+//                dominantAnimal.eatPlant(plantEnergy);
+//                remove(plants.get(plantPosition));
+//            }
+//        }
 
     }
 
@@ -188,6 +211,11 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public ArrayList<Animal> getOrderedAnimals() {
+
+        /* TODO
+        *   test
+        * */
+
         ArrayList<Animal> orderedAnimals = new ArrayList<>();
 
         animals.forEach((position, animalsAtPosition) -> {
@@ -195,14 +223,29 @@ public abstract class AbstractWorldMap implements WorldMap {
                 orderedAnimals.add((Animal) animal);
         });
 
-        orderedAnimals.sort(Comparator.comparing(animal -> animal.getPosition().getXValue())
-                .thenComparing(animal -> animal.getPosition().getYValue()));
+        orderedAnimals.sort(
+                Comparator.comparing(animal -> ((Animal) animal).getPosition().getXValue())
+                        .thenComparing(animal -> ((Animal) animal).getPosition().getYValue())
+        );
 
         return orderedAnimals;
     }
 
     @Override
     public void growNewPlants(int n) {
+        List<Vector2d> freePositions = new ArrayList<>(animals.keySet()
+                .stream()
+                .filter(position -> !plants.containsKey(position))
+                .toList());
 
+        Collections.shuffle(freePositions);
+
+        List<Vector2d> chosenPositions = freePositions.subList(0, Math.min(n, freePositions.size()));
+
+        for (Vector2d position : chosenPositions) {
+            Plant plant = new Plant(position);
+            plants.put(position, plant);
+            mapChanged("New plant " + plant + " has grown at " + plant.position());
+        }
     }
 }

@@ -1,5 +1,8 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.annotations.Observer;
+
+@Observer
 public class ConsoleMapDisplay implements MapChangeListener {
 
     private int changeCounter;
@@ -15,7 +18,7 @@ public class ConsoleMapDisplay implements MapChangeListener {
                 worldMap.getID() + "\n" +
                 message + "\n" +
                 worldMap +
-                "Change counter: " + ++this.changeCounter + "\n\n\n";
+                "Change counter: " + ++this.changeCounter;
 
         System.out.println(view);
     }
