@@ -39,7 +39,7 @@ public interface WorldMap extends MoveValidator {
      * @param position The position of the animal.
      * @return animal or null if the position is not occupied.
      */
-    Set<WorldElement> objectAt(Vector2d position);
+    Optional<WorldElement> objectAt(Vector2d position);
 
     Boundary getCurrentBounds();
 
@@ -59,4 +59,6 @@ public interface WorldMap extends MoveValidator {
     void registerObserver(MapChangeListener observer);
 
     void unregisterObserver(MapChangeListener observer);
+
+    List<Animal> getOrderedAnimals();
 }

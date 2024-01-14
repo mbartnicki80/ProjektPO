@@ -1,4 +1,7 @@
 package agh.ics.oop.model;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class Animal implements WorldElement {
@@ -6,7 +9,7 @@ public class Animal implements WorldElement {
     private Vector2d position;
     private final Genome genome;
     private int energy;
-    private int childrenCounter; //zrobic jako liste potomkow
+    private final ArrayList<Animal> children = new ArrayList<>();
     private final int dayOfBirth;
     private static final MapDirection[] directions = MapDirection.values();
 
@@ -14,7 +17,6 @@ public class Animal implements WorldElement {
         this.position = position;
         this.orientation = orientation;
         this.energy = energy;
-        this.childrenCounter = 0; //jako pusta lista
         this.dayOfBirth = dayOfBirth;
         this.genome = new Genome(genomeLength);
     }
@@ -24,7 +26,6 @@ public class Animal implements WorldElement {
         Random random = new Random();
         this.orientation = directions[random.nextInt(directions.length)];
         this.energy = energy;
-        this.childrenCounter = 0;
         this.dayOfBirth = dayOfBirth;
         this.genome = genome;
     }
@@ -47,8 +48,12 @@ public class Animal implements WorldElement {
         return energy;
     }
 
+    public List<Animal> getChildrenList() {
+        return Collections.unmodifiableList(children);
+    }
+
     public int getChildrenCount() {
-        return childrenCounter;
+        return children.size();
     }
 
     public int getDayOfBirth() {
@@ -62,9 +67,9 @@ public class Animal implements WorldElement {
                                 this.getGenome(), reproductionPartner.getGenome(),
                 (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
 
-        Animal newbornAnimal = new Animal(reproductionPartner.getPosition(), newbornEnergy, day, newbornGenome);
+        Animal newbornAnimal = new Animal(reproductionPartner.position(), newbornEnergy, day, newbornGenome);
 
-        this.addChildren(); reproductionPartner.addChildren();
+        this.addChild(newbornAnimal); reproductionPartner.addChild(newbornAnimal);
         return newbornAnimal;
     }
 
@@ -94,8 +99,8 @@ public class Animal implements WorldElement {
         energy -= energyToUse;
     }
 
-    public void addChildren() { //tutaj ewentualnie przerobic, zeby przyjmowalo animala i dodawalo mu do listy
-        childrenCounter += 1;
+    public void addChild(Animal animal) { //tutaj ewentualnie przerobic, zeby przyjmowalo animala i dodawalo mu do listy
+        children.add(animal);
     }
 
     public Genome getGenome() {

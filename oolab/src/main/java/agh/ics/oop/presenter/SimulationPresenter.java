@@ -11,6 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +76,8 @@ public class SimulationPresenter {
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
         presenter.setWorldMap(worldMap);
+
+        worldMap.registerObserver((map, message) -> System.out.println(LocalDateTime.now() + " " + message));
 
         Simulation simulation = new Simulation(
                 worldMap,

@@ -4,8 +4,7 @@ public class EarthGlobe extends AbstractWorldMap {
 
     public EarthGlobe(int mapWidth, int mapHeight, int numOfPlants) {
         super(mapWidth, mapHeight);
-
-        randomlyPlaceGrass(mapWidth, mapHeight, numOfPlants);
+        randomlyPlacePlants(mapWidth, mapHeight, numOfPlants);
     }
 
 
@@ -19,9 +18,7 @@ public class EarthGlobe extends AbstractWorldMap {
         return bounds.lowerLeft().precedes(position) && bounds.upperRight().follows(position);
     }
 
-
-
-    private void randomlyPlaceGrass(int width, int height, int plantCount) {
+    private void randomlyPlacePlants(int width, int height, int plantCount) {
         ForestedEquators plantPositions = new ForestedEquators(width, height, plantCount);
         for(Vector2d plantPosition : plantPositions) {
             plants.put(plantPosition, new Plant(plantPosition));

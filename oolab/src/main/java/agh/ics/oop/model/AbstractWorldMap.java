@@ -2,6 +2,8 @@ package agh.ics.oop.model;
 import agh.ics.oop.MapVisualizer;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class AbstractWorldMap implements WorldMap {
     protected final UUID ID;
@@ -56,7 +58,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public void move(Animal animal) {
 
-        Vector2d currentPosition = animal.getPosition();
+        Vector2d currentPosition = animal.position();
         MapDirection currentOrientation = animal.getOrientation();
 
         MapDirection newOrientation = currentOrientation.rotate(animal.useCurrentAnimalGene());
@@ -78,15 +80,14 @@ public abstract class AbstractWorldMap implements WorldMap {
         */
 
 
-        mapChanged("Animal " + animal + " moved from " + currentPosition + " " +
-                currentOrientation + " to " + newPosition + " " + newOrientation);
+        mapChanged("Animal was moved from " + currentPosition + " " + " to " + newPosition);
 
     }
 
     public void place(Animal animal) {
         //wydaje mi sie ze wystarczy
-        if (canMoveTo(animal.getPosition()))
-            animals.get(animal.getPosition()).add(animal);
+        if (canMoveTo(animal.position()))
+            animals.get(animal.position()).add(animal);
 
         /*
         if (isOccupied(animal.getPosition())) {
@@ -103,16 +104,16 @@ public abstract class AbstractWorldMap implements WorldMap {
         return animals.containsKey(position);
     }
 
-    public Set<WorldElement> objectAt(Vector2d position) {
-        return animals.get(position);
+    public Optional<WorldElement> objectAt(Vector2d position) {
+        return Optional.ofNullable(animals.get(position))
+                .flatMap(set -> set.stream().findAny())
+                .or(() -> Optional.ofNullable(plants.get(position)));
     }
 
-    public ArrayList<WorldElement> getElements() {
-        ArrayList<WorldElement> elements = new ArrayList<>();
-        for (Set<WorldElement> element : animals.values()) {
-            elements.addAll(element);
-        }
-        return elements;
+    public List<WorldElement> getElements() {
+        return Stream
+                .concat(animals.values().stream().flatMap(Set::stream), plants.values().stream())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -176,13 +177,28 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public void remove(WorldElement element) {
         if (element instanceof Animal animal) {
-            animals.get(element.getPosition()).remove(animal);
-            mapChanged("Animal " + animal + " died at " + animal.getPosition());
+            animals.get(element.position()).remove(animal);
+            mapChanged("Animal " + animal + " died at " + animal.position());
         }
         else if (element instanceof Plant plant) {
-            plants.remove(element.getPosition());
-            mapChanged("Plant " + plant + " has been eaten at " + plant.getPosition());
+            plants.remove(element.position());
+            mapChanged("Plant " + plant + " has been eaten at " + plant.position());
         }
+    }
+
+    @Override
+    public ArrayList<Animal> getOrderedAnimals() {
+        ArrayList<Animal> orderedAnimals = new ArrayList<>();
+
+        animals.forEach((position, animalsAtPosition) -> {
+            for (WorldElement animal : animalsAtPosition)
+                orderedAnimals.add((Animal) animal);
+        });
+
+        orderedAnimals.sort(Comparator.comparing(animal -> animal.getPosition().getXValue())
+                .thenComparing(animal -> animal.getPosition().getYValue()));
+
+        return orderedAnimals;
     }
 
     @Override
