@@ -27,6 +27,7 @@
                 <Label text="Liczba rosnących dziennie roślin"/>
                 <TextField fx:id="plantsPerDayTextField" promptText="Liczba rosnących dziennie roślin"> </TextField>
                 <!-- wariant roślin -->
+                <!-- wariant roślin -->
             </VBox>
             <VBox spacing="10">
                 <Label text="Liczba zwierząt na start"/>
@@ -42,7 +43,6 @@
                 <Label text="Maksymalna liczba mutacji u potomków"/>
                 <TextField fx:id="maximalMutationsTextField" promptText="Maksymalna liczba mutacji u potomków"> </TextField>
 
-                <!-- wariant roślin -->
                 <Label text="Długość genomu zwierząt"/>
                 <TextField fx:id="genomeLengthTextField" promptText="Długość genomu zwierząt"> </TextField>
             </VBox>

@@ -152,8 +152,11 @@ public class EarthGlobe implements WorldMap {
 
     public Optional<WorldElement> objectAt(Vector2d position) {
         return Optional.ofNullable(animals.get(position))
-                .flatMap(set -> set.stream().findAny())
-                .or(() -> Optional.ofNullable(plants.get(position)));
+                .flatMap(set -> set.stream()
+                        .map(animal -> (Animal) animal)
+                        .max(animalComparator)
+                        .map(animal -> (WorldElement) animal)
+                .or(() -> Optional.ofNullable(plants.get(position))));
     }
 
     public List<WorldElement> getElements() {
@@ -177,8 +180,9 @@ public class EarthGlobe implements WorldMap {
 
         Collection<Vector2d> plantPositions = plants.keySet();
 
+
         for (Vector2d plantPosition : plantPositions) {
-            if (animals.containsKey(plantPosition)) {
+            if (!animals.get(plantPosition).isEmpty()) {
                 List<Animal> animalsAtPosition = animals.get(plantPosition)
                         .stream()
                         .map(animal -> (Animal) animal)
@@ -187,7 +191,7 @@ public class EarthGlobe implements WorldMap {
                 Animal dominantAnimal = Collections.max(animalsAtPosition, animalComparator);
 
                 dominantAnimal.eatPlant(plants.get(plantPosition).getEnergy());
-                remove(plants.get(plantPosition));
+                //remove(plants.get(plantPosition));
             }
         }
 

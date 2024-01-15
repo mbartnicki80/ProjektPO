@@ -9,6 +9,8 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
+import java.util.Optional;
+
 public class SimulationViewPresenter implements MapChangeListener {
     @FXML
     private GridPane mapGrid;
@@ -66,16 +68,16 @@ public class SimulationViewPresenter implements MapChangeListener {
         int upperRightX = bounds.upperRight().getXValue();
         int upperRightY = bounds.upperRight().getYValue();
 
-        /*for (int i = lowerLeftX; i <= upperRightX; i++) {
+        for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
-                WorldElement worldElement = worldMap.objectAt(new Vector2d(i, j));
-                if (worldElement != null) {
-                    Label elemLabel = new Label(worldElement.toString());
+                Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
+                if (worldElement.isPresent()) {
+                    Label elemLabel = new Label(worldElement.get().toString());
                     mapGrid.add(elemLabel, i - lowerLeftX + 1, upperRightY - j + 1);
                     GridPane.setHalignment(elemLabel, HPos.CENTER);
                 }
             }
-        }*/
+        }
     }
 
     @Override
