@@ -45,7 +45,7 @@ public class Genome {
         return genome[index];
     }
 
-    public int[] reproducedGenome(int genomeLength, Genome dominantAnimalGenome, Genome reproductionPartnerGenome,
+    private int[] reproducedGenome(int genomeLength, Genome dominantAnimalGenome, Genome reproductionPartnerGenome,
                                   int minimalMutations, int maximalMutations, double dominantEnergyProportion) {
 
         int[] newbornGenome = new int[genomeLength];

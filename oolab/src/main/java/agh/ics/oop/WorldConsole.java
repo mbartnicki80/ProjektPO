@@ -9,7 +9,7 @@ import java.util.Date;
 public class WorldConsole {
     public static void main(String[] args) {
 
-        WorldMap globe = new EarthGlobe(10, 10, 5);
+        WorldMap globe = new EarthGlobe(10, 10, 5, 5);
         ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
 
         globe.registerObserver(consoleMapDisplay);
@@ -21,12 +21,11 @@ public class WorldConsole {
                 2,
                 10,
                 2,
-                1,
-                15,
                 5,
                 2,
                 5,
-                10
+                10,
+                7
         );
 
         simulation.run();

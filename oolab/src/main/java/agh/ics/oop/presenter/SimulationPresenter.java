@@ -70,7 +70,8 @@ public class SimulationPresenter {
         EarthGlobe worldMap = new EarthGlobe(
                 mapWidth,
                 mapHeight,
-                numberOfPlants
+                numberOfPlants,
+                plantEnergy
         );
 
         worldMap.registerObserver(presenter);
@@ -83,7 +84,6 @@ public class SimulationPresenter {
                 worldMap,
                 numberOfAnimals,
                 animalEnergy,
-                plantEnergy,
                 plantsPerDay,
                 reproductionReadyEnergy,
                 usedReproductionEnergy,

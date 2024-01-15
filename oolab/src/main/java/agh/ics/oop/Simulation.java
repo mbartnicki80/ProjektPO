@@ -17,14 +17,13 @@ public class Simulation implements Runnable {
     private final int maximalMutations;
     private final int genomeLength;
     private static final MapDirection[] directions = MapDirection.values();
-    private final int plantEnergy;
+
 
     public Simulation(WorldMap worldMap, int numberOfAnimals, int startAnimalEnergy,
-            int plantEnergy, int plantsPerDay, int reproductionReadyEnergy,
-            int usedReproductionEnergy, int minimalMutations, int maximalMutations, int genomeLength) {
+                      int plantsPerDay, int reproductionReadyEnergy, int usedReproductionEnergy,
+                      int minimalMutations, int maximalMutations, int genomeLength) {
 
         this.worldMap = worldMap;
-        this.plantEnergy = plantEnergy;
         this.plantsPerDay = plantsPerDay;
         this.reproductionReadyEnergy = reproductionReadyEnergy;
         this.usedReproductionEnergy = usedReproductionEnergy;
@@ -81,9 +80,7 @@ public class Simulation implements Runnable {
         } catch (InterruptedException ignored) {}
     }
 
-    //nie dajemy tutaj zadnych private/public? zostawiamy package-private?
-
-    void removeDeadAnimals() {
+    private void removeDeadAnimals() {
         Iterator<Animal> iterator = aliveAnimals.iterator();
 
         while (iterator.hasNext()) {
@@ -96,17 +93,17 @@ public class Simulation implements Runnable {
         }
     }
 
-    void moveAnimals() {
+    private void moveAnimals() {
         for (Animal animal : aliveAnimals) {
             worldMap.move(animal);
         }
     }
 
-    void consumption() {
-        worldMap.consumption(this.plantEnergy);
+    private void consumption() {
+        worldMap.consumption();
     }
 
-    void reproduceAnimals(int day) {
+    private void reproduceAnimals(int day) {
         List<Animal> newbornAnimals = worldMap
                 .reproduceAnimals(
                         day,
@@ -118,7 +115,7 @@ public class Simulation implements Runnable {
         aliveAnimals.addAll(newbornAnimals);
     }
 
-    void growNewPlants() {
+    private void growNewPlants() {
         worldMap.growNewPlants(plantsPerDay);
     }
 }

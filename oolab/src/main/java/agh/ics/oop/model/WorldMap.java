@@ -49,7 +49,7 @@ public interface WorldMap extends MoveValidator {
 
     void remove(WorldElement worldElement);
 
-    void consumption(int plantEnergy);
+    void consumption();
 
     List<Animal> reproduceAnimals(int day, int genomeLength, int minimalMutations, int maximalMutations,
                                   int reproductionReadyEnergy, int usedReproductionEnergy);

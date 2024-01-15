@@ -1,55 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 
+<?import javafx.scene.control.Label?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
 
     <top>
-        <VBox spacing="10" alignment="BASELINE_LEFT">
-            <HBox spacing="10">
-                <Label fx:id="Wysokość mapy" textAlignment="CENTER"/>
-                <TextField fx:id="mapHeightTextField"> </TextField>
-                <Label fx:id="Szerokość mapy" textAlignment="CENTER"/>
-                <TextField fx:id="mapWidthTextField"> </TextField>
-                <Label fx:id="Liczba roślin na start" textAlignment="CENTER"/>
-                <TextField fx:id="numOfPlantsTextField"> </TextField>
-                <Label fx:id="Energia dostarczana przez rośliny" textAlignment="CENTER"/>
-                <TextField fx:id="plantEnergyTextField"> </TextField>
-                <Label fx:id="Liczba rosnących dziennie roślin" textAlignment="CENTER"/>
-                <TextField fx:id="plantsPerDayTextField"> </TextField>
+        <HBox spacing="10" alignment="CENTER">
+            <VBox spacing="10" alignment="BASELINE_LEFT">
+                <Label text="Wysokość mapy"/>
+                <TextField fx:id="mapHeightTextField" promptText="Wysokość mapy"> </TextField>
+                <Label text="Szerokośćć mapy"/>
+                <TextField fx:id="mapWidthTextField" promptText="Szerokość mapy"> </TextField>
+                <Label text="Liczba roślin na start"/>
+                <TextField fx:id="numOfPlantsTextField" promptText="Liczba roślin na start"> </TextField>
+                <Label text="Energia dostarczana przez rośliny"/>
+                <TextField fx:id="plantEnergyTextField" promptText="Energia dostarczana przez rośliny"> </TextField>
+                <Label text="Liczba rosnących dziennie roślin"/>
+                <TextField fx:id="plantsPerDayTextField" promptText="Liczba rosnących dziennie roślin"> </TextField>
                 <!-- wariant roślin -->
-            </HBox>
-        </VBox>
-        <VBox spacing="10" alignment="BASELINE_RIGHT">
-            <HBox spacing="10">
-                <Label fx:id="Liczba zwierząt na start" textAlignment="CENTER"/>
-                <TextField fx:id="numOfAnimalsTextField"> </TextField>
-                <Label fx:id="Startowa energia zwierząt" textAlignment="CENTER"/>
-                <TextField fx:id="animalEnergyTextField"> </TextField>
-                <Label fx:id="Energia potrzebna do gotowości do rozmnażania" textAlignment="CENTER"/>
-                <TextField fx:id="reproductionReadyEnergyTextField"> </TextField>
-                <Label fx:id="Energia zużywana podczas rozmnażania" textAlignment="CENTER"/>
-                <TextField fx:id="usedReproductionEnergyTextField"> </TextField>
-                <Label fx:id="Minimalna liczba mutacji u potomków" textAlignment="CENTER"/>
-                <TextField fx:id="minimalMutationsTextField"> </TextField>
-                <Label fx:id="Maksymalna liczba mutacji u potomków" textAlignment="CENTER"/>
-                <TextField fx:id="maximalMutationsTextField"> </TextField>
+            </VBox>
+            <VBox spacing="10">
+                <Label text="Liczba zwierząt na start"/>
+                <TextField fx:id="numOfAnimalsTextField" promptText="Liczba zwierząt na start"> </TextField>
+                <Label text="Startowa energia zwierząt"/>
+                <TextField fx:id="animalEnergyTextField" promptText="Startowa energia zwierząt"> </TextField>
+                <Label text="Energia potrzebna do gotowości do rozmnażania"/>
+                <TextField fx:id="reproductionReadyEnergyTextField" promptText="Energia potrzebna do gotowości do rozmnażania"> </TextField>
+                <Label text="Energia zużywana podczas rozmnażania"/>
+                <TextField fx:id="usedReproductionEnergyTextField" promptText="Energia zużywana podczas rozmnażania"> </TextField>
+                <Label text="Minimalna liczba mutacji u potomków"/>
+                <TextField fx:id="minimalMutationsTextField" promptText="Minimalna liczba mutacji u potomków"> </TextField>
+                <Label text="Maksymalna liczba mutacji u potomków"/>
+                <TextField fx:id="maximalMutationsTextField" promptText="Maksymalna liczba mutacji u potomków"> </TextField>
 
                 <!-- wariant roślin -->
-
-                <Label fx:id="Długość genomu zwierząt" textAlignment="CENTER"/>
-                <TextField fx:id="genomeLengthTextField"> </TextField>
-            </HBox>
-        </VBox>
+                <Label text="Długość genomu zwierząt"/>
+                <TextField fx:id="genomeLengthTextField" promptText="Długość genomu zwierząt"> </TextField>
+            </VBox>
+        </HBox>
     </top>
     <bottom>
         <HBox spacing="10" alignment="CENTER">
