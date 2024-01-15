@@ -3,6 +3,7 @@ package agh.ics.oop.model;
 import agh.ics.oop.MapVisualizer;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -10,8 +11,8 @@ public class EarthGlobe implements WorldMap {
     protected final UUID ID;
     protected final Boundary bounds;
     private final int plantEnergy;
-    protected final Map<Vector2d, Set<WorldElement>> animals = new HashMap<>();
-    protected final Map<Vector2d, WorldElement> plants = new HashMap<>();
+    protected final Map<Vector2d, Set<WorldElement>> animals = new ConcurrentHashMap<>();
+    protected final Map<Vector2d, WorldElement> plants = new ConcurrentHashMap<>();
     protected final List<MapChangeListener> observers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
     private final AnimalComparator animalComparator = new AnimalComparator();
@@ -120,23 +121,6 @@ public class EarthGlobe implements WorldMap {
         animal.useEnergy(1);
         animals.get(newPosition).add(animal);
 
-
-
-        /* Tu wyrzuca null ptr, dlaczegooo?
-         * TODO
-         *  jeszcze nie ma pozycji modulo, więc wywala nullptr bo
-         *  szuka mapie pozycji spoza mapy
-         * */
-
-
-
-        /*Exception in thread "main" java.lang.NullPointerException: Cannot invoke "java.util.Set.add(Object)" because the return value of "java.util.Map.get(Object)" is null
-            at agh.ics.oop.model.AbstractWorldMap.move(AbstractWorldMap.java:64)
-            at agh.ics.oop.Simulation.moveAnimals(Simulation.java:128)
-            at agh.ics.oop.Simulation.run(Simulation.java:84)
-            at agh.ics.oop.WorldConsole.main(WorldConsole.java:27)
-        */
-
         mapChanged("Animal was moved from " + currentPosition + " " + " to " + newPosition);
 
     }
@@ -191,7 +175,7 @@ public class EarthGlobe implements WorldMap {
                 Animal dominantAnimal = Collections.max(animalsAtPosition, animalComparator);
 
                 dominantAnimal.eatPlant(plants.get(plantPosition).getEnergy());
-                //remove(plants.get(plantPosition));
+                remove(plants.get(plantPosition));
             }
         }
 
@@ -217,6 +201,7 @@ public class EarthGlobe implements WorldMap {
                             minimalMutations, maximalMutations, usedReproductionEnergy * 2);
                     dominantAnimal.useEnergy(usedReproductionEnergy); reproductionPartner.useEnergy(usedReproductionEnergy);
                     newbornAnimals.add(newbornAnimal);
+                    mapChanged("New animal has been born at " + newbornAnimal.position());
                 }
             }
         });

@@ -74,7 +74,7 @@ public class Simulation implements Runnable {
                 growNewPlants();
 
                 Thread.sleep(500);
-
+                System.out.println(aliveAnimals.size());
                 day++;
             }
         } catch (InterruptedException ignored) {}
