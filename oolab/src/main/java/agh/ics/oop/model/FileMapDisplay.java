@@ -2,16 +2,27 @@ package agh.ics.oop.model;
 
 import agh.ics.oop.model.annotations.Observer;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 @Observer
 public class FileMapDisplay implements MapChangeListener {
 
+    private int changeCounter;
+
+    public FileMapDisplay() {this.changeCounter = 0;}
+
     @Override
-    public void mapChanged(WorldMap worldMap, String message) {
-        /* TODO
-            Zapisywanie logów do pliku
-            Dodaj kolejnego obserwatora mapy - tym razem niech to będzie klasa FileMapDisplay.
-            W reakcji na modyfikację mapy, obserwator powinien otwierać plik o nazwie map_id.log (gdzie id to identyfikator mapy) i dopisywać do niego na koniec informacje o ruchu i aktualnym wyglądzie mapy.
-            Pamiętaj by poprawnie obsługiwać zamykanie pliku i ewentualne błędy. Użyj w tym celu mechanizmu try-with-resources.
-        */
+    public synchronized void mapChanged(WorldMap worldMap, String message) {
+        String logFileName = "map_" + worldMap.getID() + ".log";
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(logFileName, true))) {
+            writer.println("Change number: " + changeCounter++);
+            writer.println(message);
+            writer.println(worldMap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

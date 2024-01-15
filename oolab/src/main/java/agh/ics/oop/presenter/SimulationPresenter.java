@@ -1,7 +1,6 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
-import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,8 +11,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimulationPresenter {
     @FXML
@@ -42,6 +41,8 @@ public class SimulationPresenter {
     private TextField genomeLengthTextField;
 
     private final ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
+    private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public void onSimulationStartClicked() throws IOException, NumberFormatException {
         FXMLLoader loader = new FXMLLoader();
@@ -76,6 +77,7 @@ public class SimulationPresenter {
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
+        worldMap.registerObserver(fileMapDisplay);
         presenter.setWorldMap(worldMap);
 
         worldMap.registerObserver((map, message) -> System.out.println(LocalDateTime.now() + " " + message));
@@ -92,10 +94,7 @@ public class SimulationPresenter {
                 genomeLength
         );
 
-        ArrayList<Simulation> simulations = new ArrayList<>(List.of(simulation));
-        SimulationEngine simulationEngine = new SimulationEngine(simulations);
-        simulationEngine.runAsync();
-
+        executorService.submit(simulation);
         stage.show();
     }
 

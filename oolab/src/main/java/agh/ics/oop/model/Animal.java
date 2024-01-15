@@ -8,7 +8,7 @@ public class Animal implements WorldElement {
 
     private MapDirection orientation;
     private Vector2d position;
-    private final Genome genome;
+    private final FullRandomnessGenome genome;
     private int energy;
     private final ArrayList<Animal> children = new ArrayList<>();
     private final int dayOfBirth;
@@ -19,10 +19,10 @@ public class Animal implements WorldElement {
         this.orientation = orientation;
         this.energy = energy;
         this.dayOfBirth = dayOfBirth;
-        this.genome = new Genome(genomeLength);
+        this.genome = new FullRandomnessGenome(genomeLength);
     }
 
-    public Animal(Vector2d position, int energy, int dayOfBirth, Genome genome) {
+    public Animal(Vector2d position, int energy, int dayOfBirth, FullRandomnessGenome genome) {
         this.position = position;
         Random random = new Random();
         this.orientation = directions[random.nextInt(directions.length)];
@@ -64,7 +64,7 @@ public class Animal implements WorldElement {
     public Animal reproduce(Animal reproductionPartner, int day, int genomeLength,
                             int minimalMutations, int maximalMutations, int newbornEnergy) {
 
-        Genome newbornGenome = new Genome(genomeLength, minimalMutations, maximalMutations,
+        FullRandomnessGenome newbornGenome = new FullRandomnessGenome(genomeLength, minimalMutations, maximalMutations,
                                 this.getGenome(), reproductionPartner.getGenome(),
                 (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
 
@@ -109,7 +109,7 @@ public class Animal implements WorldElement {
         children.add(animal);
     }
 
-    public Genome getGenome() {
+    public FullRandomnessGenome getGenome() {
         // #TODO
         return genome;
     }
