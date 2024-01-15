@@ -1,21 +1,14 @@
 package agh.ics.oop.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class EarthGlobe extends AbstractWorldMap {
 
     public EarthGlobe(int mapWidth, int mapHeight, int numOfPlants) {
         super(mapWidth, mapHeight);
         randomlyPlacePlants(mapWidth, mapHeight, numOfPlants);
-    }
-
-
-    @Override
-    public boolean canMoveTo(Vector2d position) {
-        //trzeba inaczej zrobic logike
-        /* w zasadzie to to będzie działać poprawnie
-        * bo nie interesują nas boki bo się zapętla,
-        * a precedes i follows sprawdzi dół i górę
-        * */
-        return bounds.lowerLeft().precedes(position) && bounds.upperRight().follows(position);
     }
 
     private void randomlyPlacePlants(int width, int height, int plantCount) {
@@ -25,11 +18,21 @@ public class EarthGlobe extends AbstractWorldMap {
         }
     }
 
-    public boolean isOccupiedByPlant(Vector2d position) {
-        return plants.containsKey(position);
-    }
+    @Override
+    public void growNewPlants(int n) {
+        List<Vector2d> freePositions = new ArrayList<>(animals.keySet()
+                .stream()
+                .filter(position -> !plants.containsKey(position))
+                .toList());
 
-    public void eatPlantFromPosition(Vector2d position) {
-        plants.remove(position);
+        Collections.shuffle(freePositions);
+
+        List<Vector2d> chosenPositions = freePositions.subList(0, Math.min(n, freePositions.size()));
+
+        for (Vector2d position : chosenPositions) {
+            Plant plant = new Plant(position);
+            plants.put(position, plant);
+            mapChanged("New plant " + plant + " has grown at " + plant.position());
+        }
     }
 }

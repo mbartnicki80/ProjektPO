@@ -56,6 +56,16 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
+    @Override
+    public boolean canMoveTo(Vector2d position) {
+        //trzeba inaczej zrobic logike
+        /* w zasadzie to to będzie działać poprawnie
+         * bo nie interesują nas boki bo się zapętla,
+         * a precedes i follows sprawdzi dół i górę
+         * */
+        return bounds.lowerLeft().precedes(position) && bounds.upperRight().follows(position);
+    }
+
     public void move(Animal animal) {
 
         Vector2d currentPosition = animal.position();
@@ -155,19 +165,19 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         Collection<Vector2d> plantPositions = plants.keySet();
 
-//        for (Vector2d plantPosition : plantPositions) {
-//            if (animals.containsKey(plantPosition)) {
-//                List<Animal> animalsAtPosition = animals.get(plantPosition)
-//                        .stream()
-//                        .map(animal -> (Animal) animal)
-//                        .toList();
-//
-//                Animal dominantAnimal = Collections.max(animalsAtPosition, animalComparator);
-//
-//                dominantAnimal.eatPlant(plantEnergy);
-//                remove(plants.get(plantPosition));
-//            }
-//        }
+        for (Vector2d plantPosition : plantPositions) {
+            if (animals.containsKey(plantPosition)) {
+                List<Animal> animalsAtPosition = animals.get(plantPosition)
+                        .stream()
+                        .map(animal -> (Animal) animal)
+                        .toList();
+
+                Animal dominantAnimal = Collections.max(animalsAtPosition, animalComparator);
+
+                dominantAnimal.eatPlant(plantEnergy);
+                remove(plants.get(plantPosition));
+            }
+        }
 
     }
 
@@ -231,21 +241,5 @@ public abstract class AbstractWorldMap implements WorldMap {
         return orderedAnimals;
     }
 
-    @Override
-    public void growNewPlants(int n) {
-        List<Vector2d> freePositions = new ArrayList<>(animals.keySet()
-                .stream()
-                .filter(position -> !plants.containsKey(position))
-                .toList());
 
-        Collections.shuffle(freePositions);
-
-        List<Vector2d> chosenPositions = freePositions.subList(0, Math.min(n, freePositions.size()));
-
-        for (Vector2d position : chosenPositions) {
-            Plant plant = new Plant(position);
-            plants.put(position, plant);
-            mapChanged("New plant " + plant + " has grown at " + plant.position());
-        }
-    }
 }

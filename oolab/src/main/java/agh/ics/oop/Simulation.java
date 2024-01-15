@@ -55,7 +55,6 @@ public class Simulation implements Runnable {
 
     public void run() {
 
-        //trzeba tutaj dorobic jakis licznik, aktualnie i przeksztalcilem na day
         try {
             int day = 0;
             while (!aliveAnimals.isEmpty()) {
@@ -81,10 +80,6 @@ public class Simulation implements Runnable {
             }
         } catch (InterruptedException ignored) {}
     }
-
-        // #TODO
-        //5. Wzrastanie nowych roślin na wybranych polach mapy.
-
 
     //nie dajemy tutaj zadnych private/public? zostawiamy package-private?
 
