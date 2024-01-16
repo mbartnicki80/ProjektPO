@@ -8,7 +8,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-import java.util.Optional;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SimulationViewPresenter implements MapChangeListener {
     @FXML
@@ -18,8 +20,20 @@ public class SimulationViewPresenter implements MapChangeListener {
     private WorldMap worldMap;
     private final static int CELL_SIZE = 30;
 
+    private List<List<Map<String, WorldElementBox>>> worldElementBoxes;
+
     public void setWorldMap(WorldMap map) {
         this.worldMap = map;
+        this.worldElementBoxes = new ArrayList<>();
+
+
+        for (int i = 0; i <= worldMap.getCurrentBounds().upperRight().getXValue(); i++) {
+            worldElementBoxes.add(new ArrayList<>());
+            for (int j = 0; j <= worldMap.getCurrentBounds().upperRight().getYValue(); j++) {
+                worldElementBoxes.get(i).add(new ConcurrentHashMap<>());
+            }
+        }
+
     }
 
     private void clearGrid() {
@@ -67,12 +81,24 @@ public class SimulationViewPresenter implements MapChangeListener {
         int upperRightX = bounds.upperRight().getXValue();
         int upperRightY = bounds.upperRight().getYValue();
 
+
+        Map<String, WorldElementBox> worldElementBoxMap = new HashMap<>();
+
+
         for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
                 Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
                 if (worldElement.isPresent()) {
 
-                    WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
+                    WorldElementBox worldElementBox;
+
+                    if (worldElementBoxes.get(i - lowerLeftX).get(upperRightY - j).containsKey(worldElement.get().toString())) {
+                        worldElementBox = worldElementBoxes.get(i - lowerLeftX).get(upperRightY - j).get(worldElement.get().toString());
+                    } else {
+                        worldElementBox = new WorldElementBox(worldElement.get());
+                        worldElementBoxes.get(i - lowerLeftX).get(upperRightY - j).put(worldElement.get().toString(), worldElementBox);
+                    }
+
 
                     Label elemLabel = new Label(worldElement.get().toString());
                     mapGrid.add(worldElementBox.getVBox(), i - lowerLeftX + 1, upperRightY - j + 1);

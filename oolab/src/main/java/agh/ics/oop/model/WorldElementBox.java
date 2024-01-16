@@ -8,7 +8,6 @@ import java.util.Objects;
 
 public class WorldElementBox {
 
-
     private final VBox vBox;
 
 
@@ -24,8 +23,6 @@ public class WorldElementBox {
         this.vBox = new VBox(imageView);
 
         this.vBox.setAlignment(Pos.CENTER);
-
-
     }
 
     public VBox getVBox() {
