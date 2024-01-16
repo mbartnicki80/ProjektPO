@@ -9,6 +9,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
+import java.io.FileNotFoundException;
 import java.util.Optional;
 
 public class SimulationViewPresenter implements MapChangeListener {
@@ -59,7 +60,7 @@ public class SimulationViewPresenter implements MapChangeListener {
         GridPane.setHalignment(label, HPos.CENTER);
         mapGrid.add(label, 0, 0);
     }
-    private void drawMap() {
+    private void drawMap() throws FileNotFoundException {
         clearGrid();
         drawHeaders();
         Boundary bounds = worldMap.getCurrentBounds();
@@ -72,8 +73,11 @@ public class SimulationViewPresenter implements MapChangeListener {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
                 Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
                 if (worldElement.isPresent()) {
+
+                    WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
+
                     Label elemLabel = new Label(worldElement.get().toString());
-                    mapGrid.add(elemLabel, i - lowerLeftX + 1, upperRightY - j + 1);
+                    mapGrid.add(worldElementBox.getVBox(), i - lowerLeftX + 1, upperRightY - j + 1);
                     GridPane.setHalignment(elemLabel, HPos.CENTER);
                 }
             }
@@ -83,7 +87,11 @@ public class SimulationViewPresenter implements MapChangeListener {
     @Override
     public void mapChanged(WorldMap worldMap, String message) {
         Platform.runLater(() -> {
-            drawMap();
+            try {
+                drawMap();
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             movementsDescriptionLabel.setText(message);
         });
     }

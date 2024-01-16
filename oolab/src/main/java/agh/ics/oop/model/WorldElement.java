@@ -4,4 +4,7 @@ public interface WorldElement {
     boolean isAt(Vector2d position);
     Vector2d position();
     int getEnergy();
+
+    String getImageName();
+
 }

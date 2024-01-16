@@ -49,6 +49,11 @@ public class Animal implements WorldElement {
         return energy;
     }
 
+    @Override
+    public String getImageName() {
+        return this.orientation.toString() + ".png";
+    }
+
     public List<Animal> getChildrenList() {
         return Collections.unmodifiableList(children);
     }

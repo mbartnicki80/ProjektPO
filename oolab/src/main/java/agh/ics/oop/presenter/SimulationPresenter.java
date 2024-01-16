@@ -104,5 +104,7 @@ public class SimulationPresenter {
         primaryStage.setTitle("Simulation app");
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+
+        primaryStage.setOnCloseRequest(event -> primaryStage.close());
     }
 }

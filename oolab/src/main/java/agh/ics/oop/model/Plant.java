@@ -30,6 +30,11 @@ public class Plant implements WorldElement {
     }
 
     @Override
+    public String getImageName() {
+        return "src/main/java/agh/ics/oop/resources/plant.png";
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
