@@ -4,9 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.util.Objects;
 
 public class WorldElementBox {
 
@@ -14,15 +12,9 @@ public class WorldElementBox {
     private final VBox vBox;
 
 
-    public WorldElementBox(WorldElement worldElement) throws FileNotFoundException {
+    public WorldElementBox(WorldElement worldElement) {
 
-/*
-        Image image = Toolkit.getDefaultToolkit()
-                .getImage(worldElement.getImageName());
-*/
-
-        Image image = new Image(
-                new FileInputStream(worldElement.getImageName()));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(worldElement.getImageName())));
 
         ImageView imageView = new ImageView(image);
 

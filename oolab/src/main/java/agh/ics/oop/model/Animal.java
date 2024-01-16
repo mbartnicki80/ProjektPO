@@ -51,7 +51,7 @@ public class Animal implements WorldElement {
 
     @Override
     public String getImageName() {
-        return this.orientation.toString() + ".png";
+        return "/" + this.orientation.toString() + ".png";
     }
 
     public List<Animal> getChildrenList() {
