@@ -14,7 +14,7 @@ public class FullRandomnessGenome extends AbstractGenome {
     public int[] mutateGenome(int[] newbornGenome, int mutationsCount) {
         for (int i = 0; i < mutationsCount; i++) {
             int mutationIndex = random.nextInt(newbornGenome.length);
-            newbornGenome[mutationIndex] = random.nextInt();
+            newbornGenome[mutationIndex] = random.nextInt(8);
         }
         return newbornGenome;
     }

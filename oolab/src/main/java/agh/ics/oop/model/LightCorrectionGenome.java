@@ -16,7 +16,7 @@ public class LightCorrectionGenome extends AbstractGenome {
         for (int i = 0; i < mutationsCount; i++) {
             int mutationIndex = random.nextInt(newbornGenome.length);
 
-            newbornGenome[mutationIndex] = (newbornGenome[mutationIndex] + (Math.random() < 0.5 ? -1 : 1)) % 8;
+            newbornGenome[mutationIndex] = (8 + (newbornGenome[mutationIndex] + (Math.random() < 0.5 ? -1 : 1))) % 8;
         }
         return newbornGenome;
     }

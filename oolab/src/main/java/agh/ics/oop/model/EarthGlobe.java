@@ -221,26 +221,14 @@ public class EarthGlobe implements WorldMap {
     }
 
     @Override
-    public ArrayList<Animal> getOrderedAnimals() {
+    public List<Animal> getOrderedAnimals() {
 
-        /* TODO
-         *   test
-         * */
-
-        ArrayList<Animal> orderedAnimals = new ArrayList<>();
-
-        animals.forEach((position, animalsAtPosition) -> {
-            for (WorldElement animal : animalsAtPosition)
-                orderedAnimals.add((Animal) animal);
-        });
-
-        orderedAnimals.sort(
-                Comparator.comparing(animal -> ((Animal) animal).getPosition().getXValue())
-                        .thenComparing(animal -> ((Animal) animal).getPosition().getYValue())
-        );
-
-        return orderedAnimals;
+        return animals.values().stream()
+                .flatMap(Set::stream)
+                .toList()
+                .stream().sorted(Comparator.comparing(animal -> ((Animal) animal).getPosition().getXValue())
+                        .thenComparing(animal -> ((Animal) animal).getPosition().getYValue()))
+                .map(animal -> (Animal) animal)
+                .toList();
     }
-
-
 }

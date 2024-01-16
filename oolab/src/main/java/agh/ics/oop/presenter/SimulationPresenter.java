@@ -94,7 +94,9 @@ public class SimulationPresenter {
                 genomeLength
         );
 
-        executorService.submit(simulation);
+        //executorService.submit(simulation);
+        Thread thread = new Thread(simulation);
+        thread.start();
         stage.show();
     }
 
