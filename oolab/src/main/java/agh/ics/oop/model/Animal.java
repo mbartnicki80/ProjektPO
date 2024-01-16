@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class Animal implements WorldElement {
+public class Animal implements WorldElement, Comparable<Animal> {
 
     private MapDirection orientation;
     private Vector2d position;
@@ -35,10 +35,6 @@ public class Animal implements WorldElement {
         return orientation;
     }
 
-    public Vector2d getPosition() {
-        return position;
-    }
-
     public int useCurrentAnimalGene() {
         return genome.useCurrentGene();
     }
@@ -47,11 +43,6 @@ public class Animal implements WorldElement {
 
     public int getEnergy() {
         return energy;
-    }
-
-    @Override
-    public String getImageName() {
-        return "/" + this.orientation.toString() + ".png";
     }
 
     public List<Animal> getChildrenList() {
@@ -83,13 +74,8 @@ public class Animal implements WorldElement {
         this.energy += plantEnergy;
     }
 
-    //zamienić toString na jakieś ładne obrazki, np strzałki czy coś
     public String toString() {
         return orientation.toString();
-    }
-
-    public boolean isAt(Vector2d position) {
-        return this.position.equals(position);
     }
 
     @Override
@@ -98,12 +84,10 @@ public class Animal implements WorldElement {
     }
 
     public void move(Vector2d newPosition, MapDirection newOrientation, MoveValidator moveValidator) {
-
         if (moveValidator.canMoveTo(newPosition)) {
             this.position = newPosition;
             this.orientation = newOrientation;
         }
-
     }
 
     public void useEnergy (int energyToUse) {
@@ -115,13 +99,36 @@ public class Animal implements WorldElement {
     }
 
     public FullRandomnessGenome getGenome() {
-        // #TODO
         return genome;
     }
-
 
     public void setOrientation(MapDirection orientation) {
         this.orientation = orientation;
     }
 
+    @Override
+    public int compareTo(Animal animal) {
+        if (animal==this)
+            return 0;
+        // Porównywanie energii
+        int energyComparison = Integer.compare(this.getEnergy(), animal.getEnergy());
+        if (energyComparison != 0) {
+            return energyComparison;
+        }
+
+        // Jeżeli energia jest taka sama, porównujemy wiek
+        int birthComparison = Integer.compare(this.getDayOfBirth(), animal.getDayOfBirth());
+        if (birthComparison != 0) {
+            return -birthComparison;
+        }
+
+        // Jeżeli wiek też jest taki sam, porównujemy liczbę dzieci
+        int childrenComparison = Integer.compare(this.getChildrenCount(), animal.getChildrenCount());
+        if (childrenComparison != 0) {
+            return childrenComparison;
+        }
+
+        // Jeżeli liczba dzieci też jest taka sama, zwracamy losowy wynik
+        return Math.random() < 0.5 ? -1 : 1;
+    }
 }

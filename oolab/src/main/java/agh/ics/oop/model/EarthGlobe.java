@@ -4,18 +4,16 @@ import agh.ics.oop.MapVisualizer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EarthGlobe implements WorldMap {
     protected final UUID ID;
     protected final Boundary bounds;
     private final int plantEnergy;
-    protected final Map<Vector2d, Set<WorldElement>> animals = new ConcurrentHashMap<>();
-    protected final Map<Vector2d, WorldElement> plants = new ConcurrentHashMap<>();
+    protected final Map<Vector2d, Set<Animal>> animals = new ConcurrentHashMap<>();
+    protected final Map<Vector2d, Plant> plants = new ConcurrentHashMap<>();
     protected final List<MapChangeListener> observers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
-    private final AnimalComparator animalComparator = new AnimalComparator();
+
     public EarthGlobe(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
         this.plantEnergy = plantEnergy;
         randomlyPlacePlants(mapWidth, mapHeight, numOfPlants);
@@ -23,16 +21,10 @@ public class EarthGlobe implements WorldMap {
 
         this.bounds = new Boundary(new Vector2d(0, 0), new Vector2d(mapWidth - 1, mapHeight - 1));
 
-        /* Brucik trochę
-         * Można się zastanowić jak to najładniej zastąpić,
-         * bo tworzyć zbędnie n^2 obiektów trochę szkoda */
-
-        //myślę że bez znaczenia bo jest spora szansa i tak że każda komórka będzie odwiedzona chociaż raz więc
-        //i tak się kiedyś wygeneruje to cos
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++){
                 Vector2d position = new Vector2d(i, j);
-                animals.put(position, new HashSet<>());
+                animals.put(position, new TreeSet<>());
             }
         }
     }
@@ -82,11 +74,6 @@ public class EarthGlobe implements WorldMap {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        //trzeba inaczej zrobic logike
-        /* w zasadzie to to będzie działać poprawnie
-         * bo nie interesują nas boki bo się zapętla,
-         * a precedes i follows sprawdzi dół i górę
-         * */
         return bounds.lowerLeft().precedes(position) && bounds.upperRight().follows(position);
     }
 
@@ -122,7 +109,6 @@ public class EarthGlobe implements WorldMap {
         animals.get(newPosition).add(animal);
 
         mapChanged("Animal was moved from " + currentPosition + " " + " to " + newPosition);
-
     }
 
     public void place(Animal animal) {
@@ -130,23 +116,14 @@ public class EarthGlobe implements WorldMap {
             animals.get(animal.position()).add(animal);
     }
 
-    public boolean isOccupied(Vector2d position) {
-        return animals.containsKey(position);
-    }
-
     public Optional<WorldElement> objectAt(Vector2d position) {
-        return Optional.ofNullable(animals.get(position))
-                .flatMap(set -> set.stream()
-                        .map(animal -> (Animal) animal)
-                        .max(animalComparator)
-                        .map(animal -> (WorldElement) animal)
-                .or(() -> Optional.ofNullable(plants.get(position))));
-    }
 
-    public List<WorldElement> getElements() {
-        return Stream
-                .concat(animals.values().stream().flatMap(Set::stream), plants.values().stream())
-                .collect(Collectors.toList());
+        return Optional.ofNullable(animals.get(position))
+                .orElse(Collections.emptySet())
+                .stream()
+                .findFirst()
+                .map(animal -> (WorldElement) animal)
+                .or(() -> Optional.ofNullable((WorldElement) plants.get(position)));
     }
 
     @Override
@@ -161,24 +138,14 @@ public class EarthGlobe implements WorldMap {
     }
 
     public void consumption() {
-
         Collection<Vector2d> plantPositions = plants.keySet();
 
-
-        for (Vector2d plantPosition : plantPositions) {
+        for (Vector2d plantPosition : plantPositions)
             if (!animals.get(plantPosition).isEmpty()) {
-                List<Animal> animalsAtPosition = animals.get(plantPosition)
-                        .stream()
-                        .map(animal -> (Animal) animal)
-                        .toList();
-
-                Animal dominantAnimal = Collections.max(animalsAtPosition, animalComparator);
-
+                Animal dominantAnimal = Collections.max(animals.get(plantPosition));
                 dominantAnimal.eatPlant(plants.get(plantPosition).getEnergy());
                 remove(plants.get(plantPosition));
             }
-        }
-
     }
 
     @Override
@@ -188,19 +155,15 @@ public class EarthGlobe implements WorldMap {
 
         animals.forEach((position, animalsAtPosition) -> {
             if (animalsAtPosition.size() > 1) {
-                List<Animal> sortedAnimalsAtPosition = animalsAtPosition
-                        .stream()
-                        .map(animal -> (Animal) animal)
-                        .sorted(animalComparator)
-                        .toList();
-
-                Animal dominantAnimal = sortedAnimalsAtPosition.get(0);
-                Animal reproductionPartner = sortedAnimalsAtPosition.get(1);
+                List<Animal> dominantAnimals = animalsAtPosition.stream().sorted().toList();
+                Animal dominantAnimal = dominantAnimals.get(0);
+                Animal reproductionPartner = dominantAnimals.get(1);
                 if (dominantAnimal.getEnergy() > reproductionReadyEnergy && reproductionPartner.getEnergy() > reproductionReadyEnergy) {
                     Animal newbornAnimal = dominantAnimal.reproduce(reproductionPartner, day, genomeLength,
                             minimalMutations, maximalMutations, usedReproductionEnergy * 2);
                     dominantAnimal.useEnergy(usedReproductionEnergy); reproductionPartner.useEnergy(usedReproductionEnergy);
                     newbornAnimals.add(newbornAnimal);
+                    this.place(newbornAnimal);
                     mapChanged("New animal has been born at " + newbornAnimal.position());
                 }
             }
@@ -218,17 +181,5 @@ public class EarthGlobe implements WorldMap {
             plants.remove(element.position());
             mapChanged("Plant " + plant + " has been eaten at " + plant.position());
         }
-    }
-
-    @Override
-    public List<Animal> getOrderedAnimals() {
-
-        return animals.values().stream()
-                .flatMap(Set::stream)
-                .toList()
-                .stream().sorted(Comparator.comparing(animal -> ((Animal) animal).getPosition().getXValue())
-                        .thenComparing(animal -> ((Animal) animal).getPosition().getYValue()))
-                .map(animal -> (Animal) animal)
-                .toList();
     }
 }

@@ -8,9 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class SimulationViewPresenter implements MapChangeListener {
     @FXML

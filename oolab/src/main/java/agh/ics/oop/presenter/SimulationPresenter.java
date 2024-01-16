@@ -10,7 +10,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -77,10 +76,8 @@ public class SimulationPresenter {
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
-        worldMap.registerObserver(fileMapDisplay);
+        //worldMap.registerObserver(fileMapDisplay);
         presenter.setWorldMap(worldMap);
-
-        worldMap.registerObserver((map, message) -> System.out.println(LocalDateTime.now() + " " + message));
 
         Simulation simulation = new Simulation(
                 worldMap,
@@ -94,9 +91,7 @@ public class SimulationPresenter {
                 genomeLength
         );
 
-        //executorService.submit(simulation);
-        Thread thread = new Thread(simulation);
-        thread.start();
+        executorService.submit(simulation);
         stage.show();
     }
 

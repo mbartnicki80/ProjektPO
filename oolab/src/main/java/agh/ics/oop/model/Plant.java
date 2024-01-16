@@ -12,12 +12,7 @@ public class Plant implements WorldElement {
     }
 
     public String toString() {
-        return "*";
-    }
-
-    @Override
-    public boolean isAt(Vector2d position) {
-        return this.position.equals(position);
+        return "#";
     }
 
     @Override
@@ -27,11 +22,6 @@ public class Plant implements WorldElement {
 
     public int getEnergy() {
         return plantEnergy;
-    }
-
-    @Override
-    public String getImageName() {
-        return "/plant.png";
     }
 
     @Override

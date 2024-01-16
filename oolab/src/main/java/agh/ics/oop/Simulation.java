@@ -58,24 +58,14 @@ public class Simulation implements Runnable {
             int day = 0;
             while (!aliveAnimals.isEmpty()) {
 
-                /* Done */
                 removeDeadAnimals();
-
-                /* Done */
                 moveAnimals();
-
-                /* Done */
                 consumption();
-
-                /* Done */
                 reproduceAnimals(day);
-
-                /* Done */
                 growNewPlants();
 
-                Thread.sleep(500);
-                System.out.println(aliveAnimals.size());
                 day++;
+                Thread.sleep(500);
             }
         } catch (InterruptedException ignored) {}
     }
