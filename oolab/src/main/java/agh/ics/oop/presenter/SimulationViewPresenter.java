@@ -8,8 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-
-import java.io.FileNotFoundException;
 import java.util.Optional;
 
 public class SimulationViewPresenter implements MapChangeListener {
@@ -60,7 +58,7 @@ public class SimulationViewPresenter implements MapChangeListener {
         GridPane.setHalignment(label, HPos.CENTER);
         mapGrid.add(label, 0, 0);
     }
-    private void drawMap() throws FileNotFoundException {
+    private void drawMap() {
         clearGrid();
         drawHeaders();
         Boundary bounds = worldMap.getCurrentBounds();
@@ -87,11 +85,7 @@ public class SimulationViewPresenter implements MapChangeListener {
     @Override
     public void mapChanged(WorldMap worldMap, String message) {
         Platform.runLater(() -> {
-            try {
-                drawMap();
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            drawMap();
             movementsDescriptionLabel.setText(message);
         });
     }
