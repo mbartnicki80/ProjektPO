@@ -17,6 +17,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
     protected final List<MapChangeListener> observers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
     private final List<List<Vector2d>> positions = new ArrayList<>();
+    private AnimalFactory animalFactory;
 
     public AbstractWorldMap(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
         this.plantEnergy = plantEnergy;
@@ -39,6 +40,10 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
                 animals.put(position, new TreeSet<>());
             }
         }
+    }
+
+    public void setAnimalFactory(AnimalFactory animalFactory) {
+        this.animalFactory = animalFactory;
     }
 
     @Override
@@ -119,8 +124,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
     }
 
     @Override
-    public ArrayList<Animal> reproduceAnimals(int day, int genomeLength, int minimalMutations, int maximalMutations,
-                                              int reproductionReadyEnergy, int usedReproductionEnergy, boolean fullRandomnessGenome) {
+    public ArrayList<Animal> reproduceAnimals(int day, int reproductionReadyEnergy, int usedReproductionEnergy) {
         ArrayList<Animal> newbornAnimals = new ArrayList<>();
 
         animals.forEach((position, animalsAtPosition) -> {
@@ -129,8 +133,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
                 Animal dominantAnimal = dominantAnimals.get(0);
                 Animal reproductionPartner = dominantAnimals.get(1);
                 if (dominantAnimal.getEnergy() > reproductionReadyEnergy && reproductionPartner.getEnergy() > reproductionReadyEnergy) {
-                    Animal newbornAnimal = dominantAnimal.reproduce(reproductionPartner, day, genomeLength,
-                            minimalMutations, maximalMutations, usedReproductionEnergy * 2, fullRandomnessGenome);
+                    Animal newbornAnimal = animalFactory.create(usedReproductionEnergy * 2, day, dominantAnimal, reproductionPartner);
                     dominantAnimal.useEnergy(usedReproductionEnergy); reproductionPartner.useEnergy(usedReproductionEnergy);
                     newbornAnimals.add(newbornAnimal);
                     this.place(newbornAnimal);
@@ -191,22 +194,27 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
                 .flatMap(Set::stream)
                 .map(Animal::getGenome)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-
+        if (frequencyMap.isEmpty())
+            return null;
         return Collections.max(frequencyMap.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
     @Override
     public int getAverageEnergy() {
-        return animals.values().stream().mapToInt(animalSet -> animalSet.stream().mapToInt(Animal::getEnergy).sum()).sum();
+        return getNumberOfAnimals() != 0
+               ? animals.values().stream().mapToInt(animalSet -> animalSet.stream().mapToInt(Animal::getEnergy).sum()).sum() / getNumberOfAnimals()
+                : 0;
     }
 
     @Override
     public int getAverageLifeLengthOfDeadAnimals() {
-        return deadAnimals.stream().mapToInt(Animal::getLifeLength).sum();
+        return !deadAnimals.isEmpty() ? deadAnimals.stream().mapToInt(Animal::getLifeLength).sum() / deadAnimals.size() : 0;
     }
 
     @Override
     public int getAverageChildrenCount() {
-        return animals.values().stream().mapToInt(animalSet -> animalSet.stream().mapToInt(Animal::getChildrenCount).sum()).sum();
+        return getNumberOfAnimals() != 0
+                ? animals.values().stream().mapToInt(animalSet -> animalSet.stream().mapToInt(Animal::getChildrenCount).sum()).sum() / getNumberOfAnimals()
+                : 0;
     }
 }

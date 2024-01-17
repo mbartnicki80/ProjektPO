@@ -41,8 +41,9 @@ public interface WorldMap extends MoveValidator {
 
     void consumption();
 
-    List<Animal> reproduceAnimals(int day, int genomeLength, int minimalMutations, int maximalMutations,
-                                  int reproductionReadyEnergy, int usedReproductionEnergy, boolean fullRandomnessGenome);
+    void setAnimalFactory(AnimalFactory animalFactory);
+
+    List<Animal> reproduceAnimals(int day, int genomeLength, int minimalMutations);
 
     void registerObserver(MapChangeListener observer);
 

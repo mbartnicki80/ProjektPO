@@ -13,12 +13,7 @@ public class Simulation implements Runnable {
     private final int plantsPerDay;
     private final int reproductionReadyEnergy;
     private final int usedReproductionEnergy;
-    private final int minimalMutations;
-    private final int maximalMutations;
-    private final int genomeLength;
-    private final boolean fullRandomnessGenome;
     private boolean isRunning = true;
-    private static final MapDirection[] directions = MapDirection.values();
 
     public Simulation(WorldMap worldMap, int numberOfAnimals, int startAnimalEnergy,
                       int plantsPerDay, int reproductionReadyEnergy, int usedReproductionEnergy,
@@ -28,11 +23,8 @@ public class Simulation implements Runnable {
         this.plantsPerDay = plantsPerDay;
         this.reproductionReadyEnergy = reproductionReadyEnergy;
         this.usedReproductionEnergy = usedReproductionEnergy;
-        this.minimalMutations = minimalMutations;
-        this.maximalMutations = maximalMutations;
-        this.genomeLength = genomeLength;
-        this.fullRandomnessGenome = fullRandomnessGenome;
-
+        AnimalFactory animalFactory = new AnimalFactory(genomeLength, minimalMutations, maximalMutations, fullRandomnessGenome);
+        worldMap.setAnimalFactory(animalFactory);
         Random random = new Random();
         Boundary boundary = worldMap.getCurrentBounds();
 
@@ -46,9 +38,7 @@ public class Simulation implements Runnable {
                 .toList();
 
         for (Vector2d position : positions) {
-            MapDirection direction = directions[random.nextInt(directions.length)];
-
-            Animal animal = new Animal(position, direction, startAnimalEnergy, 0, genomeLength);
+            Animal animal = AnimalFactory.create(position, startAnimalEnergy, 0, genomeLength);
             worldMap.place(animal);
             aliveAnimals.add(animal);
         }
@@ -107,14 +97,7 @@ public class Simulation implements Runnable {
 
     private void reproduceAnimals(int day) {
         List<Animal> newbornAnimals = worldMap
-                .reproduceAnimals(
-                        day,
-                        genomeLength,
-                        minimalMutations,
-                        maximalMutations,
-                        reproductionReadyEnergy,
-                        usedReproductionEnergy,
-                        fullRandomnessGenome);
+                .reproduceAnimals(day, reproductionReadyEnergy, usedReproductionEnergy);
         aliveAnimals.addAll(newbornAnimals);
     }
 

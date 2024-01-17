@@ -1,7 +1,6 @@
 package agh.ics.oop.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -18,10 +17,11 @@ public class Animal implements WorldElement, Comparable<Animal> {
     private int dayOfDeath = -1;
     private int plantsEaten = 0;
     private static final MapDirection[] directions = MapDirection.values();
+    private final Random random = new Random();
 
-    public Animal(Vector2d position, MapDirection orientation, int energy, int dayOfBirth, int genomeLength) {
+    public Animal(Vector2d position, int energy, int dayOfBirth, int genomeLength) {
         this.position = position;
-        this.orientation = orientation;
+        this.orientation = directions[random.nextInt(directions.length)];
         this.energy = energy;
         this.dayOfBirth = dayOfBirth;
         this.genome = new BasicGenome(genomeLength);
@@ -29,7 +29,6 @@ public class Animal implements WorldElement, Comparable<Animal> {
 
     public Animal(Vector2d position, int energy, int dayOfBirth, Genome genome) {
         this.position = position;
-        Random random = new Random();
         this.orientation = directions[random.nextInt(directions.length)];
         this.energy = energy;
         this.dayOfBirth = dayOfBirth;
@@ -60,10 +59,6 @@ public class Animal implements WorldElement, Comparable<Animal> {
         return plantsEaten;
     }
 
-    public List<Animal> getChildrenList() {
-        return Collections.unmodifiableList(children);
-    }
-
     public int getChildrenCount() {
         return children.size();
     }
@@ -78,25 +73,6 @@ public class Animal implements WorldElement, Comparable<Animal> {
 
     public int getLifeLength() {
         return dayOfDeath - dayOfBirth;
-    }
-
-    public Animal reproduce(Animal reproductionPartner, int day, int genomeLength,
-                            int minimalMutations, int maximalMutations, int newbornEnergy, boolean fullRandomnessGenome) {
-
-        Genome newbornGenome;
-        if (fullRandomnessGenome) {
-            newbornGenome = new FullRandomnessGenome(genomeLength, minimalMutations, maximalMutations,
-                                    this.getGenome(), reproductionPartner.getGenome(),
-                    (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
-        } else
-            newbornGenome = new LightCorrectionGenome(genomeLength, minimalMutations, maximalMutations,
-                    this.getGenome(), reproductionPartner.getGenome(),
-                    (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
-
-        Animal newbornAnimal = new Animal(reproductionPartner.position(), newbornEnergy, day, newbornGenome);
-
-        this.addChild(newbornAnimal); reproductionPartner.addChild(newbornAnimal);
-        return newbornAnimal;
     }
 
     public void eatPlant(int plantEnergy) {
