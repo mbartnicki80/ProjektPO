@@ -5,6 +5,7 @@ import agh.ics.oop.model.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -44,6 +45,17 @@ public class SimulationPresenter {
     private ToggleGroup plantsToggleGroup;
     @FXML
     private ToggleGroup genomeToggleGroup;
+    @FXML
+    private ComboBox presetConfigurationsComboBox;
+    @FXML
+    private RadioButton forestedEquatorRadioButton;
+    @FXML
+    private RadioButton lifeGivingCorpsesRadioButton;
+    @FXML
+    private RadioButton fullRandomnessRadioButton;
+    @FXML
+    private RadioButton lightCorrectionRadioButton;
+
     private final ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
     //private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
@@ -120,6 +132,54 @@ public class SimulationPresenter {
         presenter.setSimulation(simulation);
         executorService.submit(simulation);
         stage.show();
+    }
+
+    public void onPresetConfigurationSelected() {
+        String selectedConfiguration = presetConfigurationsComboBox.getValue().toString();
+
+        switch (selectedConfiguration) {
+            case "Konfiguracja 1":
+                mapHeightTextField.setText("10");
+                mapWidthTextField.setText("10");
+                numOfPlantsTextField.setText("5");
+                plantEnergyTextField.setText("5");
+                plantsPerDayTextField.setText("2");
+
+                forestedEquatorRadioButton.setSelected(true);
+                lifeGivingCorpsesRadioButton.setSelected(false);
+
+                numOfAnimalsTextField.setText("2");
+                animalEnergyTextField.setText("10");
+                reproductionReadyEnergyTextField.setText("5");
+                usedReproductionEnergyTextField.setText("2");
+                minimalMutationsTextField.setText("5");
+                maximalMutationsTextField.setText("10");
+                genomeLengthTextField.setText("7");
+
+                fullRandomnessRadioButton.setSelected(true);
+                lightCorrectionRadioButton.setSelected(false);
+                break;
+            case "Konfiguracja 2":
+                mapHeightTextField.setText("8");
+                mapWidthTextField.setText("9");
+                numOfPlantsTextField.setText("3");
+                plantEnergyTextField.setText("2");
+                plantsPerDayTextField.setText("1");
+
+                forestedEquatorRadioButton.setSelected(false);
+                lifeGivingCorpsesRadioButton.setSelected(true);
+
+                numOfAnimalsTextField.setText("1");
+                animalEnergyTextField.setText("15");
+                reproductionReadyEnergyTextField.setText("25");
+                usedReproductionEnergyTextField.setText("23");
+                minimalMutationsTextField.setText("5");
+                maximalMutationsTextField.setText("10");
+                genomeLengthTextField.setText("7");
+                fullRandomnessRadioButton.setSelected(false);
+                lightCorrectionRadioButton.setSelected(true);
+                break;
+        }
     }
 
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {
