@@ -80,6 +80,7 @@
     <bottom>
         <HBox spacing="10" alignment="CENTER">
             <Button text="Start" onAction="#onSimulationStartClicked"/>
+            <Button text="Save Configuration" onAction="#onSaveConfigClicked"/>
         </HBox>
     </bottom>
 
