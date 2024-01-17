@@ -1,4 +1,6 @@
 package agh.ics.oop.model;
+import agh.ics.oop.model.exceptions.PositionOutOfBoundsException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -112,11 +114,19 @@ public class Animal implements WorldElement, Comparable<Animal> {
         return this.position;
     }
 
-    public void move(Vector2d newPosition, MapDirection newOrientation, MoveValidator moveValidator) {
-        if (moveValidator.canMoveTo(newPosition)) {
+    boolean move(MoveValidator validator) {
+        Vector2d oldPosition = this.position;
+        MapDirection orientation = this.orientation;
+
+        MapDirection newOrientation = this.orientation.rotate(this.useCurrentAnimalGene());
+        Vector2d newPosition = this.position.add(newOrientation.toUnitVector());
+
+        if (validator.canMoveTo(newPosition)) {
             this.position = newPosition;
             this.orientation = newOrientation;
         }
+
+        return !this.position.equals(oldPosition) || this.orientation != orientation;
     }
 
     public void useEnergy (int energyToUse) {

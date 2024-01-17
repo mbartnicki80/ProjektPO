@@ -1,5 +1,7 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.exceptions.PositionOutOfBoundsException;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,8 +36,14 @@ public class Vector2d {
         return new Vector2d(x + other.x, y + other.y);
     }
 
-    public Vector2d addModuloX(Vector2d other, int width) {
-        return new Vector2d((width + x + other.x) % width, y + other.y);
+    public Vector2d add(Vector2d other, Boundary boundary) throws PositionOutOfBoundsException {
+
+        Vector2d potentialPosition = new Vector2d(x + other.x, y + other.y);
+
+        if (potentialPosition.precedes(boundary.lowerLeft()) || potentialPosition.follows(boundary.upperRight()))
+            throw new PositionOutOfBoundsException("Position %s is out of bounds".formatted(potentialPosition.toString()));
+
+        return potentialPosition;
     }
 
     public Vector2d subtract(Vector2d other) {

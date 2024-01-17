@@ -1,5 +1,7 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.exceptions.PositionOutOfBoundsException;
+
 import java.util.*;
 
 /**
@@ -21,7 +23,7 @@ public interface WorldMap extends MoveValidator {
      * Moves an animal (if it is present on the map) according to specified direction.
      * If the move is not possible, this method has no effect.
      */
-    void move(Animal animal);
+    void move(Animal animal) throws PositionOutOfBoundsException;
 
     /**
      * Return an animal at a given position.

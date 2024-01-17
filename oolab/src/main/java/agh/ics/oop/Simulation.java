@@ -1,6 +1,7 @@
 package agh.ics.oop;
 
 import agh.ics.oop.model.*;
+import agh.ics.oop.model.exceptions.PositionOutOfBoundsException;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -66,6 +67,10 @@ public class Simulation implements Runnable {
                     reproduceAnimals(day);
                     growNewPlants();
 
+                    if (this.worldMap instanceof LifeGivingCorpses lifeGivingCorpses) {
+                        lifeGivingCorpses.update(day);
+                    }
+
                     day++;
                     Thread.sleep(500);
                 }
@@ -89,7 +94,10 @@ public class Simulation implements Runnable {
 
     private void moveAnimals() {
         for (Animal animal : aliveAnimals) {
-            worldMap.move(animal);
+            try {
+                worldMap.move(animal);
+            }
+            catch (PositionOutOfBoundsException ignored) {}
         }
     }
 
