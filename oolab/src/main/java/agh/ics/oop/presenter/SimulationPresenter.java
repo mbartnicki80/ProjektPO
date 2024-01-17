@@ -117,6 +117,7 @@ public class SimulationPresenter {
                 fullRandomnessGenome
         );
 
+        presenter.setSimulation(simulation);
         executorService.submit(simulation);
         stage.show();
     }

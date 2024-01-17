@@ -1,5 +1,6 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.Button;
 import java.util.*;
 
 public class SimulationViewPresenter implements MapChangeListener {
@@ -15,11 +17,20 @@ public class SimulationViewPresenter implements MapChangeListener {
     private GridPane mapGrid;
     @FXML
     private Label movementsDescriptionLabel;
+    @FXML
+    private Button stopButton;
+    @FXML
+    private Button resumeButton;
+
     private WorldMap worldMap;
+    private Simulation simulation;
     private final static int CELL_SIZE = 30;
 
     public void setWorldMap(WorldMap map) {
         this.worldMap = map;
+    }
+    public void setSimulation(Simulation simulation) {
+        this.simulation = simulation;
     }
 
     private void clearGrid() {
@@ -88,5 +99,17 @@ public class SimulationViewPresenter implements MapChangeListener {
             drawMap();
             movementsDescriptionLabel.setText(message);
         });
+    }
+
+    public void onSimulationStopClicked() {
+        stopButton.setVisible(false);
+        resumeButton.setVisible(true);
+        this.simulation.changeRunningMode();
+    }
+
+    public void onSimulationResumeClicked() {
+        stopButton.setVisible(true);
+        resumeButton.setVisible(false);
+        this.simulation.changeRunningMode();
     }
 }

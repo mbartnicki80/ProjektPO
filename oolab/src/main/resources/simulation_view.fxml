@@ -17,4 +17,11 @@
             <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"/>
         </VBox>
     </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER">
+            <Button fx:id="stopButton" text="Stop" onAction="#onSimulationStopClicked"/>
+            <Button fx:id="resumeButton" text="Resume" onAction="#onSimulationResumeClicked" visible="false"/>
+        </HBox>
+
+    </bottom>
 </BorderPane>

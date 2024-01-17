@@ -17,8 +17,8 @@ public class Simulation implements Runnable {
     private final int maximalMutations;
     private final int genomeLength;
     private final boolean fullRandomnessGenome;
+    private boolean isRunning = true;
     private static final MapDirection[] directions = MapDirection.values();
-
 
     public Simulation(WorldMap worldMap, int numberOfAnimals, int startAnimalEnergy,
                       int plantsPerDay, int reproductionReadyEnergy, int usedReproductionEnergy,
@@ -59,15 +59,18 @@ public class Simulation implements Runnable {
         try {
             int day = 0;
             while (!aliveAnimals.isEmpty()) {
+                if (isRunning) {
+                    removeDeadAnimals();
+                    moveAnimals();
+                    consumption();
+                    reproduceAnimals(day);
+                    growNewPlants();
 
-                removeDeadAnimals();
-                moveAnimals();
-                consumption();
-                reproduceAnimals(day);
-                growNewPlants();
-
-                day++;
-                Thread.sleep(500);
+                    day++;
+                    Thread.sleep(500);
+                }
+                else
+                    Thread.sleep(500);
             }
         } catch (InterruptedException ignored) {}
     }
@@ -109,16 +112,10 @@ public class Simulation implements Runnable {
     }
 
     private void growNewPlants() {
-            //nie wiem jak to rozegrac, ale zbey byl interfejs, to musza miec takie same argumenty
-            //a inaczej niz bez interfejsu to nie pociagnie, bo nie wykryje nawet istnienia tych metod
-
-            //no a tutaj musimy przekazac jakos wyzej nasze deadAnimalsy
-            //chyba ze przechowywac deadAnimalsy tez w worldMapie
-
-            //moim pomyslem jest zeby stworzyc interfejs na generatory, mialby jedna metode
-            //generatePreferedPositions
-            //i to by byla jakas iterable klasa co to implementuje
-            //i trzeba by tutaj tego seta pozmieniac na te gowna
         worldMap.growNewPlants(plantsPerDay);
+    }
+
+    public void changeRunningMode() {
+        this.isRunning = !this.isRunning;
     }
 }
