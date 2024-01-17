@@ -1,7 +1,6 @@
 package agh.ics.oop.model;
 
 import agh.ics.oop.MapVisualizer;
-import agh.ics.oop.model.exceptions.PositionOutOfBoundsException;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,7 +75,6 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
             mapChanged("Animal " + animal + " moved from " + previousPosition + " to " + animal.position());
         }
         else {
-            animal.setOrientation(animal.getOrientation().opposite());
             mapChanged("Animal " + animal + " cannot execute move.");
         }
     }

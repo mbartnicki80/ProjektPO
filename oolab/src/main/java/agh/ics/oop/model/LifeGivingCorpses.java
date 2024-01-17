@@ -37,9 +37,7 @@ public class LifeGivingCorpses extends AbstractWorldMap implements Updatable {
     }
 
     public void update(int currentDay) {
-
         recentlyDeadAnimals.removeIf(animal -> currentDay - animal.getDayOfDeath() > 3);
-
     }
 
 }

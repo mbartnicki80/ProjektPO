@@ -116,7 +116,6 @@ public class Animal implements WorldElement, Comparable<Animal> {
 
     boolean move(MoveValidator validator) {
         Vector2d oldPosition = this.position;
-        MapDirection orientation = this.orientation;
 
         MapDirection newOrientation = this.orientation.rotate(this.useCurrentAnimalGene());
         Vector2d newPosition = this.position.add(newOrientation.toUnitVector());
@@ -125,8 +124,11 @@ public class Animal implements WorldElement, Comparable<Animal> {
             this.position = newPosition;
             this.orientation = newOrientation;
         }
+        else {
+            this.orientation = newOrientation.opposite();
+        }
 
-        return !this.position.equals(oldPosition) || this.orientation != orientation;
+        return !this.position.equals(oldPosition);
     }
 
     public void useEnergy (int energyToUse) {
