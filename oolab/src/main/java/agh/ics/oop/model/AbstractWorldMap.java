@@ -1,6 +1,7 @@
 package agh.ics.oop.model;
 
 import agh.ics.oop.MapVisualizer;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,38 +63,20 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
         return bounds.lowerLeft().precedes(position) && bounds.upperRight().follows(position);
     }
 
+    @Override
     public void move(Animal animal) {
+        Vector2d previousPosition = animal.position();
 
-        Vector2d currentPosition = animal.position();
-        MapDirection currentOrientation = animal.getOrientation();
+        if (animal.move(this)) {
+            animals.get(previousPosition).remove(animal);
+            animal.useEnergy(1);
+            animals.get(animal.position()).add(animal);
 
-        MapDirection newOrientation = currentOrientation.rotate(animal.useCurrentAnimalGene());
-        Vector2d newPosition = currentPosition.add(newOrientation.toUnitVector());
-
-        //TODO SADASDSADSADADSSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
-        /* Na razie brzydko ale żeby działalo */
-        if (newPosition.getXValue() < 0)
-            newPosition = new Vector2d(bounds.lowerLeft().getXValue(), newPosition.getYValue());
-
-        if (newPosition.getXValue() > bounds.upperRight().getXValue())
-            newPosition = new Vector2d(bounds.upperRight().getXValue(), newPosition.getYValue());
-
-        if (newPosition.getYValue() < 0) {
-            newPosition = new Vector2d(newPosition.getXValue(), bounds.lowerLeft().getYValue());
-            animal.setOrientation(animal.getOrientation().rotate(4));
+            mapChanged("Animal " + animal + " moved from " + previousPosition + " to " + animal.position());
         }
-
-        if (newPosition.getYValue() > bounds.upperRight().getYValue()) {
-            newPosition = new Vector2d(newPosition.getXValue(), bounds.upperRight().getYValue());
-            animal.setOrientation(animal.getOrientation().rotate(4));
+        else {
+            mapChanged("Animal " + animal + " cannot execute move.");
         }
-
-        animals.get(currentPosition).remove(animal);
-        animal.move(newPosition, newOrientation, this);
-        animal.useEnergy(1);
-        animals.get(newPosition).add(animal);
-
-        mapChanged("Animal was moved from " + currentPosition + " " + " to " + newPosition);
     }
 
     public void place(Animal animal) {
