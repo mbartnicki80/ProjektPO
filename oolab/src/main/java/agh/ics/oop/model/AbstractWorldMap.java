@@ -4,6 +4,8 @@ import agh.ics.oop.MapVisualizer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public abstract class AbstractWorldMap implements WorldMap, MapStats {
     protected final UUID ID;
@@ -183,10 +185,14 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
         return freeSpaceSum;
     }
 
-    //#TODO: ZROBIC TO
     @Override
     public Genome getDominantGenome() {
-        return null;
+        Map<Genome, Long> frequencyMap = animals.values().stream()
+                .flatMap(Set::stream)
+                .map(Animal::getGenome)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        return Collections.max(frequencyMap.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
     @Override
