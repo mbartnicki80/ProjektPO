@@ -13,15 +13,24 @@
         </VBox>
     </top>
     <center>
-        <VBox spacing="10" alignment="CENTER">
+        <HBox spacing="10" alignment="CENTER">
             <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"/>
-        </VBox>
+        </HBox>
     </center>
+    <left>
+        <VBox spacing="10">
+            <HBox spacing="10">
+                <Button fx:id="showStatsButton" text="Show statistics" onAction="#onShowStatsClicked"/>
+                <Button fx:id="hideStatsButton" text="Hide statistics" onAction="#onHideStatsClicked" visible="false"/>
+            </HBox>
+            <Label fx:id="statsLabel" visible="false" style="-fx-background-color: lightblue;"/>
+        </VBox>
+
+    </left>
     <bottom>
         <HBox spacing="10" alignment="CENTER">
             <Button fx:id="stopButton" text="Stop" onAction="#onSimulationStopClicked"/>
             <Button fx:id="resumeButton" text="Resume" onAction="#onSimulationResumeClicked" visible="false"/>
         </HBox>
-
     </bottom>
 </BorderPane>

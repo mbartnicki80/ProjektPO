@@ -4,7 +4,7 @@ import agh.ics.oop.MapVisualizer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractWorldMap implements WorldMap {
+public abstract class AbstractWorldMap implements WorldMap, MapStats {
     protected final UUID ID;
     protected final Boundary bounds;
     protected final int plantEnergy;
@@ -13,6 +13,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2d, Plant> plants = new ConcurrentHashMap<>();
     protected final List<MapChangeListener> observers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
+    private final List<List<Vector2d>> positions = new ArrayList<>();
 
     public AbstractWorldMap(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
         this.plantEnergy = plantEnergy;
@@ -20,6 +21,14 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.bounds = new Boundary(new Vector2d(0, 0), new Vector2d(mapWidth - 1, mapHeight - 1));
 
         placePlants(numOfPlants);
+
+        for (int i = 0; i < bounds.upperRight().getXValue(); i++) {
+            List<Vector2d> row = new ArrayList<>();
+            for (int j = 0; j < bounds.upperRight().getYValue(); j++) {
+                row.add(new Vector2d(i, j));
+            }
+            positions.add(row);
+        }
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++){
@@ -61,7 +70,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         MapDirection newOrientation = currentOrientation.rotate(animal.useCurrentAnimalGene());
         Vector2d newPosition = currentPosition.add(newOrientation.toUnitVector());
 
-
+        //TODO SADASDSADSADADSSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
         /* Na razie brzydko ale żeby działalo */
         if (newPosition.getXValue() < 0)
             newPosition = new Vector2d(bounds.lowerLeft().getXValue(), newPosition.getYValue());
@@ -168,4 +177,47 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
+    @Override
+    public int getNumberOfAnimals() {
+        return animals.values().stream().mapToInt(Set::size).sum();
+    }
+
+    @Override
+    public int getNumberOfPlants() {
+        return plants.size();
+    }
+
+    @Override
+    public int getFreeSpace() {
+        int freeSpaceSum = 0;
+
+        for (int i = 0; i < bounds.upperRight().getXValue(); i++)
+            for (int j = 0; j < bounds.upperRight().getYValue(); j++) {
+                Vector2d position = positions.get(i).get(j);
+                if (objectAt(position).isPresent())
+                    freeSpaceSum++;
+            }
+        return freeSpaceSum;
+    }
+
+    //#TODO: ZROBIC TO
+    @Override
+    public Genome getDominantGenome() {
+        return null;
+    }
+
+    @Override
+    public int getAverageEnergy() {
+        return animals.values().stream().mapToInt(animalSet -> animalSet.stream().mapToInt(Animal::getEnergy).sum()).sum();
+    }
+
+    @Override
+    public int getAverageLifeLengthOfDeadAnimals() {
+        return deadAnimals.stream().mapToInt(Animal::getLifeLength).sum();
+    }
+
+    @Override
+    public int getAverageChildrenCount() {
+        return animals.values().stream().mapToInt(animalSet -> animalSet.stream().mapToInt(Animal::getChildrenCount).sum()).sum();
+    }
 }

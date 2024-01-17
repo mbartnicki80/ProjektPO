@@ -124,7 +124,6 @@ public class SimulationPresenter {
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
-        //worldMap.registerObserver(fileMapDisplay);
         presenter.setWorldMap(worldMap);
 
         Simulation simulation = new Simulation(

@@ -75,6 +75,10 @@ public class Animal implements WorldElement, Comparable<Animal> {
         return dayOfDeath;
     }
 
+    public int getLifeLength() {
+        return dayOfDeath - dayOfBirth;
+    }
+
     public Animal reproduce(Animal reproductionPartner, int day, int genomeLength,
                             int minimalMutations, int maximalMutations, int newbornEnergy, boolean fullRandomnessGenome) {
 

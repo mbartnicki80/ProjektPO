@@ -3,7 +3,7 @@ package agh.ics.oop.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LifeGivingCorpses extends AbstractWorldMap {
+public class LifeGivingCorpses extends AbstractWorldMap implements DeadAnimalsObserver {
 
     Set<Animal> recentlyDeadAnimals = new HashSet<>();
 
@@ -34,6 +34,13 @@ public class LifeGivingCorpses extends AbstractWorldMap {
         recentlyDeadAnimals.add(animal);
         animal.setDayOfDeath(dayOfDeath);
         mapChanged("Animal " + animal + " died at " + animal.position());
+    }
+
+    @Override
+    public void update(int currentDay) {
+
+        recentlyDeadAnimals.removeIf(animal -> currentDay - animal.getDayOfDeath() > 3);
+
     }
 
 }
