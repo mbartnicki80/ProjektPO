@@ -12,6 +12,8 @@ public class Animal implements WorldElement, Comparable<Animal> {
     private int energy;
     private final ArrayList<Animal> children = new ArrayList<>();
     private final int dayOfBirth;
+    private int dayofDeath = -1;
+    private int plantsEaten = 0;
     private static final MapDirection[] directions = MapDirection.values();
 
     public Animal(Vector2d position, MapDirection orientation, int energy, int dayOfBirth, int genomeLength) {
@@ -39,10 +41,20 @@ public class Animal implements WorldElement, Comparable<Animal> {
         return genome.useCurrentGene();
     }
 
-    public boolean isDead() {return energy <= 0;}
+    public void setDayOfDeath(int day) {
+        this.dayofDeath = day;
+    }
+
+    public boolean isDead() {
+        return energy<=0;
+    }
 
     public int getEnergy() {
         return energy;
+    }
+
+    public int getPlantsEaten() {
+        return plantsEaten;
     }
 
     public List<Animal> getChildrenList() {
@@ -55,6 +67,10 @@ public class Animal implements WorldElement, Comparable<Animal> {
 
     public int getDayOfBirth() {
         return dayOfBirth;
+    }
+
+    public int getDayofDeath() {
+        return dayofDeath;
     }
 
     public Animal reproduce(Animal reproductionPartner, int day, int genomeLength,
@@ -78,6 +94,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
 
     public void eatPlant(int plantEnergy) {
         this.energy += plantEnergy;
+        this.plantsEaten++;
     }
 
     public String toString() {

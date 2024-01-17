@@ -37,13 +37,12 @@ public class LifeGivingCorpses extends AbstractWorldMap {
     }
 
 
-    @Override
-    public void remove(WorldElement worldElement) {
-        if (worldElement instanceof Animal) {
-            lastEpochDeadAnimals.add((Animal) worldElement);
-        }
-
-        super.remove(worldElement);
+    public void removeDeadAnimal(Animal animal, int dayOfDeath) {
+        animals.get(animal.position()).remove(animal);
+        super.deadAnimals.add(animal);
+        lastEpochDeadAnimals.add(animal);
+        animal.setDayOfDeath(dayOfDeath);
+        mapChanged("Animal " + animal + " died at " + animal.position());
     }
 
 }

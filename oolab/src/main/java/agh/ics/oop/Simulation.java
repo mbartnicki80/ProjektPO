@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 public class Simulation implements Runnable {
 
     private final Set<Animal> aliveAnimals = new HashSet<>();
-    private final Map<Vector2d, Animal> deadAnimals = new HashMap<>();
     private final WorldMap worldMap;
     private final int plantsPerDay;
     private final int reproductionReadyEnergy;
@@ -60,7 +59,7 @@ public class Simulation implements Runnable {
             int day = 0;
             while (!aliveAnimals.isEmpty()) {
                 if (isRunning) {
-                    removeDeadAnimals();
+                    removeDeadAnimals(day);
                     moveAnimals();
                     consumption();
                     reproduceAnimals(day);
@@ -75,14 +74,13 @@ public class Simulation implements Runnable {
         } catch (InterruptedException ignored) {}
     }
 
-    private void removeDeadAnimals() {
+    private void removeDeadAnimals(int day) {
         Iterator<Animal> iterator = aliveAnimals.iterator();
 
         while (iterator.hasNext()) {
             Animal animal = iterator.next();
             if (animal.isDead()) {
-                deadAnimals.put(animal.position(), animal);
-                worldMap.remove(animal);
+                worldMap.removeDeadAnimal(animal, day);
                 iterator.remove();
             }
         }

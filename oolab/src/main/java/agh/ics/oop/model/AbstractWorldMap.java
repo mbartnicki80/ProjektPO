@@ -9,7 +9,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Boundary bounds;
     protected final int plantEnergy;
     protected final Map<Vector2d, Set<Animal>> animals = new ConcurrentHashMap<>();
-    protected final Map<Vector2d, Animal> deadAnimals = new HashMap<>();
+    protected final Set<Animal> deadAnimals = new HashSet<>();
     protected final Map<Vector2d, Plant> plants = new ConcurrentHashMap<>();
     protected final List<MapChangeListener> observers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
@@ -120,7 +120,7 @@ public abstract class AbstractWorldMap implements WorldMap {
             if (!animals.get(plantPosition).isEmpty()) {
                 Animal dominantAnimal = Collections.max(animals.get(plantPosition));
                 dominantAnimal.eatPlant(plants.get(plantPosition).getEnergy());
-                remove(plants.get(plantPosition));
+                removePlant(plants.get(plantPosition));
             }
     }
 
@@ -147,19 +147,18 @@ public abstract class AbstractWorldMap implements WorldMap {
         return newbornAnimals;
     }
 
-    @Override
-    public void remove(WorldElement element) {
-        if (element instanceof Animal animal) {
-            animals.get(element.position()).remove(animal);
-            deadAnimals.put(animal.position(), animal);
-            mapChanged("Animal " + animal + " died at " + animal.position());
-        }
-        else if (element instanceof Plant plant) {
-            plants.remove(element.position());
-            mapChanged("Plant " + plant + " has been eaten at " + plant.position());
-        }
+    public void removePlant(Plant plant) {
+        plants.remove(plant.position());
+        mapChanged("Plant " + plant + " has been eaten at " + plant.position());
     }
 
+    @Override
+    public void removeDeadAnimal(Animal animal, int dayOfDeath) {
+        animals.get(animal.position()).remove(animal);
+        deadAnimals.add(animal);
+        animal.setDayOfDeath(dayOfDeath);
+        mapChanged("Animal " + animal + " died at " + animal.position());
+    }
 
     public void putPlants(Iterable<Vector2d> plantPositions) {
         for (Vector2d position : plantPositions) {

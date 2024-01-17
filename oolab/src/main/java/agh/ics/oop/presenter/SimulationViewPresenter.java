@@ -21,7 +21,6 @@ public class SimulationViewPresenter implements MapChangeListener {
     private Button stopButton;
     @FXML
     private Button resumeButton;
-
     private WorldMap worldMap;
     private Simulation simulation;
     private final static int CELL_SIZE = 30;
@@ -112,4 +111,5 @@ public class SimulationViewPresenter implements MapChangeListener {
         resumeButton.setVisible(false);
         this.simulation.changeRunningMode();
     }
+
 }

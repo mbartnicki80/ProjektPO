@@ -35,7 +35,7 @@ public interface WorldMap extends MoveValidator {
 
     UUID getID();
 
-    void remove(WorldElement worldElement);
+    void removeDeadAnimal(Animal animal, int dayOfDeath);
 
     void consumption();
 
