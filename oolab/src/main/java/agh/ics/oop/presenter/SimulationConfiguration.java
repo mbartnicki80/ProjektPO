@@ -1,27 +1,39 @@
 package agh.ics.oop.presenter;
 
-public class SimulationConfiguration {
-    private static int nextConfigurationNumber = 1;
-    private final int configurationNumber;
-    private final int mapHeight;
-    private final int mapWidth;
-    private final int numberOfPlants;
-    private final int plantEnergy;
-    private final int plantsPerDay;
-    private final boolean forestedEquator;
-    private final int numberOfAnimals;
-    private final int animalEnergy;
-    private final int reproductionReadyEnergy;
-    private final int usedReproductionEnergy;
-    private final int minimalMutations;
-    private final int maximalMutations;
-    private final int genomeLength;
-    private final boolean fullRandomnessGenome;
+import java.beans.JavaBean;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
+
+@JavaBean
+public class SimulationConfiguration implements Serializable {
+    public UUID configurationNumber;
+    public String configurationName;
+    public int mapHeight;
+    public int mapWidth;
+    public int numberOfPlants;
+    public int plantEnergy;
+    public int plantsPerDay;
+    public boolean forestedEquator;
+    public int numberOfAnimals;
+    public int animalEnergy;
+    public int reproductionReadyEnergy;
+    public int usedReproductionEnergy;
+    public int minimalMutations;
+    public int maximalMutations;
+    public int genomeLength;
+    public boolean fullRandomnessGenome;
 
     public SimulationConfiguration(int mapHeight, int mapWidth, int numberOfPlants, int plantEnergy,
                                    int plantsPerDay, boolean forestedEquator, int numberOfAnimals,
                                    int animalEnergy, int reproductionReadyEnergy, int usedReproductionEnergy,
-                                   int minimalMutations, int maximalMutations, int genomeLength, boolean fullRandomnessGenome) {
+                                   int minimalMutations, int maximalMutations, int genomeLength, boolean fullRandomnessGenome,
+                                   String configurationName) {
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.numberOfPlants = numberOfPlants;
@@ -36,65 +48,31 @@ public class SimulationConfiguration {
         this.maximalMutations = maximalMutations;
         this.genomeLength = genomeLength;
         this.fullRandomnessGenome = fullRandomnessGenome;
-        this.configurationNumber = nextConfigurationNumber++;
-    }
-    public int getMapHeight() {
-        return mapHeight;
+        this.configurationNumber = UUID.randomUUID();
+        this.configurationName = configurationName;
     }
 
-    public int getMapWidth() {
-        return mapWidth;
-    }
-
-    public int getNumberOfPlants() {
-        return numberOfPlants;
-    }
-
-    public int getPlantEnergy() {
-        return plantEnergy;
-    }
-
-    public int getPlantsPerDay() {
-        return plantsPerDay;
-    }
-
-    public boolean isForestedEquator() {
-        return forestedEquator;
-    }
-
-    public int getNumberOfAnimals() {
-        return numberOfAnimals;
-    }
-
-    public int getAnimalEnergy() {
-        return animalEnergy;
-    }
-
-    public int getReproductionReadyEnergy() {
-        return reproductionReadyEnergy;
-    }
-
-    public int getUsedReproductionEnergy() {
-        return usedReproductionEnergy;
-    }
-
-    public int getMinimalMutations() {
-        return minimalMutations;
-    }
-
-    public int getMaximalMutations() {
-        return maximalMutations;
-    }
-
-    public int getGenomeLength() {
-        return genomeLength;
-    }
-
-    public boolean isFullRandomnessGenome() {
-        return fullRandomnessGenome;
-    }
-
+    public SimulationConfiguration() {}
     public String toString() {
-        return "Konfiguracja " + this.configurationNumber;
+        return configurationName;
+    }
+
+    public static void encodeToXML(String path, SimulationConfiguration configuration) {
+        try (XMLEncoder xmlEncoder = new XMLEncoder(Files.newOutputStream(Path.of(path)))) {
+            xmlEncoder.writeObject(configuration);
+        } catch (IOException e) {
+            System.out.println(new File(".").getAbsolutePath());
+            System.out.println(e.getMessage());
+//            e.printStackTrace();
+        }
+    }
+
+    public static SimulationConfiguration decodeFromXML(String path) {
+        try (XMLDecoder xmlDecoder = new XMLDecoder(Files.newInputStream(Path.of(path)))) {
+            return (SimulationConfiguration) xmlDecoder.readObject();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 }

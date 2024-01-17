@@ -12,9 +12,11 @@ import javafx.stage.Stage;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
+import java.util.Map;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -48,7 +50,7 @@ public class SimulationPresenter {
     @FXML
     private ToggleGroup genomeToggleGroup;
     @FXML
-    private ComboBox presetConfigurationsComboBox;
+    private ComboBox<SimulationConfiguration> presetConfigurationsComboBox;
     @FXML
     private RadioButton forestedEquatorRadioButton;
     @FXML
@@ -57,21 +59,36 @@ public class SimulationPresenter {
     private RadioButton fullRandomnessRadioButton;
     @FXML
     private RadioButton lightCorrectionRadioButton;
+    @FXML
+    private TextField simulationNameToSaveTextField;
     private final Map<String, SimulationConfiguration> presetConfigurations = new HashMap<>();
     {
         SimulationConfiguration config1 = new SimulationConfiguration(10, 10, 5, 5, 2,
                 true, 2, 10, 5, 2, 5,
-                10, 7, true);
+                10, 7, true, "Konfiguracja 1");
         SimulationConfiguration config2 = new SimulationConfiguration(8, 9, 3, 2, 1,
                 false, 1, 15, 25, 23, 5,
-                10, 7, false);
-
-        presetConfigurations.put(config1.toString(), config1);
-        presetConfigurations.put(config2.toString(), config2);
+                10, 7, false, "Konfiguracja 2");
+        presetConfigurations.put(config1.configurationName, config1);
+        presetConfigurations.put(config2.configurationName, config2);
     }
     private final ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
     //private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+
+    public void initialize() {
+        File dir = new File("oolab/save");
+        File[] files = dir.listFiles(file -> file.getName().endsWith(".xml") && file.isFile());
+        if (files != null) {
+            for (File file : files) {
+                SimulationConfiguration configuration = SimulationConfiguration.decodeFromXML(file.getAbsolutePath());
+                presetConfigurations.put(Objects.requireNonNull(configuration).configurationName, configuration);
+            }
+        } else {
+            System.out.println("Saves are null");
+        }
+        presetConfigurationsComboBox.getItems().addAll(presetConfigurations.values());
+    }
 
     public void onSimulationStartClicked() throws IOException, NumberFormatException {
         FXMLLoader loader = new FXMLLoader();
@@ -81,7 +98,6 @@ public class SimulationPresenter {
         Stage stage = new Stage();
 
         configureStage(stage, viewRoot);
-
         int mapHeight = Integer.parseInt(mapHeightTextField.getText());
         int mapWidth = Integer.parseInt(mapWidthTextField.getText());
         int numberOfPlants = Integer.parseInt(numOfPlantsTextField.getText());
@@ -145,27 +161,27 @@ public class SimulationPresenter {
     }
 
     public void onPresetConfigurationSelected() {
-        String selectedConfiguration = presetConfigurationsComboBox.getValue().toString();
+        String selectedConfiguration = presetConfigurationsComboBox.getValue().configurationName;
 
-        mapHeightTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getMapHeight()));
-        mapWidthTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getMapWidth()));
-        numOfPlantsTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getNumberOfPlants()));
-        plantEnergyTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getPlantEnergy()));
-        plantsPerDayTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getPlantsPerDay()));
+        mapHeightTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).mapHeight));
+        mapWidthTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).mapWidth));
+        numOfPlantsTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).numberOfPlants));
+        plantEnergyTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).plantEnergy));
+        plantsPerDayTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).plantsPerDay));
 
-        forestedEquatorRadioButton.setSelected(presetConfigurations.get(selectedConfiguration).isForestedEquator());
-        lifeGivingCorpsesRadioButton.setSelected(!presetConfigurations.get(selectedConfiguration).isForestedEquator());
+        forestedEquatorRadioButton.setSelected(presetConfigurations.get(selectedConfiguration).forestedEquator);
+        lifeGivingCorpsesRadioButton.setSelected(!presetConfigurations.get(selectedConfiguration).forestedEquator);
 
-        numOfAnimalsTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getNumberOfAnimals()));
-        animalEnergyTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getAnimalEnergy()));
-        reproductionReadyEnergyTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getReproductionReadyEnergy()));
-        usedReproductionEnergyTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getUsedReproductionEnergy()));
-        minimalMutationsTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getMinimalMutations()));
-        maximalMutationsTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getMaximalMutations()));
-        genomeLengthTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).getGenomeLength()));
+        numOfAnimalsTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).numberOfAnimals));
+        animalEnergyTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).animalEnergy));
+        reproductionReadyEnergyTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).reproductionReadyEnergy));
+        usedReproductionEnergyTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).usedReproductionEnergy));
+        minimalMutationsTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).minimalMutations));
+        maximalMutationsTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).maximalMutations));
+        genomeLengthTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).genomeLength));
 
-        fullRandomnessRadioButton.setSelected(presetConfigurations.get(selectedConfiguration).isFullRandomnessGenome());
-        lightCorrectionRadioButton.setSelected(!presetConfigurations.get(selectedConfiguration).isFullRandomnessGenome());
+        fullRandomnessRadioButton.setSelected(presetConfigurations.get(selectedConfiguration).fullRandomnessGenome);
+        lightCorrectionRadioButton.setSelected(!presetConfigurations.get(selectedConfiguration).fullRandomnessGenome);
         }
 
     public void onSaveConfigClicked() {
@@ -178,7 +194,6 @@ public class SimulationPresenter {
         boolean forestedEquator;
         RadioButton selectedPlantRadioButton = (RadioButton) plantsToggleGroup.getSelectedToggle();
         String plantRadioButtonValue = selectedPlantRadioButton.getText();
-        System.out.println(plantRadioButtonValue);
         forestedEquator = plantRadioButtonValue.equals("Zalesiony rownik");
 
         int numberOfAnimals = Integer.parseInt(numOfAnimalsTextField.getText());
@@ -193,6 +208,12 @@ public class SimulationPresenter {
         RadioButton selectedGenomeRadioButton = (RadioButton) genomeToggleGroup.getSelectedToggle();
         String genomeRadioButtonValue = selectedGenomeRadioButton.getText();
         fullRandomnessGenome = genomeRadioButtonValue.equals("Pelna losowosc");
+
+        String newPath = simulationNameToSaveTextField.getText();
+        if (newPath.isEmpty()) {
+            System.out.println("Podaj nazwe pliku.");
+            return;
+        }
         SimulationConfiguration newConfiguration = new SimulationConfiguration(
                 mapHeight,
                 mapWidth,
@@ -207,12 +228,15 @@ public class SimulationPresenter {
                 minimalMutations,
                 maximalMutations,
                 genomeLength,
-                fullRandomnessGenome
+                fullRandomnessGenome,
+                newPath
         );
 
-        presetConfigurations.put(newConfiguration.toString(), newConfiguration);
+        presetConfigurations.put(newConfiguration.configurationName, newConfiguration);
         presetConfigurationsComboBox.getItems().add(newConfiguration);
         presetConfigurationsComboBox.getSelectionModel().select(newConfiguration);
+
+        SimulationConfiguration.encodeToXML("oolab/save/" + newPath + ".xml", newConfiguration);
     }
 
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {

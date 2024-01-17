@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="17.0.8" class="java.beans.XMLDecoder">
+ <object class="agh.ics.oop.presenter.SimulationConfiguration" id="SimulationConfiguration0">
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>configurationName</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <string>config23</string>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>mapHeight</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>10</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>mapWidth</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>10</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>numberOfPlants</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>20</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>plantEnergy</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>5</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>plantsPerDay</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>5</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>numberOfAnimals</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>7</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>animalEnergy</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>10</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>reproductionReadyEnergy</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>20</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>usedReproductionEnergy</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>15</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>minimalMutations</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>10</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>maximalMutations</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>11</int>
+   </void>
+  </void>
+  <void class="agh.ics.oop.presenter.SimulationConfiguration" method="getField">
+   <string>genomeLength</string>
+   <void method="set">
+    <object idref="SimulationConfiguration0"/>
+    <int>15</int>
+   </void>
+  </void>
+ </object>
+</java>

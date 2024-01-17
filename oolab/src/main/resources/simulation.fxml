@@ -9,9 +9,7 @@
 <?import javafx.scene.control.ToggleGroup?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.ComboBox?>
-<?import java.lang.String?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
@@ -27,14 +25,7 @@
 
         <HBox spacing="10" alignment="CENTER">
             <VBox spacing="10" alignment="CENTER">
-                <ComboBox fx:id="presetConfigurationsComboBox" onAction="#onPresetConfigurationSelected">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="Konfiguracja 1"/>
-                            <String fx:value="Konfiguracja 2"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
+                <ComboBox fx:id="presetConfigurationsComboBox" onAction="#onPresetConfigurationSelected"/>
                 <Label text="Wysokość mapy"/>
                 <TextField fx:id="mapHeightTextField" promptText="Wysokość mapy"> </TextField>
                 <Label text="Szerokośćć mapy"/>
@@ -78,10 +69,13 @@
         </HBox>
     </top>
     <bottom>
-        <HBox spacing="10" alignment="CENTER">
-            <Button text="Start" onAction="#onSimulationStartClicked"/>
-            <Button text="Save Configuration" onAction="#onSaveConfigClicked"/>
-        </HBox>
+        <VBox spacing="10" alignment="CENTER">
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Start" onAction="#onSimulationStartClicked"/>
+                <Button text="Save Configuration" onAction="#onSaveConfigClicked"/>
+            </HBox>
+            <TextField fx:id="simulationNameToSaveTextField" promptText="Nazwa symulacji po zapisaniu"> </TextField>
+        </VBox>
     </bottom>
 
 </BorderPane>
