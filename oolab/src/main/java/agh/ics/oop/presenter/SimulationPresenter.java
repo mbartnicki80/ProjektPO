@@ -40,7 +40,7 @@ public class SimulationPresenter {
     private TextField genomeLengthTextField;
 
     private final ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
-    private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
+    //private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public void onSimulationStartClicked() throws IOException, NumberFormatException {
@@ -67,12 +67,26 @@ public class SimulationPresenter {
         int genomeLength = Integer.parseInt(genomeLengthTextField.getText());
         //wariant mutacji !!checkbox
 
-        EarthGlobe worldMap = new EarthGlobe(
-                mapWidth,
-                mapHeight,
-                numberOfPlants,
-                plantEnergy
-        );
+        boolean forestedEquator = true;
+        boolean fullRandomnessGenome = true;
+
+        WorldMap worldMap;
+        if (forestedEquator) {
+            worldMap = new ForestedEquator(
+                    mapWidth,
+                    mapHeight,
+                    numberOfPlants,
+                    plantEnergy
+            );
+        }
+        else {
+            worldMap = new LifeGivingCorpses(
+                    mapWidth,
+                    mapHeight,
+                    numberOfPlants,
+                    plantEnergy
+            );
+        }
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
@@ -88,7 +102,8 @@ public class SimulationPresenter {
                 usedReproductionEnergy,
                 minimalMutations,
                 maximalMutations,
-                genomeLength
+                genomeLength,
+                fullRandomnessGenome
         );
 
         executorService.submit(simulation);

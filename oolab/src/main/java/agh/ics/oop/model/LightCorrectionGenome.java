@@ -1,13 +1,9 @@
 package agh.ics.oop.model;
 
 public class LightCorrectionGenome extends AbstractGenome {
-
-    public LightCorrectionGenome(int genomeLength) {
-        super(genomeLength);
-    }
-
+    
     public LightCorrectionGenome(int genomeLength, int minimalMutations, int maximalMutations,
-                                FullRandomnessGenome dominantAnimalGenome, FullRandomnessGenome reproductionPartnerGenome, double dominantEnergyProportion) {
+                                Genome dominantAnimalGenome, Genome reproductionPartnerGenome, double dominantEnergyProportion) {
         super(genomeLength, minimalMutations, maximalMutations,
                 dominantAnimalGenome, reproductionPartnerGenome, dominantEnergyProportion);
     }

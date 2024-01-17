@@ -8,7 +8,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
 
     private MapDirection orientation;
     private Vector2d position;
-    private final FullRandomnessGenome genome;
+    private final Genome genome;
     private int energy;
     private final ArrayList<Animal> children = new ArrayList<>();
     private final int dayOfBirth;
@@ -22,7 +22,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
         this.genome = new FullRandomnessGenome(genomeLength);
     }
 
-    public Animal(Vector2d position, int energy, int dayOfBirth, FullRandomnessGenome genome) {
+    public Animal(Vector2d position, int energy, int dayOfBirth, Genome genome) {
         this.position = position;
         Random random = new Random();
         this.orientation = directions[random.nextInt(directions.length)];
@@ -58,11 +58,17 @@ public class Animal implements WorldElement, Comparable<Animal> {
     }
 
     public Animal reproduce(Animal reproductionPartner, int day, int genomeLength,
-                            int minimalMutations, int maximalMutations, int newbornEnergy) {
+                            int minimalMutations, int maximalMutations, int newbornEnergy, boolean fullRandomnessGenome) {
 
-        FullRandomnessGenome newbornGenome = new FullRandomnessGenome(genomeLength, minimalMutations, maximalMutations,
-                                this.getGenome(), reproductionPartner.getGenome(),
-                (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
+        Genome newbornGenome;
+        if (fullRandomnessGenome) {
+            newbornGenome = new FullRandomnessGenome(genomeLength, minimalMutations, maximalMutations,
+                                    this.getGenome(), reproductionPartner.getGenome(),
+                    (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
+        } else
+            newbornGenome = new LightCorrectionGenome(genomeLength, minimalMutations, maximalMutations,
+                    this.getGenome(), reproductionPartner.getGenome(),
+                    (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
 
         Animal newbornAnimal = new Animal(reproductionPartner.position(), newbornEnergy, day, newbornGenome);
 
@@ -98,7 +104,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
         children.add(animal);
     }
 
-    public FullRandomnessGenome getGenome() {
+    public Genome getGenome() {
         return genome;
     }
 

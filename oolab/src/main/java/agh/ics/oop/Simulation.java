@@ -16,12 +16,13 @@ public class Simulation implements Runnable {
     private final int minimalMutations;
     private final int maximalMutations;
     private final int genomeLength;
+    private final boolean fullRandomnessGenome;
     private static final MapDirection[] directions = MapDirection.values();
 
 
     public Simulation(WorldMap worldMap, int numberOfAnimals, int startAnimalEnergy,
                       int plantsPerDay, int reproductionReadyEnergy, int usedReproductionEnergy,
-                      int minimalMutations, int maximalMutations, int genomeLength) {
+                      int minimalMutations, int maximalMutations, int genomeLength, boolean fullRandomnessGenome) {
 
         this.worldMap = worldMap;
         this.plantsPerDay = plantsPerDay;
@@ -30,6 +31,7 @@ public class Simulation implements Runnable {
         this.minimalMutations = minimalMutations;
         this.maximalMutations = maximalMutations;
         this.genomeLength = genomeLength;
+        this.fullRandomnessGenome = fullRandomnessGenome;
 
         Random random = new Random();
         Boundary boundary = worldMap.getCurrentBounds();
@@ -101,11 +103,22 @@ public class Simulation implements Runnable {
                         minimalMutations,
                         maximalMutations,
                         reproductionReadyEnergy,
-                        usedReproductionEnergy);
+                        usedReproductionEnergy,
+                        fullRandomnessGenome);
         aliveAnimals.addAll(newbornAnimals);
     }
 
     private void growNewPlants() {
+            //nie wiem jak to rozegrac, ale zbey byl interfejs, to musza miec takie same argumenty
+            //a inaczej niz bez interfejsu to nie pociagnie, bo nie wykryje nawet istnienia tych metod
+
+            //no a tutaj musimy przekazac jakos wyzej nasze deadAnimalsy
+            //chyba ze przechowywac deadAnimalsy tez w worldMapie
+
+            //moim pomyslem jest zeby stworzyc interfejs na generatory, mialby jedna metode
+            //generatePreferedPositions
+            //i to by byla jakas iterable klasa co to implementuje
+            //i trzeba by tutaj tego seta pozmieniac na te gowna
         worldMap.growNewPlants(plantsPerDay);
     }
 }

@@ -14,7 +14,7 @@ public abstract class AbstractGenome implements Genome {
     }
 
     protected AbstractGenome(int genomeLength, int minimalMutations, int maximalMutations,
-                             FullRandomnessGenome dominantAnimalGenome, FullRandomnessGenome reproductionPartnerGenome, double dominantEnergyProportion) {
+                             Genome dominantAnimalGenome, Genome reproductionPartnerGenome, double dominantEnergyProportion) {
         this.genome = reproducedGenome(genomeLength, dominantAnimalGenome, reproductionPartnerGenome,
                 minimalMutations, maximalMutations, dominantEnergyProportion);
         this.currentGenomeIndex = random.nextInt(genomeLength);
@@ -44,7 +44,7 @@ public abstract class AbstractGenome implements Genome {
         return genome[index];
     }
 
-    private int[] reproducedGenome(int genomeLength, FullRandomnessGenome dominantAnimalGenome, FullRandomnessGenome reproductionPartnerGenome,
+    private int[] reproducedGenome(int genomeLength, Genome dominantAnimalGenome, Genome reproductionPartnerGenome,
                                    int minimalMutations, int maximalMutations, double dominantEnergyProportion) {
 
         int[] newbornGenome = new int[genomeLength];
