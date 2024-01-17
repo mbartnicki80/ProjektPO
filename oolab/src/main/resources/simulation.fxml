@@ -5,7 +5,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 
 <?import javafx.scene.control.Label?>
 <BorderPane xmlns="http://javafx.com/javafx"
@@ -13,6 +14,10 @@
             minHeight="550.0" minWidth="850.0"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
 
+    <fx:define>
+        <ToggleGroup fx:id="plantsToggleGroup"/>
+        <ToggleGroup fx:id="genomeToggleGroup"/>
+    </fx:define>
     <top>
         <HBox spacing="10" alignment="CENTER">
             <VBox spacing="10" alignment="BASELINE_LEFT">
@@ -26,8 +31,18 @@
                 <TextField fx:id="plantEnergyTextField" promptText="Energia dostarczana przez rośliny"> </TextField>
                 <Label text="Liczba rosnących dziennie roślin"/>
                 <TextField fx:id="plantsPerDayTextField" promptText="Liczba rosnących dziennie roślin"> </TextField>
-                <!-- wariant roślin -->
-                <!-- wariant roślin -->
+
+                <HBox>
+                    <VBox spacing="10" alignment="CENTER">
+                        <RadioButton text="Zalesiony rownik" toggleGroup="$plantsToggleGroup"/>
+                        <RadioButton text="Zyciodajne truchla" toggleGroup="$plantsToggleGroup"/>
+                    </VBox>
+                    <VBox spacing="10" alignment="CENTER">
+                        <RadioButton text="Pelna losowosc" toggleGroup="$genomeToggleGroup"/>
+                        <RadioButton text="Lekka korekta" toggleGroup="$genomeToggleGroup"/>
+                    </VBox>
+                </HBox>
+
             </VBox>
             <VBox spacing="10">
                 <Label text="Liczba zwierząt na start"/>

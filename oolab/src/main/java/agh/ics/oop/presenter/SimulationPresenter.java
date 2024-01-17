@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -38,7 +40,10 @@ public class SimulationPresenter {
     private TextField maximalMutationsTextField;
     @FXML
     private TextField genomeLengthTextField;
-
+    @FXML
+    private ToggleGroup plantsToggleGroup;
+    @FXML
+    private ToggleGroup genomeToggleGroup;
     private final ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
     //private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
@@ -56,7 +61,12 @@ public class SimulationPresenter {
         int numberOfPlants = Integer.parseInt(numOfPlantsTextField.getText());
         int plantEnergy = Integer.parseInt(plantEnergyTextField.getText());
         int plantsPerDay = Integer.parseInt(plantsPerDayTextField.getText());
-        //wariant wzrostu roślin !!checkbox
+
+        boolean forestedEquator;
+        RadioButton selectedPlantRadioButton = (RadioButton) plantsToggleGroup.getSelectedToggle();
+        String plantRadioButtonValue = selectedPlantRadioButton.getText();
+        System.out.println(plantRadioButtonValue);
+        forestedEquator = plantRadioButtonValue.equals("Zalesiony rownik");
 
         int numberOfAnimals = Integer.parseInt(numOfAnimalsTextField.getText());
         int animalEnergy = Integer.parseInt(animalEnergyTextField.getText());
@@ -65,10 +75,11 @@ public class SimulationPresenter {
         int minimalMutations = Integer.parseInt(minimalMutationsTextField.getText());
         int maximalMutations = Integer.parseInt(maximalMutationsTextField.getText());
         int genomeLength = Integer.parseInt(genomeLengthTextField.getText());
-        //wariant mutacji !!checkbox
 
-        boolean forestedEquator = true;
-        boolean fullRandomnessGenome = true;
+        boolean fullRandomnessGenome;
+        RadioButton selectedGenomeRadioButton = (RadioButton) genomeToggleGroup.getSelectedToggle();
+        String genomeRadioButtonValue = selectedGenomeRadioButton.getText();
+        fullRandomnessGenome = genomeRadioButtonValue.equals("Pelna losowosc");
 
         WorldMap worldMap;
         if (forestedEquator) {
@@ -116,7 +127,6 @@ public class SimulationPresenter {
         primaryStage.setTitle("Simulation app");
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
-
         primaryStage.setOnCloseRequest(event -> primaryStage.close());
     }
 }
