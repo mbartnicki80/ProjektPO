@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 public abstract class AbstractPlantPositionGenerator implements Iterable<Vector2d>, Iterator<Vector2d> {
 
-    protected final Iterator<Vector2d> iterator;
+    protected Iterator<Vector2d> iterator;
 
     Map<Vector2d, Plant> plants;
     Boundary boundary;
@@ -15,8 +15,6 @@ public abstract class AbstractPlantPositionGenerator implements Iterable<Vector2
         this.plants = plants;
         this.boundary = boundary;
         this.grassCount = grassCount;
-
-        this.iterator = generateFinalPositions().iterator();
     }
 
     protected abstract List<Vector2d> generateFinalPositions();

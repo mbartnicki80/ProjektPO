@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class LifeGivingCorpses extends AbstractWorldMap {
 
-    Set<Animal> lastEpochDeadAnimals = new HashSet<>();
+    Set<Animal> recentlyDeadAnimals = new HashSet<>();
 
     public LifeGivingCorpses(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
         super(mapWidth, mapHeight, numOfPlants, plantEnergy);
@@ -23,24 +23,15 @@ public class LifeGivingCorpses extends AbstractWorldMap {
 
     @Override
     public void growNewPlants(int plantsPerDay) {
-        //masz tutaj dostep do deadAnimalow, sa zadeklarowane w abstract
-        //dodaje je w momencie, gdy uzywamy remove, czyli wtedy, kiedy usuwamy zwierzaki, bo sa martwe
-        //powinno dzialac
+        LifeGivingCorpsesPlantPositionsGenerator plantPositions = new LifeGivingCorpsesPlantPositionsGenerator(super.plants, recentlyDeadAnimals, super.bounds, plantsPerDay);
 
-        /* Lepiej chyba zrobić oddzielny set na te zdechłe animale here,
-        * bo w przeciwnym wypadku musimy z każdym wywołaniem growNewPlants iterować po wszystkich
-        * zdechłych szukając tych które w danym dniu. Chyba że te zdechłe są tylko po to, to można je
-        * wywalić stamtąd albo przenieść tu po prostu */
-
-        LifeGivingCorpsesPlantPositionsGenerator plantPositions = new LifeGivingCorpsesPlantPositionsGenerator(super.plants, lastEpochDeadAnimals, super.bounds, plantsPerDay);
         super.putPlants(plantPositions);
     }
-
 
     public void removeDeadAnimal(Animal animal, int dayOfDeath) {
         animals.get(animal.position()).remove(animal);
         super.deadAnimals.add(animal);
-        lastEpochDeadAnimals.add(animal);
+        recentlyDeadAnimals.add(animal);
         animal.setDayOfDeath(dayOfDeath);
         mapChanged("Animal " + animal + " died at " + animal.position());
     }

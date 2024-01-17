@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Animal implements WorldElement, Comparable<Animal> {
 
@@ -12,7 +14,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
     private int energy;
     private final ArrayList<Animal> children = new ArrayList<>();
     private final int dayOfBirth;
-    private int dayofDeath = -1;
+    private int dayOfDeath = -1;
     private int plantsEaten = 0;
     private static final MapDirection[] directions = MapDirection.values();
 
@@ -42,7 +44,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
     }
 
     public void setDayOfDeath(int day) {
-        this.dayofDeath = day;
+        this.dayOfDeath = day;
     }
 
     public boolean isDead() {
@@ -69,8 +71,8 @@ public class Animal implements WorldElement, Comparable<Animal> {
         return dayOfBirth;
     }
 
-    public int getDayofDeath() {
-        return dayofDeath;
+    public int getDayOfDeath() {
+        return dayOfDeath;
     }
 
     public Animal reproduce(Animal reproductionPartner, int day, int genomeLength,
@@ -154,4 +156,24 @@ public class Animal implements WorldElement, Comparable<Animal> {
         // Jeżeli liczba dzieci też jest taka sama, zwracamy losowy wynik
         return Math.random() < 0.5 ? -1 : 1;
     }
+
+    private List<Animal> getDescendants() {
+        return children.stream()
+                .flatMap(child -> Stream.concat(
+                        Stream.of(child), child.getDescendants().stream()))
+                .collect(Collectors.toList());
+    }
+
+    protected List<Animal> getAliveDescendants() {
+        return getDescendants().stream().filter(animal -> animal.getDayOfDeath() == -1).toList();
+    }
+
+    public int getDescendantsNumber() {
+        return getDescendants().size();
+    }
+
+    public int getAliveDescendantsNumber() {
+        return getAliveDescendants().size();
+    }
+
 }

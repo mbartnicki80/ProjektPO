@@ -59,6 +59,7 @@ public class Simulation implements Runnable {
             int day = 0;
             while (!aliveAnimals.isEmpty()) {
                 if (isRunning) {
+
                     removeDeadAnimals(day);
                     moveAnimals();
                     consumption();

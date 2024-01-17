@@ -63,8 +63,7 @@ public class Vector2d {
                 .flatMap(xValue -> Arrays.stream(yValues)
                         .mapToObj(yValue -> new Vector2d(xValue, yValue)))
                 .filter(vector2d -> boundary.lowerLeft().precedes(vector2d)
-                        && boundary.upperRight().follows(vector2d)
-                        && !vector2d.equals(this))
+                        && boundary.upperRight().follows(vector2d))
                 .collect(Collectors.toList());
     }
 

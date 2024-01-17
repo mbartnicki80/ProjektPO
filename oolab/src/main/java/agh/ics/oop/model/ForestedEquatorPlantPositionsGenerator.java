@@ -11,6 +11,8 @@ public class ForestedEquatorPlantPositionsGenerator extends AbstractPlantPositio
 
     public ForestedEquatorPlantPositionsGenerator(Map<Vector2d, Plant> plants, Boundary boundary, int grassCount) {
         super(plants, boundary, grassCount);
+
+        super.iterator = generateFinalPositions().iterator();
     }
 
 
