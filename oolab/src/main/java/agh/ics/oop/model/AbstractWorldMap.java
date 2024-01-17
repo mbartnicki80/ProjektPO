@@ -1,16 +1,36 @@
 package agh.ics.oop.model;
-import agh.ics.oop.MapVisualizer;
 
+import agh.ics.oop.MapVisualizer;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractWorldMap implements WorldMap {
     protected final UUID ID;
-    protected Map<Vector2d, WorldElement> animals = new HashMap<>();
-    private final List<MapChangeListener> observers = new ArrayList<>();
-    private final MapVisualizer mapVisualizer = new MapVisualizer(this);
+    protected final Boundary bounds;
+    protected final int plantEnergy;
+    protected final Map<Vector2d, Set<Animal>> animals = new ConcurrentHashMap<>();
+    protected final Map<Vector2d, Animal> deadAnimals = new HashMap<>();
+    protected final Map<Vector2d, Plant> plants = new ConcurrentHashMap<>();
+    protected final List<MapChangeListener> observers = new ArrayList<>();
+    protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
 
-    protected AbstractWorldMap() {
+    public AbstractWorldMap(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
+        this.plantEnergy = plantEnergy;
         this.ID = UUID.randomUUID();
+        placePlants(mapWidth, mapHeight, numOfPlants);
+        this.bounds = new Boundary(new Vector2d(0, 0), new Vector2d(mapWidth - 1, mapHeight - 1));
+
+        for (int i = 0; i < mapWidth; i++) {
+            for (int j = 0; j < mapHeight; j++){
+                Vector2d position = new Vector2d(i, j);
+                animals.put(position, new TreeSet<>());
+            }
+        }
+    }
+
+    @Override
+    public Boundary getCurrentBounds() {
+        return bounds;
     }
 
     public void registerObserver(MapChangeListener observer) {
@@ -29,46 +49,56 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        return !(objectAt(position) instanceof Animal);
+        return bounds.lowerLeft().precedes(position) && bounds.upperRight().follows(position);
     }
 
-    public void move(Animal animal, MoveDirection direction) {
-        Vector2d oldPosition = animal.getPosition();
-        MapDirection oldDirection = animal.getOrientation();
-        if (isOccupied(animal.getPosition())) {
+    public void move(Animal animal) {
 
-            animals.remove(animal.getPosition());
-            animal.move(direction, this);
-            animals.put(animal.getPosition(), animal);
+        Vector2d currentPosition = animal.position();
+        MapDirection currentOrientation = animal.getOrientation();
 
-            Vector2d newPosition = animal.getPosition();
-            MapDirection newDirection = animal.getOrientation();
+        MapDirection newOrientation = currentOrientation.rotate(animal.useCurrentAnimalGene());
+        Vector2d newPosition = currentPosition.add(newOrientation.toUnitVector());
 
-            if (!oldPosition.equals(newPosition))
-                mapChanged("Zwierze z pozycji " + oldPosition + " poruszylo sie na pozycje " + newPosition);
-            else if (!(oldDirection==newDirection))
-                mapChanged("Zwierze z pozycji " + newPosition + " zmienilo orientacje z " + oldDirection + " na " + newDirection);
+
+        /* Na razie brzydko ale żeby działalo */
+        if (newPosition.getXValue() < 0)
+            newPosition = new Vector2d(bounds.lowerLeft().getXValue(), newPosition.getYValue());
+
+        if (newPosition.getXValue() > bounds.upperRight().getXValue())
+            newPosition = new Vector2d(bounds.upperRight().getXValue(), newPosition.getYValue());
+
+        if (newPosition.getYValue() < 0) {
+            newPosition = new Vector2d(newPosition.getXValue(), bounds.lowerLeft().getYValue());
+            animal.setOrientation(animal.getOrientation().rotate(4));
         }
-    }
 
-    public void place(Animal animal) throws PositionAlreadyOccupiedException {
-        if (canMoveTo(animal.getPosition())) {
-            animals.put(animal.getPosition(), animal);
-            mapChanged("Zwierze zostalo umieszczone na pozycji: " + animal.getPosition());
+        if (newPosition.getYValue() > bounds.upperRight().getYValue()) {
+            newPosition = new Vector2d(newPosition.getXValue(), bounds.upperRight().getYValue());
+            animal.setOrientation(animal.getOrientation().rotate(4));
         }
-        else throw new PositionAlreadyOccupiedException(animal.getPosition());
+
+        animals.get(currentPosition).remove(animal);
+        animal.move(newPosition, newOrientation, this);
+        animal.useEnergy(1);
+        animals.get(newPosition).add(animal);
+
+        mapChanged("Animal was moved from " + currentPosition + " " + " to " + newPosition);
     }
 
-    public boolean isOccupied(Vector2d position) {
-        return animals.containsKey(position);
+    public void place(Animal animal) {
+        if (canMoveTo(animal.position()))
+            animals.get(animal.position()).add(animal);
     }
 
-    public WorldElement objectAt(Vector2d position) {
-        return animals.getOrDefault(position, null);
-    }
+    public Optional<WorldElement> objectAt(Vector2d position) {
 
-    public ArrayList<WorldElement> getElements() {
-        return new ArrayList<>(animals.values());
+        return Optional.ofNullable(animals.get(position))
+                .orElse(Collections.emptySet())
+                .stream()
+                .findFirst()
+                .map(animal -> (WorldElement) animal)
+                .or(() -> Optional.ofNullable((WorldElement) plants.get(position)));
     }
 
     @Override
@@ -80,5 +110,52 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public UUID getID() {
         return ID;
+    }
+
+    public void consumption() {
+        Collection<Vector2d> plantPositions = plants.keySet();
+
+        for (Vector2d plantPosition : plantPositions)
+            if (!animals.get(plantPosition).isEmpty()) {
+                Animal dominantAnimal = Collections.max(animals.get(plantPosition));
+                dominantAnimal.eatPlant(plants.get(plantPosition).getEnergy());
+                remove(plants.get(plantPosition));
+            }
+    }
+
+    @Override
+    public ArrayList<Animal> reproduceAnimals(int day, int genomeLength, int minimalMutations, int maximalMutations,
+                                              int reproductionReadyEnergy, int usedReproductionEnergy, boolean fullRandomnessGenome) {
+        ArrayList<Animal> newbornAnimals = new ArrayList<>();
+
+        animals.forEach((position, animalsAtPosition) -> {
+            if (animalsAtPosition.size() > 1) {
+                List<Animal> dominantAnimals = animalsAtPosition.stream().sorted().toList();
+                Animal dominantAnimal = dominantAnimals.get(0);
+                Animal reproductionPartner = dominantAnimals.get(1);
+                if (dominantAnimal.getEnergy() > reproductionReadyEnergy && reproductionPartner.getEnergy() > reproductionReadyEnergy) {
+                    Animal newbornAnimal = dominantAnimal.reproduce(reproductionPartner, day, genomeLength,
+                            minimalMutations, maximalMutations, usedReproductionEnergy * 2, fullRandomnessGenome);
+                    dominantAnimal.useEnergy(usedReproductionEnergy); reproductionPartner.useEnergy(usedReproductionEnergy);
+                    newbornAnimals.add(newbornAnimal);
+                    this.place(newbornAnimal);
+                    mapChanged("New animal has been born at " + newbornAnimal.position());
+                }
+            }
+        });
+        return newbornAnimals;
+    }
+
+    @Override
+    public void remove(WorldElement element) {
+        if (element instanceof Animal animal) {
+            animals.get(element.position()).remove(animal);
+            deadAnimals.put(animal.position(), animal);
+            mapChanged("Animal " + animal + " died at " + animal.position());
+        }
+        else if (element instanceof Plant plant) {
+            plants.remove(element.position());
+            mapChanged("Plant " + plant + " has been eaten at " + plant.position());
+        }
     }
 }

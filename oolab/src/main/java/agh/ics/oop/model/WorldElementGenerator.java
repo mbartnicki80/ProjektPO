@@ -26,7 +26,7 @@ public class WorldElementGenerator {
         return null;
     }
 
-    public ForestedEquators generateGrasses() {
+    public ForestedEquatorPlantPositionsGenerator generateGrasses() {
         return null;
     }
 

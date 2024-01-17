@@ -1,54 +1,79 @@
 package agh.ics.oop.model;
-
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
-public class Animal implements WorldElement {
+public class Animal implements WorldElement, Comparable<Animal> {
+
     private MapDirection orientation;
     private Vector2d position;
-    private Genome genome;
+    private final Genome genome;
     private int energy;
-    private int childrenCounter;
-    private int dayOfBirth;
+    private final ArrayList<Animal> children = new ArrayList<>();
+    private final int dayOfBirth;
+    private static final MapDirection[] directions = MapDirection.values();
 
     public Animal(Vector2d position, MapDirection orientation, int energy, int dayOfBirth, int genomeLength) {
         this.position = position;
         this.orientation = orientation;
         this.energy = energy;
-        this.childrenCounter = 0;
         this.dayOfBirth = dayOfBirth;
-        this.genome = new Genome(genomeLength);
+        this.genome = new FullRandomnessGenome(genomeLength);
     }
 
-    public Animal(Vector2d position) {
-        this.orientation = MapDirection.NORTH;
+    public Animal(Vector2d position, int energy, int dayOfBirth, Genome genome) {
         this.position = position;
-    }
-
-    public Animal() {
-        this(new Vector2d(2, 2));
+        Random random = new Random();
+        this.orientation = directions[random.nextInt(directions.length)];
+        this.energy = energy;
+        this.dayOfBirth = dayOfBirth;
+        this.genome = genome;
     }
 
     public MapDirection getOrientation() {
         return orientation;
     }
 
-    public Vector2d getPosition() {
-        return position;
+    public int useCurrentAnimalGene() {
+        return genome.useCurrentGene();
     }
 
-    public int getCurrentMove(int i) {
-        return genome.getCurrentGenome(i);
-    }
+    public boolean isDead() {return energy <= 0;}
 
     public int getEnergy() {
         return energy;
     }
-    public int getChildrenCount() {
-        return childrenCounter;
+
+    public List<Animal> getChildrenList() {
+        return Collections.unmodifiableList(children);
     }
+
+    public int getChildrenCount() {
+        return children.size();
+    }
+
     public int getDayOfBirth() {
         return dayOfBirth;
+    }
+
+    public Animal reproduce(Animal reproductionPartner, int day, int genomeLength,
+                            int minimalMutations, int maximalMutations, int newbornEnergy, boolean fullRandomnessGenome) {
+
+        Genome newbornGenome;
+        if (fullRandomnessGenome) {
+            newbornGenome = new FullRandomnessGenome(genomeLength, minimalMutations, maximalMutations,
+                                    this.getGenome(), reproductionPartner.getGenome(),
+                    (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
+        } else
+            newbornGenome = new LightCorrectionGenome(genomeLength, minimalMutations, maximalMutations,
+                    this.getGenome(), reproductionPartner.getGenome(),
+                    (double) this.getEnergy() / (this.getEnergy() + reproductionPartner.getEnergy()));
+
+        Animal newbornAnimal = new Animal(reproductionPartner.position(), newbornEnergy, day, newbornGenome);
+
+        this.addChild(newbornAnimal); reproductionPartner.addChild(newbornAnimal);
+        return newbornAnimal;
     }
 
     public void eatPlant(int plantEnergy) {
@@ -59,22 +84,57 @@ public class Animal implements WorldElement {
         return orientation.toString();
     }
 
-    public boolean isAt(Vector2d position) {
-        return this.position.equals(position);
+    @Override
+    public Vector2d position() {
+        return this.position;
     }
 
-
-    public void move(MoveDirection direction, MoveValidator moveValidator) {
-        switch (direction) {
-            case FORWARD, BACKWARD -> {
-                Vector2d newPosition = direction == MoveDirection.FORWARD ? position.add(orientation.toUnitVector()) : position.subtract(orientation.toUnitVector());
-                if (moveValidator.canMoveTo(newPosition))
-                    position = newPosition;
-            }
-            case RIGHT -> orientation = orientation.next();
-            case LEFT -> orientation = orientation.previous();
+    public void move(Vector2d newPosition, MapDirection newOrientation, MoveValidator moveValidator) {
+        if (moveValidator.canMoveTo(newPosition)) {
+            this.position = newPosition;
+            this.orientation = newOrientation;
         }
     }
 
+    public void useEnergy (int energyToUse) {
+        energy -= energyToUse;
+    }
 
+    public void addChild(Animal animal) { //tutaj ewentualnie przerobic, zeby przyjmowalo animala i dodawalo mu do listy
+        children.add(animal);
+    }
+
+    public Genome getGenome() {
+        return genome;
+    }
+
+    public void setOrientation(MapDirection orientation) {
+        this.orientation = orientation;
+    }
+
+    @Override
+    public int compareTo(Animal animal) {
+        if (animal==this)
+            return 0;
+        // Porównywanie energii
+        int energyComparison = Integer.compare(this.getEnergy(), animal.getEnergy());
+        if (energyComparison != 0) {
+            return energyComparison;
+        }
+
+        // Jeżeli energia jest taka sama, porównujemy wiek
+        int birthComparison = Integer.compare(this.getDayOfBirth(), animal.getDayOfBirth());
+        if (birthComparison != 0) {
+            return -birthComparison;
+        }
+
+        // Jeżeli wiek też jest taki sam, porównujemy liczbę dzieci
+        int childrenComparison = Integer.compare(this.getChildrenCount(), animal.getChildrenCount());
+        if (childrenComparison != 0) {
+            return childrenComparison;
+        }
+
+        // Jeżeli liczba dzieci też jest taka sama, zwracamy losowy wynik
+        return Math.random() < 0.5 ? -1 : 1;
+    }
 }

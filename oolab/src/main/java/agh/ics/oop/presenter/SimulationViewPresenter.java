@@ -1,5 +1,6 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,17 +9,28 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.Button;
+import java.util.*;
 
 public class SimulationViewPresenter implements MapChangeListener {
     @FXML
     private GridPane mapGrid;
     @FXML
     private Label movementsDescriptionLabel;
+    @FXML
+    private Button stopButton;
+    @FXML
+    private Button resumeButton;
+
     private WorldMap worldMap;
+    private Simulation simulation;
     private final static int CELL_SIZE = 30;
 
     public void setWorldMap(WorldMap map) {
         this.worldMap = map;
+    }
+    public void setSimulation(Simulation simulation) {
+        this.simulation = simulation;
     }
 
     private void clearGrid() {
@@ -68,10 +80,13 @@ public class SimulationViewPresenter implements MapChangeListener {
 
         for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
-                WorldElement worldElement = worldMap.objectAt(new Vector2d(i, j));
-                if (worldElement != null) {
-                    Label elemLabel = new Label(worldElement.toString());
-                    mapGrid.add(elemLabel, i - lowerLeftX + 1, upperRightY - j + 1);
+                Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
+                if (worldElement.isPresent()) {
+
+                    WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
+
+                    Label elemLabel = new Label(worldElement.get().toString());
+                    mapGrid.add(worldElementBox.getVBox(), i - lowerLeftX + 1, upperRightY - j + 1);
                     GridPane.setHalignment(elemLabel, HPos.CENTER);
                 }
             }
@@ -84,5 +99,17 @@ public class SimulationViewPresenter implements MapChangeListener {
             drawMap();
             movementsDescriptionLabel.setText(message);
         });
+    }
+
+    public void onSimulationStopClicked() {
+        stopButton.setVisible(false);
+        resumeButton.setVisible(true);
+        this.simulation.changeRunningMode();
+    }
+
+    public void onSimulationResumeClicked() {
+        stopButton.setVisible(true);
+        resumeButton.setVisible(false);
+        this.simulation.changeRunningMode();
     }
 }

@@ -5,11 +5,11 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ForestedEquators implements Iterable<Vector2d>, Iterator<Vector2d> {
+public class ForestedEquatorPlantPositionsGenerator implements Iterable<Vector2d>, Iterator<Vector2d> {
 
     private final Iterator<Vector2d> iterator;
 
-    public ForestedEquators(int width, int height, int grassCount) {
+    public ForestedEquatorPlantPositionsGenerator(int width, int height, int grassCount) {
 
         int equatorHeight = height / 2;
 

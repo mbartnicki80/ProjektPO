@@ -2,53 +2,120 @@ package agh.ics.oop;
 
 import agh.ics.oop.model.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Simulation implements Runnable {
 
-    private final List<Animal> animals;
-    private final List<MoveDirection> moves;
+    private final Set<Animal> aliveAnimals = new HashSet<>();
+    private final Map<Vector2d, Animal> deadAnimals = new HashMap<>();
     private final WorldMap worldMap;
+    private final int plantsPerDay;
+    private final int reproductionReadyEnergy;
+    private final int usedReproductionEnergy;
+    private final int minimalMutations;
+    private final int maximalMutations;
+    private final int genomeLength;
+    private final boolean fullRandomnessGenome;
+    private boolean isRunning = true;
     private static final MapDirection[] directions = MapDirection.values();
-    private static final Random random = new Random();
 
-    List<Animal> getAnimalsList() {
-        return Collections.unmodifiableList(animals);
-    }
+    public Simulation(WorldMap worldMap, int numberOfAnimals, int startAnimalEnergy,
+                      int plantsPerDay, int reproductionReadyEnergy, int usedReproductionEnergy,
+                      int minimalMutations, int maximalMutations, int genomeLength, boolean fullRandomnessGenome) {
 
-    public Simulation(List<Vector2d> positions, List<MoveDirection> moves, WorldMap worldMap, int energy, int genomeLength) {
-        this.moves = moves;
         this.worldMap = worldMap;
-        animals = new ArrayList<>();
+        this.plantsPerDay = plantsPerDay;
+        this.reproductionReadyEnergy = reproductionReadyEnergy;
+        this.usedReproductionEnergy = usedReproductionEnergy;
+        this.minimalMutations = minimalMutations;
+        this.maximalMutations = maximalMutations;
+        this.genomeLength = genomeLength;
+        this.fullRandomnessGenome = fullRandomnessGenome;
+
+        Random random = new Random();
+        Boundary boundary = worldMap.getCurrentBounds();
+
+        List<Vector2d> positions = Stream.generate(() ->
+                        new Vector2d(
+                                random.nextInt(boundary.upperRight().getXValue()),
+                                random.nextInt(boundary.upperRight().getYValue())
+                        )
+                )
+                .limit(numberOfAnimals)
+                .toList();
+
         for (Vector2d position : positions) {
-            int random_orientation = random.nextInt(8);
-            Animal newAnimal = new Animal(position, directions[random_orientation], energy, 0, genomeLength);
-            try {
-                worldMap.place(newAnimal);
-                animals.add(newAnimal);
-            } catch (PositionAlreadyOccupiedException e) {
-                System.out.println(e.getMessage());
-            }
+            MapDirection direction = directions[random.nextInt(directions.length)];
+
+            Animal animal = new Animal(position, direction, startAnimalEnergy, 0, genomeLength);
+            worldMap.place(animal);
+            aliveAnimals.add(animal);
         }
     }
 
     public void run() {
-        //1. Usunięcie martwych zwierzaków z mapy.
-        //2. Skręt i przemieszczenie każdego zwierzaka.
-        //3. Konsumpcja roślin, na których pola weszły zwierzaki.
-        //4. Rozmnażanie się najedzonych zwierzaków znajdujących się na tym samym polu.
-        //5. Wzrastanie nowych roślin na wybranych polach mapy.
-        int animalsSize = animals.size();
+
         try {
-        for (int i=0; i<moves.size(); i++) {
-            Animal animal = animals.get(i % animalsSize);
-            worldMap.move(animal, moves.get(i));
-            Thread.sleep(500);
-        }
+            int day = 0;
+            while (!aliveAnimals.isEmpty()) {
+                if (isRunning) {
+                    removeDeadAnimals();
+                    moveAnimals();
+                    consumption();
+                    reproduceAnimals(day);
+                    growNewPlants();
+
+                    day++;
+                    Thread.sleep(500);
+                }
+                else
+                    Thread.sleep(500);
+            }
         } catch (InterruptedException ignored) {}
     }
 
+    private void removeDeadAnimals() {
+        Iterator<Animal> iterator = aliveAnimals.iterator();
+
+        while (iterator.hasNext()) {
+            Animal animal = iterator.next();
+            if (animal.isDead()) {
+                deadAnimals.put(animal.position(), animal);
+                worldMap.remove(animal);
+                iterator.remove();
+            }
+        }
+    }
+
+    private void moveAnimals() {
+        for (Animal animal : aliveAnimals) {
+            worldMap.move(animal);
+        }
+    }
+
+    private void consumption() {
+        worldMap.consumption();
+    }
+
+    private void reproduceAnimals(int day) {
+        List<Animal> newbornAnimals = worldMap
+                .reproduceAnimals(
+                        day,
+                        genomeLength,
+                        minimalMutations,
+                        maximalMutations,
+                        reproductionReadyEnergy,
+                        usedReproductionEnergy,
+                        fullRandomnessGenome);
+        aliveAnimals.addAll(newbornAnimals);
+    }
+
+    private void growNewPlants() {
+        worldMap.growNewPlants(plantsPerDay);
+    }
+
+    public void changeRunningMode() {
+        this.isRunning = !this.isRunning;
+    }
 }

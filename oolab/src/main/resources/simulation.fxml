@@ -1,39 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 
-
-
+<?import javafx.scene.control.Label?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.ComboBox?>
+<?import java.lang.String?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
 
+    <fx:define>
+        <ToggleGroup fx:id="plantsToggleGroup"/>
+        <ToggleGroup fx:id="genomeToggleGroup"/>
+    </fx:define>
+
     <top>
-        <VBox spacing="10" alignment="CENTER">
-            <HBox spacing="10" alignment="CENTER">
-                <TextField fx:id="movementsListTextField"> </TextField>
-            </HBox>
-            <Label fx:id="movementsDescriptionLabel" textAlignment="CENTER"/>
-        </VBox>
+
+
+        <HBox spacing="10" alignment="CENTER">
+            <VBox spacing="10" alignment="CENTER">
+                <ComboBox fx:id="presetConfigurationsComboBox" onAction="#onPresetConfigurationSelected">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Konfiguracja 1"/>
+                            <String fx:value="Konfiguracja 2"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <Label text="Wysokość mapy"/>
+                <TextField fx:id="mapHeightTextField" promptText="Wysokość mapy"> </TextField>
+                <Label text="Szerokośćć mapy"/>
+                <TextField fx:id="mapWidthTextField" promptText="Szerokość mapy"> </TextField>
+                <Label text="Liczba roślin na start"/>
+                <TextField fx:id="numOfPlantsTextField" promptText="Liczba roślin na start"> </TextField>
+                <Label text="Energia dostarczana przez rośliny"/>
+                <TextField fx:id="plantEnergyTextField" promptText="Energia dostarczana przez rośliny"> </TextField>
+                <Label text="Liczba rosnących dziennie roślin"/>
+                <TextField fx:id="plantsPerDayTextField" promptText="Liczba rosnących dziennie roślin"> </TextField>
+
+                <HBox>
+                    <VBox spacing="10" alignment="CENTER">
+                        <RadioButton fx:id="forestedEquatorRadioButton" text="Zalesiony rownik" toggleGroup="$plantsToggleGroup"/>
+                        <RadioButton fx:id="lifeGivingCorpsesRadioButton" text="Zyciodajne truchla" toggleGroup="$plantsToggleGroup"/>
+                    </VBox>
+                    <VBox spacing="10" alignment="CENTER">
+                        <RadioButton fx:id="fullRandomnessRadioButton" text="Pelna losowosc" toggleGroup="$genomeToggleGroup"/>
+                        <RadioButton fx:id="lightCorrectionRadioButton" text="Lekka korekta" toggleGroup="$genomeToggleGroup"/>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+            <VBox spacing="10">
+                <Label text="Liczba zwierząt na start"/>
+                <TextField fx:id="numOfAnimalsTextField" promptText="Liczba zwierząt na start"> </TextField>
+                <Label text="Startowa energia zwierząt"/>
+                <TextField fx:id="animalEnergyTextField" promptText="Startowa energia zwierząt"> </TextField>
+                <Label text="Energia potrzebna do gotowości do rozmnażania"/>
+                <TextField fx:id="reproductionReadyEnergyTextField" promptText="Energia potrzebna do gotowości do rozmnażania"> </TextField>
+                <Label text="Energia zużywana podczas rozmnażania"/>
+                <TextField fx:id="usedReproductionEnergyTextField" promptText="Energia zużywana podczas rozmnażania"> </TextField>
+                <Label text="Minimalna liczba mutacji u potomków"/>
+                <TextField fx:id="minimalMutationsTextField" promptText="Minimalna liczba mutacji u potomków"> </TextField>
+                <Label text="Maksymalna liczba mutacji u potomków"/>
+                <TextField fx:id="maximalMutationsTextField" promptText="Maksymalna liczba mutacji u potomków"> </TextField>
+
+                <Label text="Długość genomu zwierząt"/>
+                <TextField fx:id="genomeLengthTextField" promptText="Długość genomu zwierząt"> </TextField>
+            </VBox>
+        </HBox>
     </top>
-
-    <center>
-        <VBox spacing="10" alignment="CENTER">
-            <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"/>
-            <Label fx:id="infoLabel" text="All animals will be living here!" textAlignment="CENTER"/>
-        </VBox>
-    </center>
-
     <bottom>
         <HBox spacing="10" alignment="CENTER">
             <Button text="Start" onAction="#onSimulationStartClicked"/>
         </HBox>
     </bottom>
+
 </BorderPane>

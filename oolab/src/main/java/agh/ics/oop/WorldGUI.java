@@ -2,7 +2,7 @@ package agh.ics.oop;
 
 import javafx.application.Application;
 
-public class World {
+public class WorldGUI {
 
     static void start() {
         System.out.println("System wystartowal");
