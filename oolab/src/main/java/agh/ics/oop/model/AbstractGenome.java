@@ -1,5 +1,6 @@
 package agh.ics.oop.model;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -91,6 +92,10 @@ public abstract class AbstractGenome implements Genome {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return Arrays.toString(this.genome);
+    }
 
     @Override
     public int hashCode() {

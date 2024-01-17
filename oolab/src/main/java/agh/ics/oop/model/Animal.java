@@ -1,5 +1,4 @@
 package agh.ics.oop.model;
-import agh.ics.oop.model.exceptions.PositionOutOfBoundsException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +24,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
         this.orientation = orientation;
         this.energy = energy;
         this.dayOfBirth = dayOfBirth;
-        this.genome = new FullRandomnessGenome(genomeLength);
+        this.genome = new BasicGenome(genomeLength);
     }
 
     public Animal(Vector2d position, int energy, int dayOfBirth, Genome genome) {
@@ -141,10 +140,6 @@ public class Animal implements WorldElement, Comparable<Animal> {
 
     public Genome getGenome() {
         return genome;
-    }
-
-    public void setOrientation(MapDirection orientation) {
-        this.orientation = orientation;
     }
 
     @Override

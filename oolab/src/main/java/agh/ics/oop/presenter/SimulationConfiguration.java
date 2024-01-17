@@ -63,7 +63,6 @@ public class SimulationConfiguration implements Serializable {
         } catch (IOException e) {
             System.out.println(new File(".").getAbsolutePath());
             System.out.println(e.getMessage());
-//            e.printStackTrace();
         }
     }
 
