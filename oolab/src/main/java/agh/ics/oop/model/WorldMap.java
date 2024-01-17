@@ -46,7 +46,7 @@ public interface WorldMap extends MoveValidator {
 
     void unregisterObserver(MapChangeListener observer);
 
-    void placePlants(int mapWidth, int mapHeight, int numOfPlants);
+    void placePlants(int numOfPlants);
 
     void growNewPlants(int plantsPerDay);
 }

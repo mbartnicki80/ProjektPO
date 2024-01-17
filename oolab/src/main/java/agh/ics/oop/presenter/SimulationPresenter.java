@@ -79,6 +79,7 @@ public class SimulationPresenter {
         BorderPane viewRoot = loader.load();
         SimulationViewPresenter presenter = loader.getController();
         Stage stage = new Stage();
+
         configureStage(stage, viewRoot);
 
         int mapHeight = Integer.parseInt(mapHeightTextField.getText());
@@ -87,10 +88,9 @@ public class SimulationPresenter {
         int plantEnergy = Integer.parseInt(plantEnergyTextField.getText());
         int plantsPerDay = Integer.parseInt(plantsPerDayTextField.getText());
 
-        boolean forestedEquator;
         RadioButton selectedPlantRadioButton = (RadioButton) plantsToggleGroup.getSelectedToggle();
         String plantRadioButtonValue = selectedPlantRadioButton.getText();
-        forestedEquator = plantRadioButtonValue.equals("Zalesiony rownik");
+        boolean forestedEquator = plantRadioButtonValue.equals("Zalesiony rownik");
 
         int numberOfAnimals = Integer.parseInt(numOfAnimalsTextField.getText());
         int animalEnergy = Integer.parseInt(animalEnergyTextField.getText());
@@ -100,10 +100,9 @@ public class SimulationPresenter {
         int maximalMutations = Integer.parseInt(maximalMutationsTextField.getText());
         int genomeLength = Integer.parseInt(genomeLengthTextField.getText());
 
-        boolean fullRandomnessGenome;
         RadioButton selectedGenomeRadioButton = (RadioButton) genomeToggleGroup.getSelectedToggle();
         String genomeRadioButtonValue = selectedGenomeRadioButton.getText();
-        fullRandomnessGenome = genomeRadioButtonValue.equals("Pelna losowosc");
+        boolean fullRandomnessGenome = genomeRadioButtonValue.equals("Pelna losowosc");
 
         WorldMap worldMap;
         if (forestedEquator) {
@@ -211,6 +210,7 @@ public class SimulationPresenter {
                 genomeLength,
                 fullRandomnessGenome
         );
+
         presetConfigurations.put(newConfiguration.toString(), newConfiguration);
         presetConfigurationsComboBox.getItems().add(newConfiguration);
         presetConfigurationsComboBox.getSelectionModel().select(newConfiguration);
@@ -222,6 +222,10 @@ public class SimulationPresenter {
         primaryStage.setTitle("Simulation app");
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+
+        /* TODO
+         *   po zamknięciu okienka symulacji powinna zostać przerywana,
+         *   a dalej consoleMapDisplay wypisuje ruchy itp, why????? */
         primaryStage.setOnCloseRequest(event -> primaryStage.close());
     }
 }

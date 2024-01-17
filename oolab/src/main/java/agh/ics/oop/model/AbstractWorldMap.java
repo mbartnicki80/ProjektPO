@@ -17,8 +17,9 @@ public abstract class AbstractWorldMap implements WorldMap {
     public AbstractWorldMap(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
         this.plantEnergy = plantEnergy;
         this.ID = UUID.randomUUID();
-        placePlants(mapWidth, mapHeight, numOfPlants);
         this.bounds = new Boundary(new Vector2d(0, 0), new Vector2d(mapWidth - 1, mapHeight - 1));
+
+        placePlants(numOfPlants);
 
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++){
@@ -158,4 +159,14 @@ public abstract class AbstractWorldMap implements WorldMap {
             mapChanged("Plant " + plant + " has been eaten at " + plant.position());
         }
     }
+
+
+    public void putPlants(Iterable<Vector2d> plantPositions) {
+        for (Vector2d position : plantPositions) {
+            Plant plant = new Plant(position, plantEnergy);
+            plants.put(position, plant);
+            mapChanged("New plant " + plant + " has grown at " + plant.position());
+        }
+    }
+
 }
