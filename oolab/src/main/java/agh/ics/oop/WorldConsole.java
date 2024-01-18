@@ -27,7 +27,8 @@ public class WorldConsole {
                 5,
                 10,
                 7,
-                true
+                true,
+                300
         );
 
         simulation.run();

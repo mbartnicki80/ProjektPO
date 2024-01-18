@@ -63,9 +63,10 @@
                 <TextField fx:id="minimalMutationsTextField" promptText="Minimalna liczba mutacji u potomków"> </TextField>
                 <Label text="Maksymalna liczba mutacji u potomków"/>
                 <TextField fx:id="maximalMutationsTextField" promptText="Maksymalna liczba mutacji u potomków"> </TextField>
-
                 <Label text="Długość genomu zwierząt"/>
                 <TextField fx:id="genomeLengthTextField" promptText="Długość genomu zwierząt"> </TextField>
+                <Label text="Prędkość symulacji [ms]"/>
+                <TextField fx:id="simulationSpeedTextField" promptText="Prędkość symulacji [ms]"> </TextField>
             </VBox>
         </HBox>
     </top>

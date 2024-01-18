@@ -20,63 +20,33 @@ import java.util.concurrent.Executors;
 
 public class SimulationPresenter {
     @FXML
-    private TextField mapHeightTextField;
+    private TextField mapHeightTextField, mapWidthTextField, numOfPlantsTextField, plantEnergyTextField,
+            plantsPerDayTextField, numOfAnimalsTextField, animalEnergyTextField, reproductionReadyEnergyTextField,
+            usedReproductionEnergyTextField, minimalMutationsTextField, maximalMutationsTextField, genomeLengthTextField,
+            simulationNameToSaveTextField, simulationSpeedTextField, CSVFileNameField;
     @FXML
-    private TextField mapWidthTextField;
-    @FXML
-    private TextField numOfPlantsTextField;
-    @FXML
-    private TextField plantEnergyTextField;
-    @FXML
-    private TextField plantsPerDayTextField;
-    @FXML
-    private TextField numOfAnimalsTextField;
-    @FXML
-    private TextField animalEnergyTextField;
-    @FXML
-    private TextField reproductionReadyEnergyTextField;
-    @FXML
-    private TextField usedReproductionEnergyTextField;
-    @FXML
-    private TextField minimalMutationsTextField;
-    @FXML
-    private TextField maximalMutationsTextField;
-    @FXML
-    private TextField genomeLengthTextField;
-    @FXML
-    private ToggleGroup plantsToggleGroup;
-    @FXML
-    private ToggleGroup genomeToggleGroup;
+    private ToggleGroup plantsToggleGroup, genomeToggleGroup;
     @FXML
     private ComboBox<SimulationConfiguration> presetConfigurationsComboBox;
     @FXML
-    private RadioButton forestedEquatorRadioButton;
-    @FXML
-    private RadioButton lifeGivingCorpsesRadioButton;
-    @FXML
-    private RadioButton fullRandomnessRadioButton;
-    @FXML
-    private RadioButton lightCorrectionRadioButton;
-    @FXML
-    private TextField simulationNameToSaveTextField;
+    private RadioButton forestedEquatorRadioButton, lifeGivingCorpsesRadioButton, fullRandomnessRadioButton,
+            lightCorrectionRadioButton;
     @FXML
     private CheckBox statsToCSVCheckBox;
-    @FXML
-    private TextField CSVFileNameField;
 
     private final Map<String, SimulationConfiguration> presetConfigurations = new HashMap<>();
     {
         SimulationConfiguration config1 = new SimulationConfiguration(10, 10, 5, 5, 2,
                 true, 2, 10, 5, 2, 5,
-                10, 7, true, "Konfiguracja 1");
+                10, 7, true, "Konfiguracja 1", 500);
         SimulationConfiguration config2 = new SimulationConfiguration(8, 9, 3, 2, 1,
                 false, 1, 15, 25, 23, 5,
-                10, 7, false, "Konfiguracja 2");
+                10, 7, false, "Konfiguracja 2", 500);
         presetConfigurations.put(config1.configurationName, config1);
         presetConfigurations.put(config2.configurationName, config2);
     }
     private final ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
-    //private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
+    private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public void initialize() {
@@ -118,9 +88,10 @@ public class SimulationPresenter {
         int minimalMutations = Integer.parseInt(minimalMutationsTextField.getText());
         int maximalMutations = Integer.parseInt(maximalMutationsTextField.getText());
         int genomeLength = Integer.parseInt(genomeLengthTextField.getText());
+        int speed = Integer.parseInt(simulationSpeedTextField.getText());
 
         validateInput(mapHeight, mapWidth, numberOfPlants, plantEnergy, plantsPerDay, numberOfAnimals, animalEnergy,
-                reproductionReadyEnergy, usedReproductionEnergy, minimalMutations, maximalMutations, genomeLength);
+                reproductionReadyEnergy, usedReproductionEnergy, minimalMutations, maximalMutations, genomeLength, speed);
 
         RadioButton selectedGenomeRadioButton = (RadioButton) genomeToggleGroup.getSelectedToggle();
         String genomeRadioButtonValue = selectedGenomeRadioButton.getText();
@@ -146,7 +117,7 @@ public class SimulationPresenter {
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
-
+        worldMap.registerObserver(fileMapDisplay);
         presenter.setWorldMap(worldMap);
         boolean isCheckBoxSelected = statsToCSVCheckBox.isSelected();
 
@@ -167,7 +138,8 @@ public class SimulationPresenter {
                 minimalMutations,
                 maximalMutations,
                 genomeLength,
-                fullRandomnessGenome
+                fullRandomnessGenome,
+                speed
         );
 
         presenter.setSimulation(simulation);
@@ -197,6 +169,7 @@ public class SimulationPresenter {
 
         fullRandomnessRadioButton.setSelected(presetConfigurations.get(selectedConfiguration).fullRandomnessGenome);
         lightCorrectionRadioButton.setSelected(!presetConfigurations.get(selectedConfiguration).fullRandomnessGenome);
+        simulationSpeedTextField.setText(String.valueOf(presetConfigurations.get(selectedConfiguration).speed));
         }
 
     public void onSaveConfigClicked() {
@@ -218,6 +191,7 @@ public class SimulationPresenter {
         int minimalMutations = Integer.parseInt(minimalMutationsTextField.getText());
         int maximalMutations = Integer.parseInt(maximalMutationsTextField.getText());
         int genomeLength = Integer.parseInt(genomeLengthTextField.getText());
+        int speed = Integer.parseInt(simulationSpeedTextField.getText());
 
         boolean fullRandomnessGenome;
         RadioButton selectedGenomeRadioButton = (RadioButton) genomeToggleGroup.getSelectedToggle();
@@ -244,7 +218,8 @@ public class SimulationPresenter {
                 maximalMutations,
                 genomeLength,
                 fullRandomnessGenome,
-                newPath
+                newPath,
+                speed
         );
 
         presetConfigurations.put(newConfiguration.configurationName, newConfiguration);
@@ -256,7 +231,7 @@ public class SimulationPresenter {
 
     private void validateInput(int mapHeight, int mapWidth, int numberOfPlants, int plantEnergy, int plantsPerDay, int numberOfAnimals,
                                int animalEnergy, int reproductionReadyEnergy, int usedReproductionEnergy,
-                               int minimalMutations, int maximalMutations, int genomeLength) {
+                               int minimalMutations, int maximalMutations, int genomeLength, int speed) {
 
         if (mapHeight < 1 || mapHeight > 23)
             throw new ArgumentsValidationException("Wysokosc mapy musi byc z przedzialu [1, 23]");
@@ -264,24 +239,26 @@ public class SimulationPresenter {
             throw new ArgumentsValidationException("Szerokosc mapy musi byc z przedzialu [1, 40]");
         if (numberOfPlants < 0 || numberOfPlants > mapHeight * mapWidth)
             throw new ArgumentsValidationException("Liczba roslin musi byc z przedzialu [0, pole mapy]");
-        if (plantEnergy < 0)
-            throw new ArgumentsValidationException("Energia rosliny musi byc nieujemna");
+        if (plantEnergy < 1)
+            throw new ArgumentsValidationException("Rosliny musza dostarczac energie");
         if (plantsPerDay < 0)
             throw new ArgumentsValidationException("Liczba roslin na dzien musi byc nieujemna");
-        if (numberOfAnimals < 0 || numberOfAnimals > mapHeight * mapWidth)
-            throw new ArgumentsValidationException("Liczba zwierzat musi byc z przedzialu [0, pole mapy]");
-        if (animalEnergy < 0)
-            throw new ArgumentsValidationException("Energia zwierzecia musi byc nieujemna");
+        if (numberOfAnimals < 1 || numberOfAnimals > mapHeight * mapWidth)
+            throw new ArgumentsValidationException("Liczba zwierzat musi byc z przedzialu [1, pole mapy]");
+        if (animalEnergy < 1)
+            throw new ArgumentsValidationException("Zwierzaki musza miec energie na start");
         if (reproductionReadyEnergy < 0)
             throw new ArgumentsValidationException("Energia potrzebna do rozmnazania musi byc nieujemna");
-        if (usedReproductionEnergy < 0)
-            throw new ArgumentsValidationException("Energia zuzywana podczas rozmnazania musi byc nieujemna");
+        if (usedReproductionEnergy < 1)
+            throw new ArgumentsValidationException("Nowe zwierze tez potrzebuje energii");
         if (minimalMutations < 0)
             throw new ArgumentsValidationException("Minimalna liczba mutacji musi byc nieujemna");
         if (maximalMutations < 0 || maximalMutations < minimalMutations)
             throw new ArgumentsValidationException("Maksymalna liczba mutacji musi byc nieujemna i wieksza lub rowna minimalnej liczby mutacji");
         if (genomeLength < 0)
             throw new ArgumentsValidationException("Dlugosc genomu musi byc nieujemna");
+        if (speed < 0)
+            throw new ArgumentsValidationException("Predkosc musi byc nieujemna");
 
     }
 
@@ -295,10 +272,6 @@ public class SimulationPresenter {
         primaryStage.setTitle("Simulation app");
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
-
-        /* TODO
-         *   po zamknięciu okienka symulacji powinna zostać przerywana,
-         *   a dalej consoleMapDisplay wypisuje ruchy itp, why????? */
         primaryStage.setOnCloseRequest(event -> primaryStage.close());
     }
 }
