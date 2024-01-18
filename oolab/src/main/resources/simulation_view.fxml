@@ -18,7 +18,7 @@
         </HBox>
     </center>
     <left>
-        <VBox spacing="10" minWidth="250" maxWidth="250">
+        <VBox spacing="10" minWidth="400" maxWidth="400">
             <HBox spacing="10">
                 <Button fx:id="showMapStatsButton" text="Pokaz statystyki mapy" onAction="#onShowMapStatsClicked"/>
                 <Button fx:id="hideMapStatsButton" text="Ukryj statystyki mapy" onAction="#onHideMapStatsClicked" visible="false"/>
@@ -27,15 +27,27 @@
         </VBox>
     </left>
     <right>
-        <VBox spacing="10" minWidth="250" maxWidth="250">
-            <Label fx:id="animalStatsLabel" visible="false" style="-fx-background-color: lightblue;"/>
-            <Button fx:id="hideAnimalStatsButton" text="Ukryj statystyki zwierzaka" onAction="#onHideAnimalStatsClicked" visible="false"/>
+        <VBox spacing="10" alignment="BOTTOM_RIGHT"  minWidth="400" maxWidth="400">
+            <VBox spacing="10" alignment="TOP_RIGHT">
+                <Label fx:id="animalStatsLabel" visible="false" style="-fx-background-color: lightblue;"/>
+                <Button fx:id="hideAnimalStatsButton" text="Ukryj statystyki zwierzaka" onAction="#onHideAnimalStatsClicked" visible="false"/>
+            </VBox>
+            <HBox spacing="10" alignment="TOP_RIGHT">
+                <VBox spacing="10">
+                    <Button fx:id="startHighlightingGenomeButton" text="Podswietl najpopularniejszy genom" onAction="#onStartHighlightingGenomeClicked"/>
+                    <Button fx:id="stopHighlightingGenomeButton" text="Zatrzymaj podswietlanie genomu" onAction="#onStopHighlightingGenomeClicked" visible="false"/>
+                </VBox>
+                <VBox spacing="10">
+                    <Button fx:id="startHighlightingPreferablePlantPositionsButton" text="Podswietl preferowane pozycje" onAction="#onStartHighlightingPositionsClicked"/>
+                    <Button fx:id="stopHighlightingPreferablePlantPositionsButton" text="Zatrzymaj podswietlanie pozycji" onAction="#onStopHighlightingPositionsClicked" visible="false"/>
+                </VBox>
+            </HBox>
         </VBox>
     </right>
     <bottom>
         <HBox spacing="10" alignment="CENTER">
-            <Button fx:id="stopButton" text="Stop" onAction="#onSimulationStopClicked"/>
-            <Button fx:id="resumeButton" text="Resume" onAction="#onSimulationResumeClicked" visible="false"/>
+            <Button fx:id="stopButton" text="Zatrzymaj symulacje" onAction="#onSimulationStopClicked"/>
+            <Button fx:id="resumeButton" text="Wznow symulacje" onAction="#onSimulationResumeClicked" visible="false"/>
         </HBox>
     </bottom>
 </BorderPane>

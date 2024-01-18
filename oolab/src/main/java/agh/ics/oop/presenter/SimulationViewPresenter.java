@@ -30,6 +30,15 @@ public class SimulationViewPresenter implements MapChangeListener {
     private Label animalStatsLabel;
     @FXML
     private Button hideAnimalStatsButton;
+    @FXML
+    private Button startHighlightingGenomeButton;
+    @FXML
+    private Button stopHighlightingGenomeButton;
+    @FXML
+    private Button startHighlightingPreferablePlantPositionsButton;
+    @FXML
+    private Button stopHighlightingPreferablePlantPositionsButton;
+
     private Animal currentFollowedAnimal = null;
     private WorldMap worldMap;
     private MapStats mapStats;
@@ -152,6 +161,26 @@ public class SimulationViewPresenter implements MapChangeListener {
         });
     }
 
+    public void onStartHighlightingGenomeClicked() {
+        startHighlightingGenomeButton.setVisible(false);
+        stopHighlightingGenomeButton.setVisible(true);
+    }
+
+    public void onStopHighlightingGenomeClicked() {
+        startHighlightingGenomeButton.setVisible(true);
+        stopHighlightingGenomeButton.setVisible(false);
+    }
+
+    public void onStartHighlightingPositionsClicked() {
+        startHighlightingPreferablePlantPositionsButton.setVisible(false);
+        stopHighlightingPreferablePlantPositionsButton.setVisible(true);
+    }
+
+    public void onStopHighlightingPositionsClicked() {
+        startHighlightingPreferablePlantPositionsButton.setVisible(true);
+        stopHighlightingPreferablePlantPositionsButton.setVisible(false);
+    }
+
     public void onSimulationStopClicked() {
         stopButton.setVisible(false);
         resumeButton.setVisible(true);
@@ -206,8 +235,8 @@ public class SimulationViewPresenter implements MapChangeListener {
                 "Liczba dzieci: " + animal.getChildrenCount() + "\n" +
                 "Liczba potomkow: " + animal.getDescendantsNumber() + "\n" +
                 "Liczba zywych potomkow: " + animal.getAliveDescendantsNumber() + "\n" +
-                (animal.isDead() ? "Zmarl dnia: " + animal.getDayOfDeath() + "\n" : "Zyje juz: " + (mapStats.getDay() - animal.getDayOfBirth()))
-                + ((mapStats.getDay() - animal.getDayOfBirth()) == 1 ? " dzien" : " dni");
+                (animal.isDead() ? "Zmarl dnia: " + animal.getDayOfDeath() : ("Zyje juz: " + (mapStats.getDay() - animal.getDayOfBirth()))
+                + ((mapStats.getDay() - animal.getDayOfBirth()) == 1 ? " dzien" : " dni"));
     }
 
     private void showMapStats() {

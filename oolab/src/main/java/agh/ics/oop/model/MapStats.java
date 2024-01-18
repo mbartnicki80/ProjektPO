@@ -8,6 +8,5 @@ public interface MapStats {
     int getAverageEnergy();
     int getAverageLifeLengthOfDeadAnimals();
     int getAverageChildrenCount();
-
     int getDay();
 }
