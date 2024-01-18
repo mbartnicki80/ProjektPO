@@ -5,8 +5,8 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 public abstract class AbstractGenome implements Genome {
-    protected int[] genome;
-    protected int currentGenomeIndex;
+    private final int[] genome;
+    private int currentGenomeIndex;
     protected final Random random = new Random();
 
     protected AbstractGenome(int genomeLength) {
