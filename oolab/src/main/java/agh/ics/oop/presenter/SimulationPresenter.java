@@ -1,6 +1,6 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.CSVDataDisplay;
+import agh.ics.oop.model.CSVDataDisplay;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import javafx.fxml.FXML;
@@ -61,6 +61,8 @@ public class SimulationPresenter {
     private TextField simulationNameToSaveTextField;
     @FXML
     private CheckBox statsToCSVCheckBox;
+    @FXML
+    private TextField CSVFileNameField;
 
     private final Map<String, SimulationConfiguration> presetConfigurations = new HashMap<>();
     {
@@ -148,8 +150,10 @@ public class SimulationPresenter {
         presenter.setWorldMap(worldMap);
         boolean isCheckBoxSelected = statsToCSVCheckBox.isSelected();
 
+
         if (isCheckBoxSelected) {
-            worldMap.registerObserver(new CSVDataDisplay());
+            String fileName = CSVFileNameField.getText();
+            worldMap.registerObserver(new CSVDataDisplay(fileName));
         }
 
 
@@ -279,6 +283,10 @@ public class SimulationPresenter {
         if (genomeLength < 0)
             throw new ArgumentsValidationException("Dlugosc genomu musi byc nieujemna");
 
+    }
+
+    public void onStatsToCSVCheckBoxClicked () {
+        CSVFileNameField.setVisible(statsToCSVCheckBox.isSelected());
     }
 
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {

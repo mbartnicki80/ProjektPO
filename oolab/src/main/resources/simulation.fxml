@@ -71,7 +71,7 @@
     </top>
     <right>
         <VBox alignment="BOTTOM_RIGHT">
-            <CheckBox fx:id="statsToCSVCheckBox" text="Statystyki do CSV"/>
+            <CheckBox fx:id="statsToCSVCheckBox" text="Statystyki do CSV" onAction="#onStatsToCSVCheckBoxClicked"/>
         </VBox>
     </right>
     <bottom>
@@ -80,6 +80,7 @@
                 <Button text="Start" onAction="#onSimulationStartClicked"/>
                 <Button text="Save Configuration" onAction="#onSaveConfigClicked"/>
             </HBox>
+            <TextField fx:id="CSVFileNameField" promptText="Nazwa pliku CSV do utworzenia" visible="false"> </TextField>
             <TextField fx:id="simulationNameToSaveTextField" promptText="Nazwa symulacji po zapisaniu"> </TextField>
         </VBox>
     </bottom>

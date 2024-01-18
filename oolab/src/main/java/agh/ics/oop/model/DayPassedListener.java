@@ -1,7 +1,4 @@
-package agh.ics.oop;
-
-import agh.ics.oop.model.MapWithStatistics;
-import agh.ics.oop.model.WorldMap;
+package agh.ics.oop.model;
 
 public interface DayPassedListener extends Listener {
 

@@ -1,7 +1,5 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.DayPassedListener;
-import agh.ics.oop.Listener;
 import agh.ics.oop.MapVisualizer;
 
 import java.util.*;

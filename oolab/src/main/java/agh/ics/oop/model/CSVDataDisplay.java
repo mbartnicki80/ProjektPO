@@ -1,18 +1,14 @@
-package agh.ics.oop;
-
-import agh.ics.oop.model.MapWithStatistics;
-import agh.ics.oop.model.WorldMap;
+package agh.ics.oop.model;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class CSVDataDisplay implements DayPassedListener {
 
-    private FileWriter fileWriter;
-    public CSVDataDisplay() {
-        try {
-            fileWriter = new FileWriter("data.csv");
-
+    private final String fileName;
+    public CSVDataDisplay(String fileName) {
+        this.fileName = fileName;
+        try (FileWriter fileWriter = new FileWriter(fileName + ".csv", true)){
             fileWriter.write("day,numberOfAnimals,numberOfPlants,freeSpace,dominantGenome,averageEnergy,averageLifeLengthOfDeadAnimals,averageChildrenCount,preferredPositions\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -20,18 +16,7 @@ public class CSVDataDisplay implements DayPassedListener {
     }
 
     public void dayUpdate(MapWithStatistics worldMapWithStats) {
-        System.out.println("ADSKJASHDHASKJDHAKSDHASKJDHASKJDHSA");
-        /*
-        * "Dzien: " + mapStats.getDay() + "\n" +
-                "Liczba zywych zwierzat: " + mapStats.getNumberOfAnimals() + "\n" +
-                "Liczba roslin: " + mapStats.getNumberOfPlants() + "\n" +
-                "Wolne miejsce: " + mapStats.getFreeSpace() + "\n" +
-                "Dominujacy genom: " + "\n" + mapStats.getDominantGenome() + "\n" +
-                "Srednia energia zwierzakow: " + mapStats.getAverageEnergy() + "\n" +
-                "Srednia dlugosc zycia martwych zwierzat: " + mapStats.getAverageLifeLengthOfDeadAnimals() + "\n" +
-                "Srednia liczba dzieci zyjacych zwierzakow: " + mapStats.getAverageChildrenCount(); */
-
-        try (FileWriter fileWriter = new FileWriter("data.csv", true)) {
+        try (FileWriter fileWriter = new FileWriter(fileName + ".csv", true)) {
                 fileWriter.write(
                         worldMapWithStats.getDay() + "," +
                                 worldMapWithStats.getNumberOfAnimals() + "," +
