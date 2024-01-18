@@ -4,8 +4,9 @@ public class FullRandomnessGenome extends BasicGenome {
 
     public FullRandomnessGenome(int genomeLength, int minimalMutations, int maximalMutations,
                                 Genome dominantAnimalGenome, Genome reproductionPartnerGenome, double dominantEnergyProportion) {
+
         super(genomeLength, minimalMutations, maximalMutations,
-        dominantAnimalGenome, reproductionPartnerGenome, dominantEnergyProportion);
+            dominantAnimalGenome, reproductionPartnerGenome, dominantEnergyProportion);
     }
 
     @Override
