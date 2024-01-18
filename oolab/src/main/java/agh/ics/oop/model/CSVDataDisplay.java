@@ -1,8 +1,11 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.annotations.Observer;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
+@Observer
 public class CSVDataDisplay implements DayPassedListener {
 
     private final String fileName;

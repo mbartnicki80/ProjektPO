@@ -2,6 +2,7 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
+import agh.ics.oop.model.annotations.Observer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -11,6 +12,7 @@ import javafx.scene.layout.*;
 import javafx.scene.control.Button;
 import java.util.*;
 
+@Observer
 public class SimulationViewPresenter implements MapChangeListener {
     @FXML
     private GridPane mapGrid;
