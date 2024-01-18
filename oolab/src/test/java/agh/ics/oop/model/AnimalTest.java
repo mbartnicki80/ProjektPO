@@ -1,6 +1,8 @@
 package agh.ics.oop.model;
 
-import static org.junit.jupiter.api.Assertions.*;
+import agh.ics.oop.model.map.ForestedEquator;
+import agh.ics.oop.model.map.Vector2d;
+import agh.ics.oop.model.map.WorldMap;
 
 class AnimalTest {
 

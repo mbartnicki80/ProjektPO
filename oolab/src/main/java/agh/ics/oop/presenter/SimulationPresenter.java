@@ -1,8 +1,12 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.model.CSVDataDisplay;
+import agh.ics.oop.model.map.WorldMap;
+import agh.ics.oop.model.observers.CSVDataDisplay;
 import agh.ics.oop.Simulation;
-import agh.ics.oop.model.*;
+import agh.ics.oop.model.map.ForestedEquator;
+import agh.ics.oop.model.map.LifeGivingCorpses;
+import agh.ics.oop.model.observers.ConsoleMapDisplay;
+import agh.ics.oop.model.observers.FileMapDisplay;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -1,5 +1,6 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.map.MapDirection;
 import javafx.scene.image.Image;
 
 import java.io.IOException;

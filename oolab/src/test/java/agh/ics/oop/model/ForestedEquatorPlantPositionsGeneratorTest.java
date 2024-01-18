@@ -1,5 +1,8 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.generators.ForestedEquatorPlantPositionsGenerator;
+import agh.ics.oop.model.map.Boundary;
+import agh.ics.oop.model.map.Vector2d;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

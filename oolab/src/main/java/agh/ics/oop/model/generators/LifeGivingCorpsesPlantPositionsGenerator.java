@@ -1,4 +1,9 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.generators;
+
+import agh.ics.oop.model.Animal;
+import agh.ics.oop.model.map.Boundary;
+import agh.ics.oop.model.Plant;
+import agh.ics.oop.model.map.Vector2d;
 
 import java.util.*;
 import java.util.stream.Collectors;

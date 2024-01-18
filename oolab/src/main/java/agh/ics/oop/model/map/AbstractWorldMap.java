@@ -1,6 +1,13 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
 
 import agh.ics.oop.MapVisualizer;
+import agh.ics.oop.model.Animal;
+import agh.ics.oop.model.AnimalFactory;
+import agh.ics.oop.model.Plant;
+import agh.ics.oop.model.WorldElement;
+import agh.ics.oop.model.genome.Genome;
+import agh.ics.oop.model.observers.Listener;
+import agh.ics.oop.model.observers.MapChangeListener;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

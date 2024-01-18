@@ -1,4 +1,5 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
+
 public enum MapDirection {
     NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST;
 

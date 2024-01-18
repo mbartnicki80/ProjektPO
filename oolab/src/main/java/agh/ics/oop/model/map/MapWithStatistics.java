@@ -1,4 +1,6 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
+
+import agh.ics.oop.model.genome.Genome;
 
 import java.util.List;
 

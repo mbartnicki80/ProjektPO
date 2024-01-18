@@ -1,6 +1,10 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.*;
+import agh.ics.oop.model.Animal;
+import agh.ics.oop.model.AnimalFactory;
+import agh.ics.oop.model.map.Boundary;
+import agh.ics.oop.model.map.Vector2d;
+import agh.ics.oop.model.map.WorldMap;
 
 import java.util.*;
 import java.util.concurrent.locks.Condition;

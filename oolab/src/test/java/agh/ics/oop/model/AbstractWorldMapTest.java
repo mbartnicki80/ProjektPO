@@ -1,5 +1,8 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.map.AbstractWorldMap;
+import agh.ics.oop.model.map.Vector2d;
+import agh.ics.oop.model.map.WorldMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
