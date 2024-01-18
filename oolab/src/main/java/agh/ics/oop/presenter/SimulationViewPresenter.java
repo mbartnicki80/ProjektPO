@@ -117,7 +117,6 @@ public class SimulationViewPresenter implements MapChangeListener {
         Boundary bounds = worldMap.getCurrentBounds();
         int lowerLeftX = bounds.lowerLeft().getXValue();
         int upperRightY = bounds.upperRight().getYValue();
-
         for (Vector2d position : worldMap.getPreferredPositions()) {
             StackPane cellContainer = new StackPane();
             Region background = new Region();
@@ -143,9 +142,9 @@ public class SimulationViewPresenter implements MapChangeListener {
             showAnimalStats(currentFollowedAnimal);
         if (showMapStatsActive)
             showMapStats();
-
         if (highlightPositions)
             drawPreferredPositions();
+
 
         for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
@@ -158,7 +157,7 @@ public class SimulationViewPresenter implements MapChangeListener {
                         if (higlightGenome && animal.getGenome()==mapStats.getDominantGenome()) {
                             StackPane cellContainer = new StackPane();
                             Region background = new Region();
-                            background.setStyle("-fx-background-color: #0000FF;");
+                            background.setStyle("-fx-background-color: #00FFFF;");
                             background.setMaxSize(CELL_SIZE-1, CELL_SIZE-1);
                             cellContainer.getChildren().add(background);
                             mapGrid.add(cellContainer, animal.position().getXValue() - lowerLeftX + 1, upperRightY - animal.position().getYValue() + 1);
@@ -184,6 +183,7 @@ public class SimulationViewPresenter implements MapChangeListener {
                 }
             }
         }
+
     }
 
     @Override
@@ -213,7 +213,6 @@ public class SimulationViewPresenter implements MapChangeListener {
     public void onStartHighlightingPositionsClicked() {
         if (simulation.getRunningStatus())
             return;
-
         startHighlightingPreferablePlantPositionsButton.setVisible(false);
         stopHighlightingPreferablePlantPositionsButton.setVisible(true);
         highlightPositions = true;
