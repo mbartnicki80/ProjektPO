@@ -61,15 +61,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        if (position.getXValue() < -1 || position.getXValue() > bounds.upperRight().getXValue() + 1)
-            return false;
-
-        if (position.getXValue() == -1)
-            position.add(new Vector2d(bounds.upperRight().getXValue() + 1, 0));
-        else if (position.getXValue() == bounds.upperRight().getXValue() + 1) {
-            position.subtract(new Vector2d(bounds.upperRight().getXValue() + 1, 0));
-        }
-        return position.yCoordinateInMap(bounds.upperRight());
+        return position.getXValue() >= -1 && position.getXValue() <= bounds.upperRight().getXValue() + 1 && position.yCoordinateInMap(bounds.upperRight());
     }
 
     @Override
@@ -78,7 +70,11 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
 
         if (animal.move(this)) {
             animals.get(previousPosition).remove(animal);
-
+            if (animal.position().getXValue() == -1)
+                animal.setPosition(new Vector2d(bounds.upperRight().getXValue(), animal.position().getYValue()));
+            else if (animal.position().getXValue() == bounds.upperRight().getXValue() + 1) {
+                animal.setPosition(new Vector2d(0, animal.position().getYValue()));
+            }
             //tutaj move
             animals.get(animal.position()).add(animal);
 

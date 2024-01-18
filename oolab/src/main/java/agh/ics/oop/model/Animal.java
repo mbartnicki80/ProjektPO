@@ -114,6 +114,10 @@ public class Animal implements WorldElement, Comparable<Animal> {
         children.add(animal);
     }
 
+    public void setPosition (Vector2d position) {
+        this.position = position;
+    }
+
     public Genome getGenome() {
         return genome;
     }
