@@ -5,7 +5,7 @@ import agh.ics.oop.MapVisualizer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractWorldMap implements WorldMap, MapStats {
+public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValidator {
     protected final UUID ID;
     protected final Boundary bounds;
     protected final int plantEnergy;
@@ -15,7 +15,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
     protected final List<MapChangeListener> observers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
     private final List<List<Vector2d>> positions = new ArrayList<>();
-    private int day = 0;
+    protected int day = 0;
     private AnimalFactory animalFactory;
 
     public AbstractWorldMap(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
@@ -61,7 +61,15 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        return bounds.lowerLeft().precedes(position) && bounds.upperRight().follows(position);
+        if (position.getXValue() < -1 || position.getXValue() > bounds.upperRight().getXValue() + 1)
+            return false;
+
+        if (position.getXValue() == -1)
+            position.add(new Vector2d(bounds.upperRight().getXValue() + 1, 0));
+        else if (position.getXValue() == bounds.upperRight().getXValue() + 1) {
+            position.subtract(new Vector2d(bounds.upperRight().getXValue() + 1, 0));
+        }
+        return position.yCoordinateInMap(bounds.upperRight());
     }
 
     @Override
@@ -70,6 +78,8 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
 
         if (animal.move(this)) {
             animals.get(previousPosition).remove(animal);
+
+            //tutaj move
             animals.get(animal.position()).add(animal);
 
             mapChanged("Animal " + animal + " moved from " + previousPosition + " to " + animal.position());

@@ -156,7 +156,9 @@ public class SimulationPresenter {
         );
 
         presenter.setSimulation(simulation);
-        executorService.submit(simulation);
+        Thread thread = new Thread(simulation);
+        thread.start();
+        //executorService.submit(simulation);
         stage.show();
     }
 

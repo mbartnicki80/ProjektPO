@@ -47,25 +47,23 @@ public class Simulation implements Runnable {
     public void run() {
 
         try {
-            int day = 0;
             while (!aliveAnimals.isEmpty()) {
                 if (isRunning) {
 
                     removeDeadAnimals();
+                    Thread.sleep(300);
                     moveAnimals();
+                    Thread.sleep(300);
                     consumption();
+                    Thread.sleep(300);
                     reproduceAnimals();
+                    Thread.sleep(300);
                     growNewPlants();
-
-                    if (this.worldMap instanceof LifeGivingCorpses lifeGivingCorpses) {
-                        lifeGivingCorpses.update(day);
-                    }
                     worldMap.dayUpdate();
-                    day++;
-                    Thread.sleep(500);
+                    Thread.sleep(300);
                 }
                 else
-                    Thread.sleep(500);
+                    Thread.sleep(300);
             }
         } catch (InterruptedException ignored) {}
     }

@@ -3,7 +3,7 @@ package agh.ics.oop.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LifeGivingCorpses extends AbstractWorldMap implements Updatable {
+public class LifeGivingCorpses extends AbstractWorldMap {
 
     Set<Animal> recentlyDeadAnimals = new HashSet<>();
 
@@ -23,21 +23,21 @@ public class LifeGivingCorpses extends AbstractWorldMap implements Updatable {
 
     @Override
     public void growNewPlants(int plantsPerDay) {
+        updateCorpses();
         LifeGivingCorpsesPlantPositionsGenerator plantPositions = new LifeGivingCorpsesPlantPositionsGenerator(super.plants, recentlyDeadAnimals, super.bounds, plantsPerDay);
-
         super.putPlants(plantPositions);
     }
 
-    public void removeDeadAnimal(Animal animal, int dayOfDeath) {
+    public void removeDeadAnimal(Animal animal) {
         animals.get(animal.position()).remove(animal);
         super.deadAnimals.add(animal);
         recentlyDeadAnimals.add(animal);
-        animal.setDayOfDeath(dayOfDeath);
+        animal.setDayOfDeath(day);
         mapChanged("Animal " + animal + " died at " + animal.position());
     }
 
-    public void update(int currentDay) {
-        recentlyDeadAnimals.removeIf(animal -> currentDay - animal.getDayOfDeath() > 3);
+    public void updateCorpses() {
+        recentlyDeadAnimals.removeIf(animal -> day - animal.getDayOfDeath() > 3);
     }
 
 }
