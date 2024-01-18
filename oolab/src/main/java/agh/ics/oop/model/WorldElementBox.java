@@ -14,8 +14,8 @@ public class WorldElementBox {
         ImageView imageView;
         if (worldElement instanceof Plant) {
             imageView = new ImageView(MAP_IMAGE.getImage("#"));
-            imageView.setFitHeight(50);
-            imageView.setFitWidth(50);
+            imageView.setFitHeight(39);
+            imageView.setFitWidth(39);
         }
         else if (worldElement instanceof Animal) {
             imageView = new ImageView(MAP_IMAGE.getImage(worldElement.toString()));
