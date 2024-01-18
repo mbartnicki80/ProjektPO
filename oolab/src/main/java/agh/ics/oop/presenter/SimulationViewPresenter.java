@@ -206,30 +206,24 @@ public class SimulationViewPresenter implements MapChangeListener {
                 "Liczba dzieci: " + animal.getChildrenCount() + "\n" +
                 "Liczba potomkow: " + animal.getDescendantsNumber() + "\n" +
                 "Liczba zywych potomkow: " + animal.getAliveDescendantsNumber() + "\n" +
-                (animal.isDead() ? "Zmarl dnia: " + animal.getDayOfDeath() + "\n" : "Zyje juz: " + (mapStats.getDay() - animal.getDayOfBirth()) + "\n");
+                (animal.isDead() ? "Zmarl dnia: " + animal.getDayOfDeath() + "\n" : "Zyje juz: " + (mapStats.getDay() - animal.getDayOfBirth()))
+                + ((mapStats.getDay() - animal.getDayOfBirth()) == 1 ? " dzien" : " dni");
     }
 
     private void showMapStats() {
-        int day = mapStats.getDay();
-        int animalsCount = mapStats.getNumberOfAnimals();
-        int plantsCount = mapStats.getNumberOfPlants();
-        int freeSpace = mapStats.getFreeSpace();
-        Genome dominantGenome = mapStats.getDominantGenome();
-        int averageEnergy = mapStats.getAverageEnergy();
-        int averageLifeLengthOfDeadAnimals = mapStats.getAverageLifeLengthOfDeadAnimals();
-        int averageChildrenCount = mapStats.getAverageChildrenCount();
-
-        String statsText = "Day: " + day + "\n" +
-                "Animals Count: " + animalsCount + "\n" +
-                "Plants Count: " + plantsCount + "\n" +
-                "Free Space: " + freeSpace + "\n" +
-                "Dominant Genome: " + "\n" + dominantGenome + "\n" +
-                "Average Energy: " + averageEnergy + "\n" +
-                "Average Life Length of Dead Animals: " + averageLifeLengthOfDeadAnimals + "\n" +
-                "Average Children Count: " + averageChildrenCount;
-
-
-        mapStatsLabel.setText(statsText);
+        mapStatsLabel.setText(getMapStats());
     }
+
+    private String getMapStats() {
+        return "Dzien: " + mapStats.getDay() + "\n" +
+                "Liczba zywych zwierzat: " + mapStats.getNumberOfAnimals() + "\n" +
+                "Liczba roslin: " + mapStats.getNumberOfPlants() + "\n" +
+                "Wolne miejsce: " + mapStats.getFreeSpace() + "\n" +
+                "Dominujacy genom: " + "\n" + mapStats.getDominantGenome() + "\n" +
+                "Srednia energia zwierzakow: " + mapStats.getAverageEnergy() + "\n" +
+                "Srednia dlugosc zycia martwych zwierzat: " + mapStats.getAverageLifeLengthOfDeadAnimals() + "\n" +
+                "Srednia liczba dzieci zyjacych zwierzakow: " + mapStats.getAverageChildrenCount();
+    }
+
 
 }
