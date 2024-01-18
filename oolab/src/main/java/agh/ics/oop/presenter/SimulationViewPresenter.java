@@ -155,8 +155,14 @@ public class SimulationViewPresenter implements MapChangeListener {
                     WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
 
                     if (worldElement.get() instanceof Animal animal) {
-                        if (higlightGenome && animal.getGenome()==mapStats.getDominantGenome())
-                            worldElementBox.getVBox().setStyle("-fx-background-color: #FFFFFF;");
+                        if (higlightGenome && animal.getGenome()==mapStats.getDominantGenome()) {
+                            StackPane cellContainer = new StackPane();
+                            Region background = new Region();
+                            background.setStyle("-fx-background-color: #0000FF;");
+                            background.setMaxSize(CELL_SIZE-1, CELL_SIZE-1);
+                            cellContainer.getChildren().add(background);
+                            mapGrid.add(cellContainer, animal.position().getXValue() - lowerLeftX + 1, upperRightY - animal.position().getYValue() + 1);
+                        }
                         Label elemLabel = new Label(Integer.toString(animal.getEnergy()));
                         mapGrid.add(elemLabel, i - lowerLeftX + 1, upperRightY - j + 1);
                         GridPane.setHalignment(elemLabel, HPos.CENTER);
@@ -224,7 +230,7 @@ public class SimulationViewPresenter implements MapChangeListener {
     public void onSimulationStopClicked() {
         stopButton.setVisible(false);
         resumeButton.setVisible(true);
-        this.simulation.changeRunningMode();
+        this.simulation.pauseSimulation();
         startHighlightingGenomeButton.setVisible(true);
         startHighlightingPreferablePlantPositionsButton.setVisible(true);
     }
@@ -232,7 +238,7 @@ public class SimulationViewPresenter implements MapChangeListener {
     public void onSimulationResumeClicked() {
         stopButton.setVisible(true);
         resumeButton.setVisible(false);
-        this.simulation.changeRunningMode();
+        this.simulation.resumeSimulation();
         startHighlightingGenomeButton.setVisible(true);
         stopHighlightingGenomeButton.setVisible(false);
         startHighlightingPreferablePlantPositionsButton.setVisible(true);

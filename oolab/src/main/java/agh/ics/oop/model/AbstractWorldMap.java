@@ -31,7 +31,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapWithStatistics, M
             for (int j = 0; j < mapHeight; j++){
                 row.add(new Vector2d(i, j));
                 Vector2d position = new Vector2d(i, j);
-                animals.put(position, Collections.synchronizedSortedSet(new TreeSet<>()));
+                animals.put(position, Collections.synchronizedSet(new HashSet<>()));
             }
             positions.add(row);
         }

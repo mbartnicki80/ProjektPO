@@ -3,6 +3,9 @@ package agh.ics.oop;
 import agh.ics.oop.model.*;
 
 import java.util.*;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 public class Simulation implements Runnable {
@@ -13,17 +16,20 @@ public class Simulation implements Runnable {
     private final int reproductionReadyEnergy;
     private final int usedReproductionEnergy;
     private boolean isRunning = true;
+    private final int speed;
+    private final Lock lock = new ReentrantLock();
+    private final Condition pauseCondition = lock.newCondition();
 
-    List<DayPassedListener> dayObservers = new ArrayList<>();
 
     public Simulation(WorldMap worldMap, int numberOfAnimals, int startAnimalEnergy,
                       int plantsPerDay, int reproductionReadyEnergy, int usedReproductionEnergy,
-                      int minimalMutations, int maximalMutations, int genomeLength, boolean fullRandomnessGenome) {
+                      int minimalMutations, int maximalMutations, int genomeLength, boolean fullRandomnessGenome, int speed) {
 
         this.worldMap = worldMap;
         this.plantsPerDay = plantsPerDay;
         this.reproductionReadyEnergy = reproductionReadyEnergy;
         this.usedReproductionEnergy = usedReproductionEnergy;
+        this.speed = speed;
         AnimalFactory animalFactory = new AnimalFactory(genomeLength, minimalMutations, maximalMutations, fullRandomnessGenome);
         worldMap.setAnimalFactory(animalFactory);
         Random random = new Random();
@@ -45,34 +51,28 @@ public class Simulation implements Runnable {
         }
     }
 
-    public void registerDayObserver(DayPassedListener observer) {
-        dayObservers.add(observer);
-    }
-
-    public void unregisterDayObserver(DayPassedListener observer) {
-        dayObservers.remove(observer);
-    }
-
     public void run() {
 
         try {
             while (!aliveAnimals.isEmpty()) {
-                if (isRunning) {
-
-                    removeDeadAnimals();
-                    Thread.sleep(300);
-                    moveAnimals();
-                    Thread.sleep(300);
-                    consumption();
-                    Thread.sleep(300);
-                    reproduceAnimals();
-                    Thread.sleep(300);
-                    growNewPlants();
-                    worldMap.dayUpdate();
-                    Thread.sleep(300);
+                lock.lock();
+                try {
+                    while(!isRunning) {
+                        pauseCondition.await();
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                } finally {
+                    lock.unlock();
                 }
-                else
-                    Thread.sleep(300);
+                removeDeadAnimals();
+                moveAnimals();
+                consumption();
+                reproduceAnimals();
+                growNewPlants();
+                worldMap.dayUpdate();
+                Thread.sleep(speed);
             }
         } catch (InterruptedException ignored) {}
     }
@@ -80,13 +80,14 @@ public class Simulation implements Runnable {
     private void removeDeadAnimals() {
         Iterator<Animal> iterator = aliveAnimals.iterator();
 
-        while (iterator.hasNext()) {
-            Animal animal = iterator.next();
-            if (animal.isDead()) {
-                worldMap.removeDeadAnimal(animal);
-                iterator.remove();
-            }
-        }
+        iterator.forEachRemaining(
+                animal -> {
+                    if (animal.isDead()) {
+                        worldMap.removeDeadAnimal(animal);
+                        iterator.remove();
+                    }
+                }
+        );
     }
 
     private void moveAnimals() {
@@ -109,11 +110,23 @@ public class Simulation implements Runnable {
         worldMap.growNewPlants(plantsPerDay);
     }
 
-    public void changeRunningMode() {
-        this.isRunning = !this.isRunning;
-    }
-
     public boolean getRunningStatus() {
         return this.isRunning;
+    }
+
+    public void pauseSimulation() {
+        lock.lock();
+        isRunning = false;
+        lock.unlock();
+    }
+
+    public void resumeSimulation() {
+        lock.lock();
+        try {
+            isRunning = true;
+            pauseCondition.signalAll();
+        } finally {
+            lock.unlock();
+        }
     }
 }

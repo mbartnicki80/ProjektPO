@@ -76,7 +76,7 @@ public class SimulationPresenter {
         presetConfigurations.put(config2.configurationName, config2);
     }
     private final ConsoleMapDisplay consoleMapDisplay = new ConsoleMapDisplay();
-    //private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
+    private final FileMapDisplay fileMapDisplay = new FileMapDisplay();
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public void initialize() {
@@ -146,7 +146,7 @@ public class SimulationPresenter {
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
-
+        //worldMap.registerObserver(fileMapDisplay);
         presenter.setWorldMap(worldMap);
         boolean isCheckBoxSelected = statsToCSVCheckBox.isSelected();
 
@@ -167,7 +167,8 @@ public class SimulationPresenter {
                 minimalMutations,
                 maximalMutations,
                 genomeLength,
-                fullRandomnessGenome
+                fullRandomnessGenome,
+                300
         );
 
         presenter.setSimulation(simulation);
@@ -264,18 +265,18 @@ public class SimulationPresenter {
             throw new ArgumentsValidationException("Szerokosc mapy musi byc z przedzialu [1, 40]");
         if (numberOfPlants < 0 || numberOfPlants > mapHeight * mapWidth)
             throw new ArgumentsValidationException("Liczba roslin musi byc z przedzialu [0, pole mapy]");
-        if (plantEnergy < 0)
-            throw new ArgumentsValidationException("Energia rosliny musi byc nieujemna");
+        if (plantEnergy < 1)
+            throw new ArgumentsValidationException("Rosliny musza dostarczac energie");
         if (plantsPerDay < 0)
             throw new ArgumentsValidationException("Liczba roslin na dzien musi byc nieujemna");
-        if (numberOfAnimals < 0 || numberOfAnimals > mapHeight * mapWidth)
-            throw new ArgumentsValidationException("Liczba zwierzat musi byc z przedzialu [0, pole mapy]");
-        if (animalEnergy < 0)
-            throw new ArgumentsValidationException("Energia zwierzecia musi byc nieujemna");
+        if (numberOfAnimals < 1 || numberOfAnimals > mapHeight * mapWidth)
+            throw new ArgumentsValidationException("Liczba zwierzat musi byc z przedzialu [1, pole mapy]");
+        if (animalEnergy < 1)
+            throw new ArgumentsValidationException("Zwierzaki musza miec energie na start");
         if (reproductionReadyEnergy < 0)
             throw new ArgumentsValidationException("Energia potrzebna do rozmnazania musi byc nieujemna");
-        if (usedReproductionEnergy < 0)
-            throw new ArgumentsValidationException("Energia zuzywana podczas rozmnazania musi byc nieujemna");
+        if (usedReproductionEnergy < 1)
+            throw new ArgumentsValidationException("Nowe zwierze tez potrzebuje energii");
         if (minimalMutations < 0)
             throw new ArgumentsValidationException("Minimalna liczba mutacji musi byc nieujemna");
         if (maximalMutations < 0 || maximalMutations < minimalMutations)
@@ -295,10 +296,6 @@ public class SimulationPresenter {
         primaryStage.setTitle("Simulation app");
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
-
-        /* TODO
-         *   po zamknięciu okienka symulacji powinna zostać przerywana,
-         *   a dalej consoleMapDisplay wypisuje ruchy itp, why????? */
         primaryStage.setOnCloseRequest(event -> primaryStage.close());
     }
 }
