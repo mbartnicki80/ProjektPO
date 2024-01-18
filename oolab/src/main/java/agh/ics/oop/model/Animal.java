@@ -35,10 +35,6 @@ public class Animal implements WorldElement, Comparable<Animal> {
         this.genome = genome;
     }
 
-    public MapDirection getOrientation() {
-        return orientation;
-    }
-
     public int useCurrentAnimalGene() {
         return genome.useCurrentGene();
     }
@@ -55,7 +51,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
         return energy;
     }
 
-    public int getPlantsEaten() {
+    public int getPlantsEatenCount() {
         return plantsEaten;
     }
 
@@ -112,6 +108,10 @@ public class Animal implements WorldElement, Comparable<Animal> {
 
     public void addChild(Animal animal) { //tutaj ewentualnie przerobic, zeby przyjmowalo animala i dodawalo mu do listy
         children.add(animal);
+    }
+
+    public void setPosition (Vector2d position) {
+        this.position = position;
     }
 
     public Genome getGenome() {

@@ -5,10 +5,9 @@ import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.control.Button;
 import java.util.*;
 
@@ -22,24 +21,41 @@ public class SimulationViewPresenter implements MapChangeListener {
     @FXML
     private Button resumeButton;
     @FXML
-    private Button showStatsButton;
+    private Button showMapStatsButton;
     @FXML
-    private Button hideStatsButton;
+    private Button hideMapStatsButton;
     @FXML
-    private Label statsLabel;
+    private Label mapStatsLabel;
+    @FXML
+    private Label animalStatsLabel;
+    @FXML
+    private Button hideAnimalStatsButton;
+    @FXML
+    private Button startHighlightingGenomeButton;
+    @FXML
+    private Button stopHighlightingGenomeButton;
+    @FXML
+    private Button startHighlightingPreferablePlantPositionsButton;
+    @FXML
+    private Button stopHighlightingPreferablePlantPositionsButton;
+
+    private Animal currentFollowedAnimal = null;
     private WorldMap worldMap;
-    private MapStats mapStats;
+    private MapWithStatistics mapStats;
     private Simulation simulation;
-    private boolean showStatsActive = false;
-    private final static int CELL_SIZE = 30;
+    private boolean highlightPositions = false;
+    private boolean higlightGenome = false;
+    private boolean showMapStatsActive = false;
+    private final static int CELL_SIZE = 40;
 
     public void setWorldMap(WorldMap map) {
         this.worldMap = map;
-        this.mapStats = (MapStats) map;
+        this.mapStats = map;
     }
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
     }
+
 
     private void clearGrid() {
         mapGrid.getChildren().retainAll(mapGrid.getChildren().get(0)); // hack to retain visible grid lines
@@ -77,9 +93,8 @@ public class SimulationViewPresenter implements MapChangeListener {
         GridPane.setHalignment(label, HPos.CENTER);
         mapGrid.add(label, 0, 0);
     }
-    private void drawMap() {
-        clearGrid();
-        drawHeaders();
+
+    private void drawBackround() {
         Boundary bounds = worldMap.getCurrentBounds();
         int lowerLeftX = bounds.lowerLeft().getXValue();
         int lowerLeftY = bounds.lowerLeft().getYValue();
@@ -88,16 +103,78 @@ public class SimulationViewPresenter implements MapChangeListener {
 
         for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
-                Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
-                if (worldElement.isPresent()) {
+                StackPane cellContainer = new StackPane();
+                Region background = new Region();
+                background.setStyle("-fx-background-color: #D2B48C;");
+                background.setMaxSize(CELL_SIZE-1, CELL_SIZE-1);
+                cellContainer.getChildren().add(background);
+                mapGrid.add(cellContainer, i - lowerLeftX + 1, upperRightY - j + 1);
+            }
+        }
+    }
 
-                    if (showStatsActive)
-                        showStats();
+    private void drawPreferredPositions() {
+        Boundary bounds = worldMap.getCurrentBounds();
+        int lowerLeftX = bounds.lowerLeft().getXValue();
+        int upperRightY = bounds.upperRight().getYValue();
+
+        for (Vector2d position : worldMap.getPreferredPositions()) {
+            StackPane cellContainer = new StackPane();
+            Region background = new Region();
+            background.setStyle("-fx-background-color: #00FF00;");
+            background.setMaxSize(CELL_SIZE-1, CELL_SIZE-1);
+            cellContainer.getChildren().add(background);
+            mapGrid.add(cellContainer, position.getXValue() - lowerLeftX + 1, upperRightY - position.getYValue() + 1);
+        }
+    }
+
+    private void drawMap() {
+        clearGrid();
+        drawHeaders();
+        drawBackround();
+
+        Boundary bounds = worldMap.getCurrentBounds();
+        int lowerLeftX = bounds.lowerLeft().getXValue();
+        int lowerLeftY = bounds.lowerLeft().getYValue();
+        int upperRightX = bounds.upperRight().getXValue();
+        int upperRightY = bounds.upperRight().getYValue();
+
+        if (currentFollowedAnimal != null)
+            showAnimalStats(currentFollowedAnimal);
+        if (showMapStatsActive)
+            showMapStats();
+
+        if (highlightPositions)
+            drawPreferredPositions();
+
+        for (int i = lowerLeftX; i <= upperRightX; i++) {
+            for (int j = lowerLeftY; j <= upperRightY; j++) {
+                Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
+
+                if (worldElement.isPresent()) {
                     WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
 
-                    Label elemLabel = new Label(worldElement.get().toString());
+                    if (worldElement.get() instanceof Animal animal) {
+                        if (higlightGenome && animal.getGenome()==mapStats.getDominantGenome())
+                            worldElementBox.getVBox().setStyle("-fx-background-color: #FFFFFF;");
+                        Label elemLabel = new Label(Integer.toString(animal.getEnergy()));
+                        mapGrid.add(elemLabel, i - lowerLeftX + 1, upperRightY - j + 1);
+                        GridPane.setHalignment(elemLabel, HPos.CENTER);
+                        GridPane.setValignment(elemLabel, VPos.BOTTOM);
+                    }
+
+                    if (!simulation.getRunningStatus()) {
+                        worldElementBox.getVBox().setOnMouseClicked(event -> {
+                            if (worldElement.get() instanceof Animal animal) {
+                                currentFollowedAnimal = animal;
+                                showAnimalStats(animal);
+                            }
+                        });
+                    }
+
                     mapGrid.add(worldElementBox.getVBox(), i - lowerLeftX + 1, upperRightY - j + 1);
-                    GridPane.setHalignment(elemLabel, HPos.CENTER);
+                    GridPane.setHalignment(worldElementBox.getVBox(), HPos.CENTER);
+                    GridPane.setValignment(worldElementBox.getVBox(), VPos.CENTER);
                 }
             }
         }
@@ -111,53 +188,120 @@ public class SimulationViewPresenter implements MapChangeListener {
         });
     }
 
+    public void onStartHighlightingGenomeClicked() {
+        if (simulation.getRunningStatus())
+            return;
+        startHighlightingGenomeButton.setVisible(false);
+        stopHighlightingGenomeButton.setVisible(true);
+        higlightGenome = true;
+        drawMap();
+    }
+
+    public void onStopHighlightingGenomeClicked() {
+        startHighlightingGenomeButton.setVisible(true);
+        stopHighlightingGenomeButton.setVisible(false);
+        higlightGenome = false;
+        drawMap();
+    }
+
+    public void onStartHighlightingPositionsClicked() {
+        if (simulation.getRunningStatus())
+            return;
+
+        startHighlightingPreferablePlantPositionsButton.setVisible(false);
+        stopHighlightingPreferablePlantPositionsButton.setVisible(true);
+        highlightPositions = true;
+        drawMap();
+    }
+
+    public void onStopHighlightingPositionsClicked() {
+        startHighlightingPreferablePlantPositionsButton.setVisible(true);
+        stopHighlightingPreferablePlantPositionsButton.setVisible(false);
+        highlightPositions = false;
+        drawMap();
+    }
+
     public void onSimulationStopClicked() {
         stopButton.setVisible(false);
         resumeButton.setVisible(true);
         this.simulation.changeRunningMode();
+        startHighlightingGenomeButton.setVisible(true);
+        startHighlightingPreferablePlantPositionsButton.setVisible(true);
     }
 
     public void onSimulationResumeClicked() {
         stopButton.setVisible(true);
         resumeButton.setVisible(false);
         this.simulation.changeRunningMode();
+        startHighlightingGenomeButton.setVisible(true);
+        stopHighlightingGenomeButton.setVisible(false);
+        startHighlightingPreferablePlantPositionsButton.setVisible(true);
+        stopHighlightingPreferablePlantPositionsButton.setVisible(false);
+        higlightGenome = false;
+        highlightPositions = false;
+        drawMap();
     }
 
-    public void onShowStatsClicked() {
-        showStatsButton.setVisible(false);
-        hideStatsButton.setVisible(true);
-        statsLabel.setVisible(true);
-        showStatsActive = true;
-        showStats();
+    public void onShowMapStatsClicked() {
+        showMapStatsButton.setVisible(false);
+        hideMapStatsButton.setVisible(true);
+
+        mapStatsLabel.setVisible(true);
+        showMapStatsActive = true;
+        showMapStats();
     }
 
-    public void onHideStatsClicked() {
-        showStatsButton.setVisible(true);
-        hideStatsButton.setVisible(false);
-        statsLabel.setVisible(false);
-        showStatsActive = false;
+    public void onHideMapStatsClicked() {
+        showMapStatsButton.setVisible(true);
+        hideMapStatsButton.setVisible(false);
+
+        mapStatsLabel.setVisible(false);
+        showMapStatsActive = false;
     }
 
-    private void showStats() {
-        int day = mapStats.getDay();
-        int animalsCount = mapStats.getNumberOfAnimals();
-        int plantsCount = mapStats.getNumberOfPlants();
-        int freeSpace = mapStats.getFreeSpace();
-        Genome dominantGenome = mapStats.getDominantGenome();
-        int averageEnergy = mapStats.getAverageEnergy();
-        int averageLifeLengthOfDeadAnimals = mapStats.getAverageLifeLengthOfDeadAnimals();
-        int averageChildrenCount = mapStats.getAverageChildrenCount();
-
-        String statsText = "Day: " + day + "\n" +
-                "Animals Count: " + animalsCount + "\n" +
-                "Plants Count: " + plantsCount + "\n" +
-                "Free Space: " + freeSpace + "\n" +
-                "Dominant Genome: " + "\n" + dominantGenome + "\n" +
-                "Average Energy: " + averageEnergy + "\n" +
-                "Average Life Length of Dead Animals: " + averageLifeLengthOfDeadAnimals + "\n" +
-                "Average Children Count: " + averageChildrenCount;
-
-        statsLabel.setText(statsText);
+    public void onHideAnimalStatsClicked() {
+        animalStatsLabel.setVisible(false);
+        hideAnimalStatsButton.setVisible(false);
+        currentFollowedAnimal = null;
     }
+
+    private void showAnimalStats(Animal animal) {
+        String animalInfo = getAnimalStats(animal);
+        animalStatsLabel.setText(animalInfo);
+        animalStatsLabel.setVisible(true);
+        hideAnimalStatsButton.setVisible(true);
+    }
+
+    private String getAnimalStats(Animal animal) {
+        return "Informacje o zwierzaku:\n" +
+                "Status: " + (animal.isDead() ? "Martwy" : "Zywy") + "\n" +
+                "Pozycja: " + animal.position() + "\n" +
+                "Urodzony dnia: " + animal.getDayOfBirth() + "\n" +
+                "Genom: " + animal.getGenome() + "\n" +
+                "Obecny gen aktywny: " + animal.getGenome().getCurrentGenome() + "\n" +
+                "Energia: " + animal.getEnergy() + "\n" +
+                "Zjedzone rosliny: " + animal.getPlantsEatenCount() + "\n" +
+                "Liczba dzieci: " + animal.getChildrenCount() + "\n" +
+                "Liczba potomkow: " + animal.getDescendantsNumber() + "\n" +
+                "Liczba zywych potomkow: " + animal.getAliveDescendantsNumber() + "\n" +
+                (animal.isDead() ? "Zmarl dnia: " + animal.getDayOfDeath() : ("Zyje juz: " + (mapStats.getDay() - animal.getDayOfBirth()))
+                + ((mapStats.getDay() - animal.getDayOfBirth()) == 1 ? " dzien" : " dni"));
+    }
+
+    private void showMapStats() {
+        mapStatsLabel.setText(getMapStats());
+    }
+
+    private String getMapStats() {
+        return "Dzien: " + mapStats.getDay() + "\n" +
+                "Liczba zywych zwierzat: " + mapStats.getNumberOfAnimals() + "\n" +
+                "Liczba roslin: " + mapStats.getNumberOfPlants() + "\n" +
+                "Wolne miejsce: " + mapStats.getFreeSpace() + "\n" +
+                "Dominujacy genom: " + "\n" + mapStats.getDominantGenome() + "\n" +
+                "Srednia energia zwierzakow: " + mapStats.getAverageEnergy() + "\n" +
+                "Srednia dlugosc zycia martwych zwierzat: " + mapStats.getAverageLifeLengthOfDeadAnimals() + "\n" +
+                "Srednia liczba dzieci zyjacych zwierzakow: " + mapStats.getAverageChildrenCount();
+    }
+
 
 }

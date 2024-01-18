@@ -10,6 +10,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CheckBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
@@ -28,7 +29,7 @@
                 <ComboBox fx:id="presetConfigurationsComboBox" onAction="#onPresetConfigurationSelected"/>
                 <Label text="Wysokość mapy"/>
                 <TextField fx:id="mapHeightTextField" promptText="Wysokość mapy"> </TextField>
-                <Label text="Szerokośćć mapy"/>
+                <Label text="Szerokość mapy"/>
                 <TextField fx:id="mapWidthTextField" promptText="Szerokość mapy"> </TextField>
                 <Label text="Liczba roślin na start"/>
                 <TextField fx:id="numOfPlantsTextField" promptText="Liczba roślin na start"> </TextField>
@@ -68,12 +69,18 @@
             </VBox>
         </HBox>
     </top>
+    <right>
+        <VBox alignment="BOTTOM_RIGHT">
+            <CheckBox fx:id="statsToCSVCheckBox" text="Statystyki do CSV" onAction="#onStatsToCSVCheckBoxClicked"/>
+        </VBox>
+    </right>
     <bottom>
         <VBox spacing="10" alignment="CENTER">
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Start" onAction="#onSimulationStartClicked"/>
                 <Button text="Save Configuration" onAction="#onSaveConfigClicked"/>
             </HBox>
+            <TextField fx:id="CSVFileNameField" promptText="Nazwa pliku CSV do utworzenia" visible="false"> </TextField>
             <TextField fx:id="simulationNameToSaveTextField" promptText="Nazwa symulacji po zapisaniu"> </TextField>
         </VBox>
     </bottom>

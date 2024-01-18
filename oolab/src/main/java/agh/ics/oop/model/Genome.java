@@ -6,4 +6,6 @@ public interface Genome {
     int useCurrentGene();
 
     int getGenomeAtIndex(int i);
+
+    int getCurrentGenome();
 }

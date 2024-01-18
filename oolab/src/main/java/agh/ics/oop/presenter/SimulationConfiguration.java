@@ -52,6 +52,7 @@ public class SimulationConfiguration implements Serializable {
         this.configurationName = configurationName;
     }
 
+    //pusty konstruktor potrzebny do serializacji, nie usuwac!!!
     public SimulationConfiguration() {}
     public String toString() {
         return configurationName;

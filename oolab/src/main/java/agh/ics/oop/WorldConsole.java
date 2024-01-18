@@ -2,6 +2,7 @@ package agh.ics.oop;
 
 import agh.ics.oop.model.ConsoleMapDisplay;
 import agh.ics.oop.model.ForestedEquator;
+import agh.ics.oop.model.MapChangeListener;
 import agh.ics.oop.model.WorldMap;
 
 import java.util.Date;
@@ -14,7 +15,7 @@ public class WorldConsole {
 
         globe.registerObserver(consoleMapDisplay);
 
-        globe.registerObserver((worldMap, message) -> System.out.println(new Date() + " " + message));
+        globe.registerObserver((MapChangeListener) (worldMap, message) -> System.out.println(new Date() + " " + message));
 
         Simulation simulation = new Simulation(
                 globe,

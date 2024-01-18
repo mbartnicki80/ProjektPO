@@ -34,8 +34,8 @@ public class Vector2d {
         return new Vector2d(x + other.x, y + other.y);
     }
 
-    public boolean yCoordinateInMap (Vector2d upperRight) {
-        return y <= upperRight.y && y >= 0;
+    public boolean yCoordinateInMap (Boundary bounds) {
+        return y <= bounds.upperRight().getYValue() && y >= bounds.lowerLeft().getYValue();
     }
 
     public Vector2d subtract(Vector2d other) {

@@ -1,16 +1,14 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.model.CSVDataDisplay;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 
 import java.util.Map;
 import java.io.File;
@@ -61,6 +59,11 @@ public class SimulationPresenter {
     private RadioButton lightCorrectionRadioButton;
     @FXML
     private TextField simulationNameToSaveTextField;
+    @FXML
+    private CheckBox statsToCSVCheckBox;
+    @FXML
+    private TextField CSVFileNameField;
+
     private final Map<String, SimulationConfiguration> presetConfigurations = new HashMap<>();
     {
         SimulationConfiguration config1 = new SimulationConfiguration(10, 10, 5, 5, 2,
@@ -116,6 +119,9 @@ public class SimulationPresenter {
         int maximalMutations = Integer.parseInt(maximalMutationsTextField.getText());
         int genomeLength = Integer.parseInt(genomeLengthTextField.getText());
 
+        validateInput(mapHeight, mapWidth, numberOfPlants, plantEnergy, plantsPerDay, numberOfAnimals, animalEnergy,
+                reproductionReadyEnergy, usedReproductionEnergy, minimalMutations, maximalMutations, genomeLength);
+
         RadioButton selectedGenomeRadioButton = (RadioButton) genomeToggleGroup.getSelectedToggle();
         String genomeRadioButtonValue = selectedGenomeRadioButton.getText();
         boolean fullRandomnessGenome = genomeRadioButtonValue.equals("Pelna losowosc");
@@ -140,7 +146,16 @@ public class SimulationPresenter {
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
+
         presenter.setWorldMap(worldMap);
+        boolean isCheckBoxSelected = statsToCSVCheckBox.isSelected();
+
+
+        if (isCheckBoxSelected) {
+            String fileName = CSVFileNameField.getText();
+            worldMap.registerObserver(new CSVDataDisplay(fileName));
+        }
+
 
         Simulation simulation = new Simulation(
                 worldMap,
@@ -156,9 +171,7 @@ public class SimulationPresenter {
         );
 
         presenter.setSimulation(simulation);
-        Thread thread = new Thread(simulation);
-        thread.start();
-        //executorService.submit(simulation);
+        executorService.submit(simulation);
         stage.show();
     }
 
@@ -239,6 +252,41 @@ public class SimulationPresenter {
         presetConfigurationsComboBox.getSelectionModel().select(newConfiguration);
 
         SimulationConfiguration.encodeToXML("oolab/save/" + newPath + ".xml", newConfiguration);
+    }
+
+    private void validateInput(int mapHeight, int mapWidth, int numberOfPlants, int plantEnergy, int plantsPerDay, int numberOfAnimals,
+                               int animalEnergy, int reproductionReadyEnergy, int usedReproductionEnergy,
+                               int minimalMutations, int maximalMutations, int genomeLength) {
+
+        if (mapHeight < 1 || mapHeight > 23)
+            throw new ArgumentsValidationException("Wysokosc mapy musi byc z przedzialu [1, 23]");
+        if (mapWidth < 1 || mapWidth > 40)
+            throw new ArgumentsValidationException("Szerokosc mapy musi byc z przedzialu [1, 40]");
+        if (numberOfPlants < 0 || numberOfPlants > mapHeight * mapWidth)
+            throw new ArgumentsValidationException("Liczba roslin musi byc z przedzialu [0, pole mapy]");
+        if (plantEnergy < 0)
+            throw new ArgumentsValidationException("Energia rosliny musi byc nieujemna");
+        if (plantsPerDay < 0)
+            throw new ArgumentsValidationException("Liczba roslin na dzien musi byc nieujemna");
+        if (numberOfAnimals < 0 || numberOfAnimals > mapHeight * mapWidth)
+            throw new ArgumentsValidationException("Liczba zwierzat musi byc z przedzialu [0, pole mapy]");
+        if (animalEnergy < 0)
+            throw new ArgumentsValidationException("Energia zwierzecia musi byc nieujemna");
+        if (reproductionReadyEnergy < 0)
+            throw new ArgumentsValidationException("Energia potrzebna do rozmnazania musi byc nieujemna");
+        if (usedReproductionEnergy < 0)
+            throw new ArgumentsValidationException("Energia zuzywana podczas rozmnazania musi byc nieujemna");
+        if (minimalMutations < 0)
+            throw new ArgumentsValidationException("Minimalna liczba mutacji musi byc nieujemna");
+        if (maximalMutations < 0 || maximalMutations < minimalMutations)
+            throw new ArgumentsValidationException("Maksymalna liczba mutacji musi byc nieujemna i wieksza lub rowna minimalnej liczby mutacji");
+        if (genomeLength < 0)
+            throw new ArgumentsValidationException("Dlugosc genomu musi byc nieujemna");
+
+    }
+
+    public void onStatsToCSVCheckBoxClicked () {
+        CSVFileNameField.setVisible(statsToCSVCheckBox.isSelected());
     }
 
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {

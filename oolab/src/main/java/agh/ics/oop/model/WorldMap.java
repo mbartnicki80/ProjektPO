@@ -1,7 +1,5 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.model.exceptions.PositionOutOfBoundsException;
-
 import java.util.*;
 
 /**
@@ -10,7 +8,7 @@ import java.util.*;
  *
  * @author apohllo, idzik
  */
-public interface WorldMap extends MoveValidator {
+public interface WorldMap extends MapWithStatistics {
 
     /**
      * Place a animal on the map.
@@ -23,7 +21,7 @@ public interface WorldMap extends MoveValidator {
      * Moves an animal (if it is present on the map) according to specified direction.
      * If the move is not possible, this method has no effect.
      */
-    void move(Animal animal) throws PositionOutOfBoundsException;
+    void move(Animal animal);
 
     /**
      * Return an animal at a given position.
@@ -47,9 +45,9 @@ public interface WorldMap extends MoveValidator {
 
     List<Animal> reproduceAnimals(int genomeLength, int minimalMutations);
 
-    void registerObserver(MapChangeListener observer);
+    void registerObserver(Listener observer);
 
-    void unregisterObserver(MapChangeListener observer);
+    void unregisterObserver(Listener observer);
 
     void placePlants(int numOfPlants);
 

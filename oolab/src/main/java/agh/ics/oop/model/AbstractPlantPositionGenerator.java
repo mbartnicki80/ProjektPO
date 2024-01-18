@@ -7,15 +7,22 @@ public abstract class AbstractPlantPositionGenerator implements Iterable<Vector2
 
     protected Iterator<Vector2d> iterator;
 
-    Map<Vector2d, Plant> plants;
-    Boundary boundary;
-    int grassCount;
+    protected Map<Vector2d, Plant> plants;
+    protected Boundary boundary;
+    protected int grassCount;
 
     public AbstractPlantPositionGenerator(Map<Vector2d, Plant> plants, Boundary boundary, int grassCount) {
         this.plants = plants;
         this.boundary = boundary;
         this.grassCount = grassCount;
     }
+
+
+    public AbstractPlantPositionGenerator(Map<Vector2d, Plant> plants, Boundary boundary) {
+        this.plants = plants;
+        this.boundary = boundary;
+    }
+
 
     protected abstract List<Vector2d> generateFinalPositions();
 
@@ -82,4 +89,8 @@ public abstract class AbstractPlantPositionGenerator implements Iterable<Vector2
     public Vector2d next() {
         return iterator.next();
     }
+
+
+    public abstract List<Vector2d> getPreferredPositions();
+
 }

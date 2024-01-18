@@ -1,6 +1,9 @@
 package agh.ics.oop.model;
 
+import java.util.List;
+
 public class ForestedEquator extends AbstractWorldMap {
+
 
     public ForestedEquator(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
         super(mapWidth, mapHeight, numOfPlants, plantEnergy);
@@ -20,4 +23,9 @@ public class ForestedEquator extends AbstractWorldMap {
         super.putPlants(plantPositions);
     }
 
+    @Override
+    public List<Vector2d> getPreferredPositions() {
+        return new ForestedEquatorPlantPositionsGenerator(super.plants, super.bounds)
+                .getPreferredPositions();
+    }
 }

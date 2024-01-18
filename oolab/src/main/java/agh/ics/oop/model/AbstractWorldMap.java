@@ -5,7 +5,7 @@ import agh.ics.oop.MapVisualizer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValidator {
+public abstract class AbstractWorldMap implements WorldMap, MapWithStatistics, MoveValidator {
     protected final UUID ID;
     protected final Boundary bounds;
     protected final int plantEnergy;
@@ -13,6 +13,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
     protected final Set<Animal> deadAnimals = new HashSet<>();
     protected final Map<Vector2d, Plant> plants = new ConcurrentHashMap<>();
     protected final List<MapChangeListener> observers = new ArrayList<>();
+    protected final List<DayPassedListener> dayObservers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
     private final List<List<Vector2d>> positions = new ArrayList<>();
     protected int day = 0;
@@ -45,13 +46,25 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
         return bounds;
     }
 
-    public void registerObserver(MapChangeListener observer) {
-        observers.add(observer);
+    public void registerObserver(Listener observer) {
+        if (observer instanceof MapChangeListener)
+            observers.add((MapChangeListener) observer);
+        else if (observer instanceof DayPassedListener)
+            dayObservers.add((DayPassedListener) observer);
+        else
+            throw new IllegalArgumentException("Observer must implement MapChangeListener or DayPassedListener");
+
     }
 
-    public void unregisterObserver(MapChangeListener observer) {
-        observers.remove(observer);
+    public void unregisterObserver(Listener observer) {
+        if (observer instanceof MapChangeListener)
+            observers.remove((MapChangeListener) observer);
+        else if (observer instanceof DayPassedListener)
+            dayObservers.remove((DayPassedListener) observer);
+        else
+            throw new IllegalArgumentException("Observer must implement MapChangeListener or DayPassedListener");
     }
+
 
     protected void mapChanged(String message) {
         for (MapChangeListener observer : observers) {
@@ -61,15 +74,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        if (position.getXValue() < -1 || position.getXValue() > bounds.upperRight().getXValue() + 1)
-            return false;
-
-        if (position.getXValue() == -1)
-            position.add(new Vector2d(bounds.upperRight().getXValue() + 1, 0));
-        else if (position.getXValue() == bounds.upperRight().getXValue() + 1) {
-            position.subtract(new Vector2d(bounds.upperRight().getXValue() + 1, 0));
-        }
-        return position.yCoordinateInMap(bounds.upperRight());
+        return position.getXValue() >= -1 && position.getXValue() <= bounds.upperRight().getXValue() + 1 && position.yCoordinateInMap(bounds);
     }
 
     @Override
@@ -78,8 +83,12 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
 
         if (animal.move(this)) {
             animals.get(previousPosition).remove(animal);
+            if (animal.position().getXValue() == -1)
+                animal.setPosition(new Vector2d(bounds.upperRight().getXValue(), animal.position().getYValue()));
+            else if (animal.position().getXValue() == bounds.upperRight().getXValue() + 1) {
+                animal.setPosition(new Vector2d(0, animal.position().getYValue()));
+            }
 
-            //tutaj move
             animals.get(animal.position()).add(animal);
 
             mapChanged("Animal " + animal + " moved from " + previousPosition + " to " + animal.position());
@@ -175,6 +184,10 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
                 animal.useEnergy(1);
             }
         });
+
+        for (DayPassedListener observer : dayObservers) {
+            observer.dayUpdate(this);
+        }
     }
 
     @Override
