@@ -11,7 +11,6 @@ public class WorldElementBox {
 
     public WorldElementBox(WorldElement worldElement) {
 
-
         ImageView imageView;
         if (worldElement instanceof Plant) {
             imageView = new ImageView(MAP_IMAGE.getImage("#"));
@@ -29,6 +28,7 @@ public class WorldElementBox {
         this.vBox = new VBox(imageView);
 
         this.vBox.setAlignment(Pos.CENTER);
+
     }
 
     public VBox getVBox() {

@@ -31,6 +31,10 @@ public enum MapDirection {
         return directions[(this.ordinal() + rotation) % (directions.length)];
     }
 
+    public MapDirection opposite() {
+        return this.rotate(4);
+    }
+
     public Vector2d toUnitVector() {
         return switch (this) {
             case NORTH -> NORTH_VECTOR;

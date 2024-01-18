@@ -21,13 +21,21 @@ public class SimulationViewPresenter implements MapChangeListener {
     private Button stopButton;
     @FXML
     private Button resumeButton;
-
+    @FXML
+    private Button showStatsButton;
+    @FXML
+    private Button hideStatsButton;
+    @FXML
+    private Label statsLabel;
     private WorldMap worldMap;
+    private MapStats mapStats;
     private Simulation simulation;
+    private boolean showStatsActive = false;
     private final static int CELL_SIZE = 30;
 
     public void setWorldMap(WorldMap map) {
         this.worldMap = map;
+        this.mapStats = (MapStats) map;
     }
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
@@ -83,6 +91,8 @@ public class SimulationViewPresenter implements MapChangeListener {
                 Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
                 if (worldElement.isPresent()) {
 
+                    if (showStatsActive)
+                        showStats();
                     WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
 
                     Label elemLabel = new Label(worldElement.get().toString());
@@ -112,4 +122,42 @@ public class SimulationViewPresenter implements MapChangeListener {
         resumeButton.setVisible(false);
         this.simulation.changeRunningMode();
     }
+
+    public void onShowStatsClicked() {
+        showStatsButton.setVisible(false);
+        hideStatsButton.setVisible(true);
+        statsLabel.setVisible(true);
+        showStatsActive = true;
+        showStats();
+    }
+
+    public void onHideStatsClicked() {
+        showStatsButton.setVisible(true);
+        hideStatsButton.setVisible(false);
+        statsLabel.setVisible(false);
+        showStatsActive = false;
+    }
+
+    private void showStats() {
+        int day = mapStats.getDay();
+        int animalsCount = mapStats.getNumberOfAnimals();
+        int plantsCount = mapStats.getNumberOfPlants();
+        int freeSpace = mapStats.getFreeSpace();
+        Genome dominantGenome = mapStats.getDominantGenome();
+        int averageEnergy = mapStats.getAverageEnergy();
+        int averageLifeLengthOfDeadAnimals = mapStats.getAverageLifeLengthOfDeadAnimals();
+        int averageChildrenCount = mapStats.getAverageChildrenCount();
+
+        String statsText = "Day: " + day + "\n" +
+                "Animals Count: " + animalsCount + "\n" +
+                "Plants Count: " + plantsCount + "\n" +
+                "Free Space: " + freeSpace + "\n" +
+                "Dominant Genome: " + "\n" + dominantGenome + "\n" +
+                "Average Energy: " + averageEnergy + "\n" +
+                "Average Life Length of Dead Animals: " + averageLifeLengthOfDeadAnimals + "\n" +
+                "Average Children Count: " + averageChildrenCount;
+
+        statsLabel.setText(statsText);
+    }
+
 }

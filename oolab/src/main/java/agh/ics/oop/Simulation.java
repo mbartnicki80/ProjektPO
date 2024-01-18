@@ -1,6 +1,7 @@
 package agh.ics.oop;
 
 import agh.ics.oop.model.*;
+import agh.ics.oop.model.exceptions.PositionOutOfBoundsException;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -8,17 +9,11 @@ import java.util.stream.Stream;
 public class Simulation implements Runnable {
 
     private final Set<Animal> aliveAnimals = new HashSet<>();
-    private final Map<Vector2d, Animal> deadAnimals = new HashMap<>();
     private final WorldMap worldMap;
     private final int plantsPerDay;
     private final int reproductionReadyEnergy;
     private final int usedReproductionEnergy;
-    private final int minimalMutations;
-    private final int maximalMutations;
-    private final int genomeLength;
-    private final boolean fullRandomnessGenome;
     private boolean isRunning = true;
-    private static final MapDirection[] directions = MapDirection.values();
 
     public Simulation(WorldMap worldMap, int numberOfAnimals, int startAnimalEnergy,
                       int plantsPerDay, int reproductionReadyEnergy, int usedReproductionEnergy,
@@ -28,11 +23,8 @@ public class Simulation implements Runnable {
         this.plantsPerDay = plantsPerDay;
         this.reproductionReadyEnergy = reproductionReadyEnergy;
         this.usedReproductionEnergy = usedReproductionEnergy;
-        this.minimalMutations = minimalMutations;
-        this.maximalMutations = maximalMutations;
-        this.genomeLength = genomeLength;
-        this.fullRandomnessGenome = fullRandomnessGenome;
-
+        AnimalFactory animalFactory = new AnimalFactory(genomeLength, minimalMutations, maximalMutations, fullRandomnessGenome);
+        worldMap.setAnimalFactory(animalFactory);
         Random random = new Random();
         Boundary boundary = worldMap.getCurrentBounds();
 
@@ -46,9 +38,7 @@ public class Simulation implements Runnable {
                 .toList();
 
         for (Vector2d position : positions) {
-            MapDirection direction = directions[random.nextInt(directions.length)];
-
-            Animal animal = new Animal(position, direction, startAnimalEnergy, 0, genomeLength);
+            Animal animal = AnimalFactory.create(position, startAnimalEnergy, 0, genomeLength);
             worldMap.place(animal);
             aliveAnimals.add(animal);
         }
@@ -57,20 +47,23 @@ public class Simulation implements Runnable {
     public void run() {
 
         try {
-            int day = 0;
             while (!aliveAnimals.isEmpty()) {
                 if (isRunning) {
-                    removeDeadAnimals();
-                    moveAnimals();
-                    consumption();
-                    reproduceAnimals(day);
-                    growNewPlants();
 
-                    day++;
-                    Thread.sleep(500);
+                    removeDeadAnimals();
+                    Thread.sleep(300);
+                    moveAnimals();
+                    Thread.sleep(300);
+                    consumption();
+                    Thread.sleep(300);
+                    reproduceAnimals();
+                    Thread.sleep(300);
+                    growNewPlants();
+                    worldMap.dayUpdate();
+                    Thread.sleep(300);
                 }
                 else
-                    Thread.sleep(500);
+                    Thread.sleep(300);
             }
         } catch (InterruptedException ignored) {}
     }
@@ -81,8 +74,7 @@ public class Simulation implements Runnable {
         while (iterator.hasNext()) {
             Animal animal = iterator.next();
             if (animal.isDead()) {
-                deadAnimals.put(animal.position(), animal);
-                worldMap.remove(animal);
+                worldMap.removeDeadAnimal(animal);
                 iterator.remove();
             }
         }
@@ -90,7 +82,10 @@ public class Simulation implements Runnable {
 
     private void moveAnimals() {
         for (Animal animal : aliveAnimals) {
-            worldMap.move(animal);
+            try {
+                worldMap.move(animal);
+            }
+            catch (PositionOutOfBoundsException ignored) {}
         }
     }
 
@@ -98,16 +93,9 @@ public class Simulation implements Runnable {
         worldMap.consumption();
     }
 
-    private void reproduceAnimals(int day) {
+    private void reproduceAnimals() {
         List<Animal> newbornAnimals = worldMap
-                .reproduceAnimals(
-                        day,
-                        genomeLength,
-                        minimalMutations,
-                        maximalMutations,
-                        reproductionReadyEnergy,
-                        usedReproductionEnergy,
-                        fullRandomnessGenome);
+                .reproduceAnimals(reproductionReadyEnergy, usedReproductionEnergy);
         aliveAnimals.addAll(newbornAnimals);
     }
 

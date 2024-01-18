@@ -1,19 +1,43 @@
 package agh.ics.oop.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class LifeGivingCorpses extends AbstractWorldMap {
+
+    Set<Animal> recentlyDeadAnimals = new HashSet<>();
 
     public LifeGivingCorpses(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
         super(mapWidth, mapHeight, numOfPlants, plantEnergy);
     }
 
-    public void placePlants(int mapWidth, int mapHeight, int numOfPlants) {
+    @Override
+    public void placePlants(int numOfPlants) {
+        HashSet<Animal> lastEpochDeadAnimals = new HashSet<>();
 
+        LifeGivingCorpsesPlantPositionsGenerator plantPositions = new LifeGivingCorpsesPlantPositionsGenerator(super.plants, lastEpochDeadAnimals, super.bounds, numOfPlants);
+        for (Vector2d plantPosition : plantPositions) {
+            plants.put(plantPosition, new Plant(plantPosition, plantEnergy));
+        }
     }
 
+    @Override
     public void growNewPlants(int plantsPerDay) {
-        //masz tutaj dostep do deadAnimalow, sa zadeklarowane w abstract
-        //dodaje je w momencie, gdy uzywamy remove, czyli wtedy, kiedy usuwamy zwierzaki, bo sa martwe
-        //powinno dzialac
+        updateCorpses();
+        LifeGivingCorpsesPlantPositionsGenerator plantPositions = new LifeGivingCorpsesPlantPositionsGenerator(super.plants, recentlyDeadAnimals, super.bounds, plantsPerDay);
+        super.putPlants(plantPositions);
+    }
+
+    public void removeDeadAnimal(Animal animal) {
+        animals.get(animal.position()).remove(animal);
+        super.deadAnimals.add(animal);
+        recentlyDeadAnimals.add(animal);
+        animal.setDayOfDeath(day);
+        mapChanged("Animal " + animal + " died at " + animal.position());
+    }
+
+    public void updateCorpses() {
+        recentlyDeadAnimals.removeIf(animal -> day - animal.getDayOfDeath() > 3);
     }
 
 }

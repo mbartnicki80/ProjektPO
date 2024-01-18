@@ -1,5 +1,7 @@
 package agh.ics.oop.model;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -69,5 +71,34 @@ public abstract class AbstractGenome implements Genome {
         int mutationsCount = random.nextInt(maximalMutations - minimalMutations + 1) + minimalMutations;
 
         return mutateGenome(newbornGenome, mutationsCount);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+
+        if (this == other)
+            return true;
+
+        if (!(other instanceof AbstractGenome that))
+            return false;
+
+        if (this.genome.length != that.genome.length)
+            return false;
+
+        for (int i = 0; i < this.genome.length; i++)
+            if (this.genome[i] != that.genome[i])
+                return false;
+
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(this.genome);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash((Object) this.genome);
     }
 }

@@ -8,6 +8,7 @@ public class LightCorrectionGenome extends AbstractGenome {
                 dominantAnimalGenome, reproductionPartnerGenome, dominantEnergyProportion);
     }
 
+    @Override
     public int[] mutateGenome(int[] newbornGenome, int mutationsCount) {
         for (int i = 0; i < mutationsCount; i++) {
             int mutationIndex = random.nextInt(newbornGenome.length);
