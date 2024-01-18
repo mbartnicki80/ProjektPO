@@ -1,4 +1,8 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
+
+import agh.ics.oop.model.Animal;
+import agh.ics.oop.model.generators.LifeGivingCorpsesPlantPositionsGenerator;
+import agh.ics.oop.model.Plant;
 
 import java.util.HashSet;
 import java.util.List;

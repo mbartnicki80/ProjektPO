@@ -1,4 +1,4 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,8 +1,8 @@
 package agh.ics.oop;
 
 import agh.ics.oop.model.Animal;
-import agh.ics.oop.model.ForestedEquator;
-import agh.ics.oop.model.WorldMap;
+import agh.ics.oop.model.map.ForestedEquator;
+import agh.ics.oop.model.map.WorldMap;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;

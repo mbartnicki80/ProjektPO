@@ -1,9 +1,9 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.ConsoleMapDisplay;
-import agh.ics.oop.model.ForestedEquator;
-import agh.ics.oop.model.MapChangeListener;
-import agh.ics.oop.model.WorldMap;
+import agh.ics.oop.model.observers.ConsoleMapDisplay;
+import agh.ics.oop.model.map.ForestedEquator;
+import agh.ics.oop.model.observers.MapChangeListener;
+import agh.ics.oop.model.map.WorldMap;
 
 import java.util.Date;
 

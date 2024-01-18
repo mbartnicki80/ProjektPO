@@ -1,4 +1,7 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
+
+import agh.ics.oop.model.generators.ForestedEquatorPlantPositionsGenerator;
+import agh.ics.oop.model.Plant;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.genome;
 
 public class BasicGenome extends AbstractGenome {
     public BasicGenome(int genomeLength) {

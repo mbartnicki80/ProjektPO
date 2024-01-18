@@ -1,4 +1,9 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
+
+import agh.ics.oop.model.Animal;
+import agh.ics.oop.model.AnimalFactory;
+import agh.ics.oop.model.WorldElement;
+import agh.ics.oop.model.observers.Listener;
 
 import java.util.*;
 

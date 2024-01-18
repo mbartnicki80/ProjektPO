@@ -1,5 +1,11 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.genome.BasicGenome;
+import agh.ics.oop.model.genome.Genome;
+import agh.ics.oop.model.map.MapDirection;
+import agh.ics.oop.model.map.MoveValidator;
+import agh.ics.oop.model.map.Vector2d;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -85,7 +91,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
         return this.position;
     }
 
-    boolean move(MoveValidator validator) {
+    public boolean move(MoveValidator validator) {
         Vector2d oldPosition = this.position;
 
         MapDirection newOrientation = this.orientation.rotate(this.useCurrentAnimalGene());

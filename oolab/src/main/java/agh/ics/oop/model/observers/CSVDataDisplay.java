@@ -1,6 +1,8 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.observers;
 
 import agh.ics.oop.model.annotations.Observer;
+import agh.ics.oop.model.map.DayPassedListener;
+import agh.ics.oop.model.map.MapWithStatistics;
 
 import java.io.FileWriter;
 import java.io.IOException;

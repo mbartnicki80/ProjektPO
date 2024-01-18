@@ -1,5 +1,10 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.genome.FullRandomnessGenome;
+import agh.ics.oop.model.genome.Genome;
+import agh.ics.oop.model.genome.LightCorrectionGenome;
+import agh.ics.oop.model.map.Vector2d;
+
 public class AnimalFactory {
     private final int genomeLength;
     private final int minimalMutations;

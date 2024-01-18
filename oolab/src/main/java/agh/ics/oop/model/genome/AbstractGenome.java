@@ -1,4 +1,4 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.genome;
 
 import java.util.Objects;
 import java.util.Random;

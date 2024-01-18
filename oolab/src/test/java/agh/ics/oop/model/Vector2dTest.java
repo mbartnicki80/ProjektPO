@@ -1,4 +1,5 @@
 package agh.ics.oop.model;
+import agh.ics.oop.model.map.Vector2d;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

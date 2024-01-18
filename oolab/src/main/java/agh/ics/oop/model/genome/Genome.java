@@ -1,4 +1,4 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.genome;
 
 public interface Genome {
     int[] mutateGenome(int[] newbornGenome, int mutationsCount);
