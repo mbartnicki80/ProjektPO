@@ -43,6 +43,8 @@ public class SimulationViewPresenter implements MapChangeListener {
     private WorldMap worldMap;
     private MapWithStatistics mapStats;
     private Simulation simulation;
+    private boolean highlightPositions = false;
+    private boolean higlightGenome = false;
     private boolean showMapStatsActive = false;
     private final static int CELL_SIZE = 40;
 
@@ -91,42 +93,71 @@ public class SimulationViewPresenter implements MapChangeListener {
         GridPane.setHalignment(label, HPos.CENTER);
         mapGrid.add(label, 0, 0);
     }
-    private void drawMap() {
-        clearGrid();
-        drawHeaders();
+
+    private void drawBackround() {
         Boundary bounds = worldMap.getCurrentBounds();
         int lowerLeftX = bounds.lowerLeft().getXValue();
         int lowerLeftY = bounds.lowerLeft().getYValue();
         int upperRightX = bounds.upperRight().getXValue();
         int upperRightY = bounds.upperRight().getYValue();
 
-        if (currentFollowedAnimal != null) {
-            showAnimalStats(currentFollowedAnimal);
-        }
         for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
-                Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
-
-                //TlO
                 StackPane cellContainer = new StackPane();
                 Region background = new Region();
                 background.setStyle("-fx-background-color: #D2B48C;");
                 background.setMaxSize(CELL_SIZE-1, CELL_SIZE-1);
                 cellContainer.getChildren().add(background);
                 mapGrid.add(cellContainer, i - lowerLeftX + 1, upperRightY - j + 1);
-                //TlO
+            }
+        }
+    }
+
+    private void drawPreferredPositions() {
+        Boundary bounds = worldMap.getCurrentBounds();
+        int lowerLeftX = bounds.lowerLeft().getXValue();
+        int upperRightY = bounds.upperRight().getYValue();
+
+        for (Vector2d position : worldMap.getPreferredPositions()) {
+            StackPane cellContainer = new StackPane();
+            Region background = new Region();
+            background.setStyle("-fx-background-color: #00FF00;");
+            background.setMaxSize(CELL_SIZE-1, CELL_SIZE-1);
+            cellContainer.getChildren().add(background);
+            mapGrid.add(cellContainer, position.getXValue() - lowerLeftX + 1, upperRightY - position.getYValue() + 1);
+        }
+    }
+
+    private void drawMap() {
+        clearGrid();
+        drawHeaders();
+        drawBackround();
+
+        Boundary bounds = worldMap.getCurrentBounds();
+        int lowerLeftX = bounds.lowerLeft().getXValue();
+        int lowerLeftY = bounds.lowerLeft().getYValue();
+        int upperRightX = bounds.upperRight().getXValue();
+        int upperRightY = bounds.upperRight().getYValue();
+
+        if (currentFollowedAnimal != null)
+            showAnimalStats(currentFollowedAnimal);
+        if (showMapStatsActive)
+            showMapStats();
+
+        if (highlightPositions)
+            drawPreferredPositions();
+
+        for (int i = lowerLeftX; i <= upperRightX; i++) {
+            for (int j = lowerLeftY; j <= upperRightY; j++) {
+                Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
 
                 if (worldElement.isPresent()) {
-
-                    if (showMapStatsActive)
-                        showMapStats();
-                    //if (statsToCSV)
-                    //    mapStats.toCSV();
-
                     WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
 
-                    if (worldElement.get() instanceof Animal) {
-                        Label elemLabel = new Label(Integer.toString(worldElement.get().getEnergy()));
+                    if (worldElement.get() instanceof Animal animal) {
+                        if (higlightGenome && animal.getGenome()==mapStats.getDominantGenome())
+                            worldElementBox.getVBox().setStyle("-fx-background-color: #FFFFFF;");
+                        Label elemLabel = new Label(Integer.toString(animal.getEnergy()));
                         mapGrid.add(elemLabel, i - lowerLeftX + 1, upperRightY - j + 1);
                         GridPane.setHalignment(elemLabel, HPos.CENTER);
                         GridPane.setValignment(elemLabel, VPos.BOTTOM);
@@ -158,35 +189,57 @@ public class SimulationViewPresenter implements MapChangeListener {
     }
 
     public void onStartHighlightingGenomeClicked() {
+        if (simulation.getRunningStatus())
+            return;
         startHighlightingGenomeButton.setVisible(false);
         stopHighlightingGenomeButton.setVisible(true);
+        higlightGenome = true;
+        drawMap();
     }
 
     public void onStopHighlightingGenomeClicked() {
         startHighlightingGenomeButton.setVisible(true);
         stopHighlightingGenomeButton.setVisible(false);
+        higlightGenome = false;
+        drawMap();
     }
 
     public void onStartHighlightingPositionsClicked() {
+        if (simulation.getRunningStatus())
+            return;
+
         startHighlightingPreferablePlantPositionsButton.setVisible(false);
         stopHighlightingPreferablePlantPositionsButton.setVisible(true);
+        highlightPositions = true;
+        drawMap();
     }
 
     public void onStopHighlightingPositionsClicked() {
         startHighlightingPreferablePlantPositionsButton.setVisible(true);
         stopHighlightingPreferablePlantPositionsButton.setVisible(false);
+        highlightPositions = false;
+        drawMap();
     }
 
     public void onSimulationStopClicked() {
         stopButton.setVisible(false);
         resumeButton.setVisible(true);
         this.simulation.changeRunningMode();
+        startHighlightingGenomeButton.setVisible(true);
+        startHighlightingPreferablePlantPositionsButton.setVisible(true);
     }
 
     public void onSimulationResumeClicked() {
         stopButton.setVisible(true);
         resumeButton.setVisible(false);
         this.simulation.changeRunningMode();
+        startHighlightingGenomeButton.setVisible(true);
+        stopHighlightingGenomeButton.setVisible(false);
+        startHighlightingPreferablePlantPositionsButton.setVisible(true);
+        stopHighlightingPreferablePlantPositionsButton.setVisible(false);
+        higlightGenome = false;
+        highlightPositions = false;
+        drawMap();
     }
 
     public void onShowMapStatsClicked() {

@@ -34,11 +34,11 @@
             </VBox>
             <HBox spacing="10" alignment="TOP_RIGHT">
                 <VBox spacing="10">
-                    <Button fx:id="startHighlightingGenomeButton" text="Podswietl najpopularniejszy genom" onAction="#onStartHighlightingGenomeClicked"/>
+                    <Button fx:id="startHighlightingGenomeButton" text="Podswietl najpopularniejszy genom" onAction="#onStartHighlightingGenomeClicked" visible="false"/>
                     <Button fx:id="stopHighlightingGenomeButton" text="Zatrzymaj podswietlanie genomu" onAction="#onStopHighlightingGenomeClicked" visible="false"/>
                 </VBox>
                 <VBox spacing="10">
-                    <Button fx:id="startHighlightingPreferablePlantPositionsButton" text="Podswietl preferowane pozycje" onAction="#onStartHighlightingPositionsClicked"/>
+                    <Button fx:id="startHighlightingPreferablePlantPositionsButton" text="Podswietl preferowane pozycje" onAction="#onStartHighlightingPositionsClicked" visible="false"/>
                     <Button fx:id="stopHighlightingPreferablePlantPositionsButton" text="Zatrzymaj podswietlanie pozycji" onAction="#onStopHighlightingPositionsClicked" visible="false"/>
                 </VBox>
             </HBox>

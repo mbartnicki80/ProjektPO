@@ -74,7 +74,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapWithStatistics, M
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        return position.getXValue() >= -1 && position.getXValue() <= bounds.upperRight().getXValue() + 1 && position.yCoordinateInMap(bounds.upperRight());
+        return position.getXValue() >= -1 && position.getXValue() <= bounds.upperRight().getXValue() + 1 && position.yCoordinateInMap(bounds);
     }
 
     @Override

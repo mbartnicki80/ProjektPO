@@ -15,7 +15,7 @@ public class CSVDataDisplay implements DayPassedListener {
         }
     }
 
-    public void dayUpdate(MapWithStatistics worldMapWithStats) {
+    public synchronized void dayUpdate(MapWithStatistics worldMapWithStats) {
         try (FileWriter fileWriter = new FileWriter(fileName + ".csv", true)) {
                 fileWriter.write(
                         worldMapWithStats.getDay() + "," +
@@ -25,11 +25,8 @@ public class CSVDataDisplay implements DayPassedListener {
                                 worldMapWithStats.getDominantGenome() + "," +
                                 worldMapWithStats.getAverageEnergy() + "," +
                                 worldMapWithStats.getAverageLifeLengthOfDeadAnimals() + "," +
-                                worldMapWithStats.getAverageChildrenCount() + "," +
-                                worldMapWithStats.getPreferredPositions().size() + "\n"
+                                worldMapWithStats.getAverageChildrenCount() + "\n"
                 );
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -66,7 +66,7 @@ public class ForestedEquatorPlantPositionsGenerator extends AbstractPlantPositio
     public List<Vector2d> getPreferredPositions() {
         return generateEquatorPositions(
                 boundary.upperRight().getXValue() + 1,
-                boundary.upperRight().getYValue() / 2
+                (boundary.upperRight().getYValue() + 1) / 2
         );
     }
 }
