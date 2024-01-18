@@ -1,11 +1,12 @@
 package agh.ics.oop.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class LifeGivingCorpses extends AbstractWorldMap {
 
-    Set<Animal> recentlyDeadAnimals = new HashSet<>();
+    private final Set<Animal> recentlyDeadAnimals = new HashSet<>();
 
     public LifeGivingCorpses(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
         super(mapWidth, mapHeight, numOfPlants, plantEnergy);
@@ -40,4 +41,9 @@ public class LifeGivingCorpses extends AbstractWorldMap {
         recentlyDeadAnimals.removeIf(animal -> day - animal.getDayOfDeath() > 3);
     }
 
+    @Override
+    public List<Vector2d> getPreferredPositions() {
+        return new LifeGivingCorpsesPlantPositionsGenerator(super.plants, recentlyDeadAnimals, super.bounds)
+                .getPreferredPositions();
+    }
 }

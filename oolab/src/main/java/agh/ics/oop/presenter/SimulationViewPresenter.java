@@ -41,23 +41,19 @@ public class SimulationViewPresenter implements MapChangeListener {
 
     private Animal currentFollowedAnimal = null;
     private WorldMap worldMap;
-    private MapStats mapStats;
+    private MapWithStatistics mapStats;
     private Simulation simulation;
     private boolean showMapStatsActive = false;
-    private boolean statsToCSV = false;
     private final static int CELL_SIZE = 40;
 
     public void setWorldMap(WorldMap map) {
         this.worldMap = map;
-        this.mapStats = (MapStats) map;
+        this.mapStats = map;
     }
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
     }
 
-    public void setStatsToCSV(boolean statsToCSV) {
-        this.statsToCSV = statsToCSV;
-    }
 
     private void clearGrid() {
         mapGrid.getChildren().retainAll(mapGrid.getChildren().get(0)); // hack to retain visible grid lines

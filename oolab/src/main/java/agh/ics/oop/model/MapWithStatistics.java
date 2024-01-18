@@ -1,6 +1,8 @@
 package agh.ics.oop.model;
 
-public interface MapStats {
+import java.util.List;
+
+public interface MapWithStatistics extends MoveValidator {
     int getNumberOfAnimals();
     int getNumberOfPlants();
     int getFreeSpace();
@@ -9,4 +11,7 @@ public interface MapStats {
     int getAverageLifeLengthOfDeadAnimals();
     int getAverageChildrenCount();
     int getDay();
+
+    List<Vector2d> getPreferredPositions();
+
 }

@@ -11,7 +11,9 @@ public class FileMapDisplay implements MapChangeListener {
 
     private int changeCounter;
 
-    public FileMapDisplay() {this.changeCounter = 0;}
+    public FileMapDisplay() {
+        this.changeCounter = 0;
+    }
 
     @Override
     public synchronized void mapChanged(WorldMap worldMap, String message) {

@@ -1,11 +1,13 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.DayPassedListener;
+import agh.ics.oop.Listener;
 import agh.ics.oop.MapVisualizer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValidator {
+public abstract class AbstractWorldMap implements WorldMap, MapWithStatistics, MoveValidator {
     protected final UUID ID;
     protected final Boundary bounds;
     protected final int plantEnergy;
@@ -13,6 +15,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
     protected final Set<Animal> deadAnimals = new HashSet<>();
     protected final Map<Vector2d, Plant> plants = new ConcurrentHashMap<>();
     protected final List<MapChangeListener> observers = new ArrayList<>();
+    protected final List<DayPassedListener> dayObservers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
     private final List<List<Vector2d>> positions = new ArrayList<>();
     protected int day = 0;
@@ -45,13 +48,25 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
         return bounds;
     }
 
-    public void registerObserver(MapChangeListener observer) {
-        observers.add(observer);
+    public void registerObserver(Listener observer) {
+        if (observer instanceof MapChangeListener)
+            observers.add((MapChangeListener) observer);
+        else if (observer instanceof DayPassedListener)
+            dayObservers.add((DayPassedListener) observer);
+        else
+            throw new IllegalArgumentException("Observer must implement MapChangeListener or DayPassedListener");
+
     }
 
-    public void unregisterObserver(MapChangeListener observer) {
-        observers.remove(observer);
+    public void unregisterObserver(Listener observer) {
+        if (observer instanceof MapChangeListener)
+            observers.remove((MapChangeListener) observer);
+        else if (observer instanceof DayPassedListener)
+            dayObservers.remove((DayPassedListener) observer);
+        else
+            throw new IllegalArgumentException("Observer must implement MapChangeListener or DayPassedListener");
     }
+
 
     protected void mapChanged(String message) {
         for (MapChangeListener observer : observers) {
@@ -75,7 +90,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
             else if (animal.position().getXValue() == bounds.upperRight().getXValue() + 1) {
                 animal.setPosition(new Vector2d(0, animal.position().getYValue()));
             }
-            //tutaj move
+
             animals.get(animal.position()).add(animal);
 
             mapChanged("Animal " + animal + " moved from " + previousPosition + " to " + animal.position());
@@ -171,6 +186,10 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats, MoveValida
                 animal.useEnergy(1);
             }
         });
+
+        for (DayPassedListener observer : dayObservers) {
+            observer.dayUpdate(this);
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.CSVDataDisplay;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import javafx.fxml.FXML;
@@ -143,9 +144,14 @@ public class SimulationPresenter {
 
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
+
         presenter.setWorldMap(worldMap);
         boolean isCheckBoxSelected = statsToCSVCheckBox.isSelected();
-        presenter.setStatsToCSV(isCheckBoxSelected);
+
+        if (isCheckBoxSelected) {
+            worldMap.registerObserver(new CSVDataDisplay());
+        }
+
 
         Simulation simulation = new Simulation(
                 worldMap,
