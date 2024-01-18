@@ -4,8 +4,6 @@ import agh.ics.oop.MapVisualizer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public abstract class AbstractWorldMap implements WorldMap, MapStats {
     protected final UUID ID;
@@ -17,6 +15,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
     protected final List<MapChangeListener> observers = new ArrayList<>();
     protected final MapVisualizer mapVisualizer = new MapVisualizer(this);
     private final List<List<Vector2d>> positions = new ArrayList<>();
+    private int day = 0;
     private AnimalFactory animalFactory;
 
     public AbstractWorldMap(int mapWidth, int mapHeight, int numOfPlants, int plantEnergy) {
@@ -26,19 +25,14 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
 
         placePlants(numOfPlants);
 
-        for (int i = 0; i < bounds.upperRight().getXValue(); i++) {
+        for (int i = 0; i < mapWidth; i++) {
             List<Vector2d> row = new ArrayList<>();
-            for (int j = 0; j < bounds.upperRight().getYValue(); j++) {
+            for (int j = 0; j < mapHeight; j++){
                 row.add(new Vector2d(i, j));
+                Vector2d position = new Vector2d(i, j);
+                animals.put(position, Collections.synchronizedSortedSet(new TreeSet<>()));
             }
             positions.add(row);
-        }
-
-        for (int i = 0; i < mapWidth; i++) {
-            for (int j = 0; j < mapHeight; j++){
-                Vector2d position = new Vector2d(i, j);
-                animals.put(position, new TreeSet<>());
-            }
         }
     }
 
@@ -76,7 +70,6 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
 
         if (animal.move(this)) {
             animals.get(previousPosition).remove(animal);
-            animal.useEnergy(1);
             animals.get(animal.position()).add(animal);
 
             mapChanged("Animal " + animal + " moved from " + previousPosition + " to " + animal.position());
@@ -124,7 +117,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
     }
 
     @Override
-    public ArrayList<Animal> reproduceAnimals(int day, int reproductionReadyEnergy, int usedReproductionEnergy) {
+    public ArrayList<Animal> reproduceAnimals(int reproductionReadyEnergy, int usedReproductionEnergy) {
         ArrayList<Animal> newbornAnimals = new ArrayList<>();
 
         animals.forEach((position, animalsAtPosition) -> {
@@ -150,10 +143,10 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
     }
 
     @Override
-    public void removeDeadAnimal(Animal animal, int dayOfDeath) {
+    public void removeDeadAnimal(Animal animal) {
         animals.get(animal.position()).remove(animal);
         deadAnimals.add(animal);
-        animal.setDayOfDeath(dayOfDeath);
+        animal.setDayOfDeath(day);
         mapChanged("Animal " + animal + " died at " + animal.position());
     }
 
@@ -163,6 +156,15 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
             plants.put(position, plant);
             mapChanged("New plant " + plant + " has grown at " + plant.position());
         }
+    }
+
+    public void dayUpdate() {
+        day++;
+        animals.forEach((position, animalsAtPosition) -> {
+            for (Animal animal : animalsAtPosition) {
+                animal.useEnergy(1);
+            }
+        });
     }
 
     @Override
@@ -182,18 +184,30 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
         for (int i = 0; i < bounds.upperRight().getXValue(); i++)
             for (int j = 0; j < bounds.upperRight().getYValue(); j++) {
                 Vector2d position = positions.get(i).get(j);
-                if (objectAt(position).isPresent())
+                if (animals.get(position).isEmpty() && !plants.containsKey(position)) {
                     freeSpaceSum++;
+                }
             }
         return freeSpaceSum;
     }
 
     @Override
     public Genome getDominantGenome() {
-        Map<Genome, Long> frequencyMap = animals.values().stream()
-                .flatMap(Set::stream)
-                .map(Animal::getGenome)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        Map<Genome, Integer> frequencyMap = new HashMap<>();
+
+        for (int i = 0; i < bounds.upperRight().getXValue(); i++){
+            for (int j = 0; j < bounds.upperRight().getYValue(); j++) {
+                Vector2d position = positions.get(i).get(j);
+                if (animals.get(position).isEmpty())
+                    continue;
+                for (Animal animal : animals.get(position)) {
+                    if (frequencyMap.containsKey(animal.getGenome()))
+                        frequencyMap.put(animal.getGenome(), frequencyMap.get(animal.getGenome()) + 1);
+                    else
+                        frequencyMap.put(animal.getGenome(), 1);
+                }
+            }
+        }
         if (frequencyMap.isEmpty())
             return null;
         return Collections.max(frequencyMap.entrySet(), Map.Entry.comparingByValue()).getKey();
@@ -201,20 +215,56 @@ public abstract class AbstractWorldMap implements WorldMap, MapStats {
 
     @Override
     public int getAverageEnergy() {
-        return getNumberOfAnimals() != 0
-               ? animals.values().stream().mapToInt(animalSet -> animalSet.stream().mapToInt(Animal::getEnergy).sum()).sum() / getNumberOfAnimals()
-                : 0;
+        if (getNumberOfAnimals() == 0)
+            return 0;
+
+        int sumOfEnergy = 0;
+        for (int i = 0; i < bounds.upperRight().getXValue(); i++) {
+            for (int j = 0; j < bounds.upperRight().getYValue(); j++) {
+                Vector2d position = positions.get(i).get(j);
+                for (Animal animal : animals.get(position)) {
+                    sumOfEnergy += animal.getEnergy();
+                }
+            }
+        }
+
+        return sumOfEnergy / getNumberOfAnimals();
     }
 
     @Override
     public int getAverageLifeLengthOfDeadAnimals() {
-        return !deadAnimals.isEmpty() ? deadAnimals.stream().mapToInt(Animal::getLifeLength).sum() / deadAnimals.size() : 0;
+        if (deadAnimals.isEmpty())
+            return 0;
+
+        int sumOfDaysLived = 0;
+        for (Animal deadAnimal : deadAnimals) {
+            sumOfDaysLived += deadAnimal.getLifeLength();
+        }
+
+        return sumOfDaysLived / deadAnimals.size();
     }
 
     @Override
     public int getAverageChildrenCount() {
-        return getNumberOfAnimals() != 0
-                ? animals.values().stream().mapToInt(animalSet -> animalSet.stream().mapToInt(Animal::getChildrenCount).sum()).sum() / getNumberOfAnimals()
-                : 0;
+        if (getNumberOfAnimals() == 0)
+            return 0;
+        if (getNumberOfAnimals() == 0)
+            return 0;
+
+        int sumOfChildren = 0;
+        for (int i = 0; i < bounds.upperRight().getXValue(); i++) {
+            for (int j = 0; j < bounds.upperRight().getYValue(); j++) {
+                Vector2d position = positions.get(i).get(j);
+                for (Animal animal : animals.get(position)) {
+                    sumOfChildren += animal.getChildrenCount();
+                }
+            }
+        }
+        return sumOfChildren / getNumberOfAnimals();
+    }
+
+    @Override
+    public int getDay() {
+        return day;
     }
 }

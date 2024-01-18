@@ -51,16 +51,16 @@ public class Simulation implements Runnable {
             while (!aliveAnimals.isEmpty()) {
                 if (isRunning) {
 
-                    removeDeadAnimals(day);
+                    removeDeadAnimals();
                     moveAnimals();
                     consumption();
-                    reproduceAnimals(day);
+                    reproduceAnimals();
                     growNewPlants();
 
                     if (this.worldMap instanceof LifeGivingCorpses lifeGivingCorpses) {
                         lifeGivingCorpses.update(day);
                     }
-
+                    worldMap.dayUpdate();
                     day++;
                     Thread.sleep(500);
                 }
@@ -70,13 +70,13 @@ public class Simulation implements Runnable {
         } catch (InterruptedException ignored) {}
     }
 
-    private void removeDeadAnimals(int day) {
+    private void removeDeadAnimals() {
         Iterator<Animal> iterator = aliveAnimals.iterator();
 
         while (iterator.hasNext()) {
             Animal animal = iterator.next();
             if (animal.isDead()) {
-                worldMap.removeDeadAnimal(animal, day);
+                worldMap.removeDeadAnimal(animal);
                 iterator.remove();
             }
         }
@@ -95,9 +95,9 @@ public class Simulation implements Runnable {
         worldMap.consumption();
     }
 
-    private void reproduceAnimals(int day) {
+    private void reproduceAnimals() {
         List<Animal> newbornAnimals = worldMap
-                .reproduceAnimals(day, reproductionReadyEnergy, usedReproductionEnergy);
+                .reproduceAnimals(reproductionReadyEnergy, usedReproductionEnergy);
         aliveAnimals.addAll(newbornAnimals);
     }
 

@@ -37,13 +37,15 @@ public interface WorldMap extends MoveValidator {
 
     UUID getID();
 
-    void removeDeadAnimal(Animal animal, int dayOfDeath);
+    void removeDeadAnimal(Animal animal);
 
     void consumption();
 
+    void dayUpdate();
+
     void setAnimalFactory(AnimalFactory animalFactory);
 
-    List<Animal> reproduceAnimals(int day, int genomeLength, int minimalMutations);
+    List<Animal> reproduceAnimals(int genomeLength, int minimalMutations);
 
     void registerObserver(MapChangeListener observer);
 

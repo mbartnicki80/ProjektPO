@@ -139,6 +139,7 @@ public class SimulationViewPresenter implements MapChangeListener {
     }
 
     private void showStats() {
+        int day = mapStats.getDay();
         int animalsCount = mapStats.getNumberOfAnimals();
         int plantsCount = mapStats.getNumberOfPlants();
         int freeSpace = mapStats.getFreeSpace();
@@ -147,10 +148,11 @@ public class SimulationViewPresenter implements MapChangeListener {
         int averageLifeLengthOfDeadAnimals = mapStats.getAverageLifeLengthOfDeadAnimals();
         int averageChildrenCount = mapStats.getAverageChildrenCount();
 
-        String statsText = "Animals Count: " + animalsCount + "\n" +
+        String statsText = "Day: " + day + "\n" +
+                "Animals Count: " + animalsCount + "\n" +
                 "Plants Count: " + plantsCount + "\n" +
                 "Free Space: " + freeSpace + "\n" +
-                "Dominant Genome: " + dominantGenome + "\n" + // Uncomment when Genome is available
+                "Dominant Genome: " + "\n" + dominantGenome + "\n" +
                 "Average Energy: " + averageEnergy + "\n" +
                 "Average Life Length of Dead Animals: " + averageLifeLengthOfDeadAnimals + "\n" +
                 "Average Children Count: " + averageChildrenCount;
