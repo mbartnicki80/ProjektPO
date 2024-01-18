@@ -5,10 +5,9 @@ import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.control.Button;
 import java.util.*;
 
@@ -31,7 +30,7 @@ public class SimulationViewPresenter implements MapChangeListener {
     private MapStats mapStats;
     private Simulation simulation;
     private boolean showStatsActive = false;
-    private final static int CELL_SIZE = 30;
+    private final static int CELL_SIZE = 40;
 
     public void setWorldMap(WorldMap map) {
         this.worldMap = map;
@@ -89,15 +88,32 @@ public class SimulationViewPresenter implements MapChangeListener {
         for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
                 Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
+
+                //TlO
+                StackPane cellContainer = new StackPane();
+                Region background = new Region();
+                background.setStyle("-fx-background-color: #D2B48C;");
+                background.setMaxSize(CELL_SIZE-1, CELL_SIZE-1);
+                cellContainer.getChildren().add(background);
+                mapGrid.add(cellContainer, i - lowerLeftX + 1, upperRightY - j + 1);
+                //TlO
+
                 if (worldElement.isPresent()) {
 
                     if (showStatsActive)
                         showStats();
                     WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
 
-                    Label elemLabel = new Label(worldElement.get().toString());
+                    if (worldElement.get() instanceof Animal) {
+                        Label elemLabel = new Label(Integer.toString(worldElement.get().getEnergy()));
+                        mapGrid.add(elemLabel, i - lowerLeftX + 1, upperRightY - j + 1);
+                        GridPane.setHalignment(elemLabel, HPos.CENTER);
+                        GridPane.setValignment(elemLabel, VPos.BOTTOM);
+                    }
+
                     mapGrid.add(worldElementBox.getVBox(), i - lowerLeftX + 1, upperRightY - j + 1);
-                    GridPane.setHalignment(elemLabel, HPos.CENTER);
+                    GridPane.setHalignment(worldElementBox.getVBox(), HPos.CENTER);
+                    GridPane.setValignment(worldElementBox.getVBox(), VPos.CENTER);
                 }
             }
         }

@@ -14,16 +14,16 @@ public class WorldElementBox {
         ImageView imageView;
         if (worldElement instanceof Plant) {
             imageView = new ImageView(MAP_IMAGE.getImage("#"));
+            imageView.setFitHeight(50);
+            imageView.setFitWidth(50);
         }
         else if (worldElement instanceof Animal) {
             imageView = new ImageView(MAP_IMAGE.getImage(worldElement.toString()));
+            imageView.setFitHeight(20);
+            imageView.setFitWidth(20);
         }
         else
             throw new IllegalArgumentException("Invalid worldElement");
-
-
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
 
         this.vBox = new VBox(imageView);
 
