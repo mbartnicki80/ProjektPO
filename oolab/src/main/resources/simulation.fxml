@@ -29,7 +29,7 @@
                 <ComboBox fx:id="presetConfigurationsComboBox" onAction="#onPresetConfigurationSelected"/>
                 <Label text="Wysokość mapy"/>
                 <TextField fx:id="mapHeightTextField" promptText="Wysokość mapy"> </TextField>
-                <Label text="Szerokośćć mapy"/>
+                <Label text="Szerokość mapy"/>
                 <TextField fx:id="mapWidthTextField" promptText="Szerokość mapy"> </TextField>
                 <Label text="Liczba roślin na start"/>
                 <TextField fx:id="numOfPlantsTextField" promptText="Liczba roślin na start"> </TextField>

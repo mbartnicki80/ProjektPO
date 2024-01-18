@@ -116,6 +116,9 @@ public class SimulationPresenter {
         int maximalMutations = Integer.parseInt(maximalMutationsTextField.getText());
         int genomeLength = Integer.parseInt(genomeLengthTextField.getText());
 
+        validateInput(mapHeight, mapWidth, numberOfPlants, plantEnergy, plantsPerDay, numberOfAnimals, animalEnergy,
+                reproductionReadyEnergy, usedReproductionEnergy, minimalMutations, maximalMutations, genomeLength);
+
         RadioButton selectedGenomeRadioButton = (RadioButton) genomeToggleGroup.getSelectedToggle();
         String genomeRadioButtonValue = selectedGenomeRadioButton.getText();
         boolean fullRandomnessGenome = genomeRadioButtonValue.equals("Pelna losowosc");
@@ -239,6 +242,37 @@ public class SimulationPresenter {
         presetConfigurationsComboBox.getSelectionModel().select(newConfiguration);
 
         SimulationConfiguration.encodeToXML("oolab/save/" + newPath + ".xml", newConfiguration);
+    }
+
+    private void validateInput(int mapHeight, int mapWidth, int numberOfPlants, int plantEnergy, int plantsPerDay, int numberOfAnimals,
+                               int animalEnergy, int reproductionReadyEnergy, int usedReproductionEnergy,
+                               int minimalMutations, int maximalMutations, int genomeLength) {
+
+        if (mapHeight < 1 || mapHeight > 23)
+            throw new ArgumentsValidationException("Wysokosc mapy musi byc z przedzialu [1, 23]");
+        if (mapWidth < 1 || mapWidth > 40)
+            throw new ArgumentsValidationException("Szerokosc mapy musi byc z przedzialu [1, 40]");
+        if (numberOfPlants < 0 || numberOfPlants > mapHeight * mapWidth)
+            throw new ArgumentsValidationException("Liczba roslin musi byc z przedzialu [0, pole mapy]");
+        if (plantEnergy < 0)
+            throw new ArgumentsValidationException("Energia rosliny musi byc nieujemna");
+        if (plantsPerDay < 0)
+            throw new ArgumentsValidationException("Liczba roslin na dzien musi byc nieujemna");
+        if (numberOfAnimals < 0 || numberOfAnimals > mapHeight * mapWidth)
+            throw new ArgumentsValidationException("Liczba zwierzat musi byc z przedzialu [0, pole mapy]");
+        if (animalEnergy < 0)
+            throw new ArgumentsValidationException("Energia zwierzecia musi byc nieujemna");
+        if (reproductionReadyEnergy < 0)
+            throw new ArgumentsValidationException("Energia potrzebna do rozmnazania musi byc nieujemna");
+        if (usedReproductionEnergy < 0)
+            throw new ArgumentsValidationException("Energia zuzywana podczas rozmnazania musi byc nieujemna");
+        if (minimalMutations < 0)
+            throw new ArgumentsValidationException("Minimalna liczba mutacji musi byc nieujemna");
+        if (maximalMutations < 0 || maximalMutations < minimalMutations)
+            throw new ArgumentsValidationException("Maksymalna liczba mutacji musi byc nieujemna i wieksza lub rowna minimalnej liczby mutacji");
+        if (genomeLength < 0)
+            throw new ArgumentsValidationException("Dlugosc genomu musi byc nieujemna");
+
     }
 
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {
