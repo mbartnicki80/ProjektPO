@@ -20,51 +20,19 @@ import java.util.concurrent.Executors;
 
 public class SimulationPresenter {
     @FXML
-    private TextField mapHeightTextField;
+    private TextField mapHeightTextField, mapWidthTextField, numOfPlantsTextField, plantEnergyTextField,
+            plantsPerDayTextField, numOfAnimalsTextField, animalEnergyTextField, reproductionReadyEnergyTextField,
+            usedReproductionEnergyTextField, minimalMutationsTextField, maximalMutationsTextField, genomeLengthTextField,
+            simulationNameToSaveTextField, simulationSpeedTextField, CSVFileNameField;
     @FXML
-    private TextField mapWidthTextField;
-    @FXML
-    private TextField numOfPlantsTextField;
-    @FXML
-    private TextField plantEnergyTextField;
-    @FXML
-    private TextField plantsPerDayTextField;
-    @FXML
-    private TextField numOfAnimalsTextField;
-    @FXML
-    private TextField animalEnergyTextField;
-    @FXML
-    private TextField reproductionReadyEnergyTextField;
-    @FXML
-    private TextField usedReproductionEnergyTextField;
-    @FXML
-    private TextField minimalMutationsTextField;
-    @FXML
-    private TextField maximalMutationsTextField;
-    @FXML
-    private TextField genomeLengthTextField;
-    @FXML
-    private ToggleGroup plantsToggleGroup;
-    @FXML
-    private ToggleGroup genomeToggleGroup;
+    private ToggleGroup plantsToggleGroup, genomeToggleGroup;
     @FXML
     private ComboBox<SimulationConfiguration> presetConfigurationsComboBox;
     @FXML
-    private RadioButton forestedEquatorRadioButton;
-    @FXML
-    private RadioButton lifeGivingCorpsesRadioButton;
-    @FXML
-    private RadioButton fullRandomnessRadioButton;
-    @FXML
-    private RadioButton lightCorrectionRadioButton;
-    @FXML
-    private TextField simulationNameToSaveTextField;
+    private RadioButton forestedEquatorRadioButton, lifeGivingCorpsesRadioButton, fullRandomnessRadioButton,
+            lightCorrectionRadioButton;
     @FXML
     private CheckBox statsToCSVCheckBox;
-    @FXML
-    private TextField CSVFileNameField;
-    @FXML
-    private TextField simulationSpeedTextField;
 
     private final Map<String, SimulationConfiguration> presetConfigurations = new HashMap<>();
     {

@@ -15,30 +15,11 @@ public class SimulationViewPresenter implements MapChangeListener {
     @FXML
     private GridPane mapGrid;
     @FXML
-    private Label movementsDescriptionLabel;
+    private Label movementsDescriptionLabel, mapStatsLabel, animalStatsLabel;
     @FXML
-    private Button stopButton;
-    @FXML
-    private Button resumeButton;
-    @FXML
-    private Button showMapStatsButton;
-    @FXML
-    private Button hideMapStatsButton;
-    @FXML
-    private Label mapStatsLabel;
-    @FXML
-    private Label animalStatsLabel;
-    @FXML
-    private Button hideAnimalStatsButton;
-    @FXML
-    private Button startHighlightingGenomeButton;
-    @FXML
-    private Button stopHighlightingGenomeButton;
-    @FXML
-    private Button startHighlightingPreferablePlantPositionsButton;
-    @FXML
-    private Button stopHighlightingPreferablePlantPositionsButton;
-
+    private Button stopButton, resumeButton, showMapStatsButton, hideMapStatsButton, hideAnimalStatsButton,
+            startHighlightingGenomeButton, stopHighlightingGenomeButton, startHighlightingPreferablePlantPositionsButton,
+            stopHighlightingPreferablePlantPositionsButton;
     private Animal currentFollowedAnimal = null;
     private WorldMap worldMap;
     private MapWithStatistics mapStats;
