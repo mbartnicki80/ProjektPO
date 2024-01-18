@@ -28,12 +28,13 @@ public class SimulationConfiguration implements Serializable {
     public int maximalMutations;
     public int genomeLength;
     public boolean fullRandomnessGenome;
+    public int speed;
 
     public SimulationConfiguration(int mapHeight, int mapWidth, int numberOfPlants, int plantEnergy,
                                    int plantsPerDay, boolean forestedEquator, int numberOfAnimals,
                                    int animalEnergy, int reproductionReadyEnergy, int usedReproductionEnergy,
                                    int minimalMutations, int maximalMutations, int genomeLength, boolean fullRandomnessGenome,
-                                   String configurationName) {
+                                   String configurationName, int speed) {
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.numberOfPlants = numberOfPlants;
@@ -50,6 +51,7 @@ public class SimulationConfiguration implements Serializable {
         this.fullRandomnessGenome = fullRandomnessGenome;
         this.configurationNumber = UUID.randomUUID();
         this.configurationName = configurationName;
+        this.speed = speed;
     }
 
     //pusty konstruktor potrzebny do serializacji, nie usuwac!!!
