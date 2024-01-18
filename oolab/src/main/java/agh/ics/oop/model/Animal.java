@@ -35,10 +35,6 @@ public class Animal implements WorldElement, Comparable<Animal> {
         this.genome = genome;
     }
 
-    public MapDirection getOrientation() {
-        return orientation;
-    }
-
     public int useCurrentAnimalGene() {
         return genome.useCurrentGene();
     }
@@ -55,7 +51,7 @@ public class Animal implements WorldElement, Comparable<Animal> {
         return energy;
     }
 
-    public int getPlantsEaten() {
+    public int getPlantsEatenCount() {
         return plantsEaten;
     }
 

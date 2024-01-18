@@ -10,6 +10,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CheckBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
@@ -68,6 +69,11 @@
             </VBox>
         </HBox>
     </top>
+    <right>
+        <VBox alignment="BOTTOM_RIGHT">
+            <CheckBox fx:id="statsToCSVCheckBox" text="Statystyki do CSV"/>
+        </VBox>
+    </right>
     <bottom>
         <VBox spacing="10" alignment="CENTER">
             <HBox spacing="10" alignment="CENTER">

@@ -106,4 +106,8 @@ public class Simulation implements Runnable {
     public void changeRunningMode() {
         this.isRunning = !this.isRunning;
     }
+
+    public boolean getRunningStatus() {
+        return this.isRunning;
+    }
 }

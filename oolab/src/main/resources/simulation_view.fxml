@@ -20,14 +20,16 @@
     <left>
         <VBox spacing="10" minWidth="250" maxWidth="250">
             <HBox spacing="10">
-                <Button fx:id="showStatsButton" text="Show statistics" onAction="#onShowStatsClicked"/>
-                <Button fx:id="hideStatsButton" text="Hide statistics" onAction="#onHideStatsClicked" visible="false"/>
+                <Button fx:id="showMapStatsButton" text="Pokaz statystyki mapy" onAction="#onShowMapStatsClicked"/>
+                <Button fx:id="hideMapStatsButton" text="Ukryj statystyki mapy" onAction="#onHideMapStatsClicked" visible="false"/>
             </HBox>
-            <Label fx:id="statsLabel" visible="false" style="-fx-background-color: lightblue;"/>
+            <Label fx:id="mapStatsLabel" visible="false" style="-fx-background-color: lightblue;"/>
         </VBox>
     </left>
     <right>
         <VBox spacing="10" minWidth="250" maxWidth="250">
+            <Label fx:id="animalStatsLabel" visible="false" style="-fx-background-color: lightblue;"/>
+            <Button fx:id="hideAnimalStatsButton" text="Ukryj statystyki zwierzaka" onAction="#onHideAnimalStatsClicked" visible="false"/>
         </VBox>
     </right>
     <bottom>

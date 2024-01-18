@@ -21,15 +21,21 @@ public class SimulationViewPresenter implements MapChangeListener {
     @FXML
     private Button resumeButton;
     @FXML
-    private Button showStatsButton;
+    private Button showMapStatsButton;
     @FXML
-    private Button hideStatsButton;
+    private Button hideMapStatsButton;
     @FXML
-    private Label statsLabel;
+    private Label mapStatsLabel;
+    @FXML
+    private Label animalStatsLabel;
+    @FXML
+    private Button hideAnimalStatsButton;
+    private Animal currentFollowedAnimal = null;
     private WorldMap worldMap;
     private MapStats mapStats;
     private Simulation simulation;
-    private boolean showStatsActive = false;
+    private boolean showMapStatsActive = false;
+    private boolean statsToCSV = false;
     private final static int CELL_SIZE = 40;
 
     public void setWorldMap(WorldMap map) {
@@ -38,6 +44,10 @@ public class SimulationViewPresenter implements MapChangeListener {
     }
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
+    }
+
+    public void setStatsToCSV(boolean statsToCSV) {
+        this.statsToCSV = statsToCSV;
     }
 
     private void clearGrid() {
@@ -85,6 +95,9 @@ public class SimulationViewPresenter implements MapChangeListener {
         int upperRightX = bounds.upperRight().getXValue();
         int upperRightY = bounds.upperRight().getYValue();
 
+        if (currentFollowedAnimal != null) {
+            showAnimalStats(currentFollowedAnimal);
+        }
         for (int i = lowerLeftX; i <= upperRightX; i++) {
             for (int j = lowerLeftY; j <= upperRightY; j++) {
                 Optional<WorldElement> worldElement = worldMap.objectAt(new Vector2d(i, j));
@@ -100,8 +113,11 @@ public class SimulationViewPresenter implements MapChangeListener {
 
                 if (worldElement.isPresent()) {
 
-                    if (showStatsActive)
-                        showStats();
+                    if (showMapStatsActive)
+                        showMapStats();
+                    //if (statsToCSV)
+                    //    mapStats.toCSV();
+
                     WorldElementBox worldElementBox = new WorldElementBox(worldElement.get());
 
                     if (worldElement.get() instanceof Animal) {
@@ -109,6 +125,15 @@ public class SimulationViewPresenter implements MapChangeListener {
                         mapGrid.add(elemLabel, i - lowerLeftX + 1, upperRightY - j + 1);
                         GridPane.setHalignment(elemLabel, HPos.CENTER);
                         GridPane.setValignment(elemLabel, VPos.BOTTOM);
+                    }
+
+                    if (!simulation.getRunningStatus()) {
+                        worldElementBox.getVBox().setOnMouseClicked(event -> {
+                            if (worldElement.get() instanceof Animal animal) {
+                                currentFollowedAnimal = animal;
+                                showAnimalStats(animal);
+                            }
+                        });
                     }
 
                     mapGrid.add(worldElementBox.getVBox(), i - lowerLeftX + 1, upperRightY - j + 1);
@@ -139,22 +164,52 @@ public class SimulationViewPresenter implements MapChangeListener {
         this.simulation.changeRunningMode();
     }
 
-    public void onShowStatsClicked() {
-        showStatsButton.setVisible(false);
-        hideStatsButton.setVisible(true);
-        statsLabel.setVisible(true);
-        showStatsActive = true;
-        showStats();
+    public void onShowMapStatsClicked() {
+        showMapStatsButton.setVisible(false);
+        hideMapStatsButton.setVisible(true);
+
+        mapStatsLabel.setVisible(true);
+        showMapStatsActive = true;
+        showMapStats();
     }
 
-    public void onHideStatsClicked() {
-        showStatsButton.setVisible(true);
-        hideStatsButton.setVisible(false);
-        statsLabel.setVisible(false);
-        showStatsActive = false;
+    public void onHideMapStatsClicked() {
+        showMapStatsButton.setVisible(true);
+        hideMapStatsButton.setVisible(false);
+
+        mapStatsLabel.setVisible(false);
+        showMapStatsActive = false;
     }
 
-    private void showStats() {
+    public void onHideAnimalStatsClicked() {
+        animalStatsLabel.setVisible(false);
+        hideAnimalStatsButton.setVisible(false);
+        currentFollowedAnimal = null;
+    }
+
+    private void showAnimalStats(Animal animal) {
+        String animalInfo = getAnimalStats(animal);
+        animalStatsLabel.setText(animalInfo);
+        animalStatsLabel.setVisible(true);
+        hideAnimalStatsButton.setVisible(true);
+    }
+
+    private String getAnimalStats(Animal animal) {
+        return "Informacje o zwierzaku:\n" +
+                "Status: " + (animal.isDead() ? "Martwy" : "Zywy") + "\n" +
+                "Pozycja: " + animal.position() + "\n" +
+                "Urodzony dnia: " + animal.getDayOfBirth() + "\n" +
+                "Genom: " + animal.getGenome() + "\n" +
+                "Obecny gen aktywny: " + animal.getGenome().getCurrentGenome() + "\n" +
+                "Energia: " + animal.getEnergy() + "\n" +
+                "Zjedzone rosliny: " + animal.getPlantsEatenCount() + "\n" +
+                "Liczba dzieci: " + animal.getChildrenCount() + "\n" +
+                "Liczba potomkow: " + animal.getDescendantsNumber() + "\n" +
+                "Liczba zywych potomkow: " + animal.getAliveDescendantsNumber() + "\n" +
+                (animal.isDead() ? "Zmarl dnia: " + animal.getDayOfDeath() + "\n" : "Zyje juz: " + (mapStats.getDay() - animal.getDayOfBirth()) + "\n");
+    }
+
+    private void showMapStats() {
         int day = mapStats.getDay();
         int animalsCount = mapStats.getNumberOfAnimals();
         int plantsCount = mapStats.getNumberOfPlants();
@@ -173,7 +228,8 @@ public class SimulationViewPresenter implements MapChangeListener {
                 "Average Life Length of Dead Animals: " + averageLifeLengthOfDeadAnimals + "\n" +
                 "Average Children Count: " + averageChildrenCount;
 
-        statsLabel.setText(statsText);
+
+        mapStatsLabel.setText(statsText);
     }
 
 }

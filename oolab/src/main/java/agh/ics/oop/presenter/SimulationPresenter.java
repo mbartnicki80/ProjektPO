@@ -5,12 +5,9 @@ import agh.ics.oop.model.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 
 import java.util.Map;
 import java.io.File;
@@ -61,6 +58,9 @@ public class SimulationPresenter {
     private RadioButton lightCorrectionRadioButton;
     @FXML
     private TextField simulationNameToSaveTextField;
+    @FXML
+    private CheckBox statsToCSVCheckBox;
+
     private final Map<String, SimulationConfiguration> presetConfigurations = new HashMap<>();
     {
         SimulationConfiguration config1 = new SimulationConfiguration(10, 10, 5, 5, 2,
@@ -141,6 +141,8 @@ public class SimulationPresenter {
         worldMap.registerObserver(presenter);
         worldMap.registerObserver(consoleMapDisplay);
         presenter.setWorldMap(worldMap);
+        boolean isCheckBoxSelected = statsToCSVCheckBox.isSelected();
+        presenter.setStatsToCSV(isCheckBoxSelected);
 
         Simulation simulation = new Simulation(
                 worldMap,
