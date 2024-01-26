@@ -30,13 +30,13 @@ public abstract class AbstractPlantPositionGenerator implements Iterable<Vector2
 
     protected abstract List<Vector2d> generateFinalPositions();
 
-    protected static List<Vector2d> merge(List<Vector2d> equatorPositions, List<Vector2d> otherPositions, int grassCount) {
+    protected static List<Vector2d> merge(List<Vector2d> equatorPositions, List<Vector2d> otherPositions, int grassCount) { // merge co?
         List<Vector2d> finalPositions = new ArrayList<>(grassCount);
 
         int equatorPositionsIterator = 0, otherPositionsIterator = 0;
 
         /* Merge of positions lists with specified probability */
-        Random random = new Random();
+        Random random = new Random(); // co wywołanie?
         double equatorProbability = 0.8;
         while (equatorPositionsIterator < equatorPositions.size()
                 && otherPositionsIterator < otherPositions.size()

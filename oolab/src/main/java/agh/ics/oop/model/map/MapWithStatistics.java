@@ -4,7 +4,7 @@ import agh.ics.oop.model.genome.Genome;
 
 import java.util.List;
 
-public interface MapWithStatistics extends MoveValidator {
+public interface MapWithStatistics extends MoveValidator { // skąd to dziedziczenie?
     int getNumberOfAnimals();
     int getNumberOfPlants();
     int getFreeSpace();

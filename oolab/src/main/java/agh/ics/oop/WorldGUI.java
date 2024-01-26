@@ -16,9 +16,9 @@ public class WorldGUI {
         try {
             start();
             Application.launch(SimulationApp.class, args);
-            stop();
         } catch(IllegalArgumentException e) {
             System.out.println(e.getMessage());
+        } finally {
             stop();
         }
     }

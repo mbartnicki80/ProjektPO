@@ -65,7 +65,7 @@ public class Simulation implements Runnable {
                         pauseCondition.await();
                     }
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    Thread.currentThread().interrupt();  // ?
                     return;
                 } finally {
                     lock.unlock();

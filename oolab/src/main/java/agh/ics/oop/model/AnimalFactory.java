@@ -17,14 +17,14 @@ public class AnimalFactory {
         this.fullRandomnessGenome = fullRandomnessGenome;
     }
 
-    public static Animal create(Vector2d initialPosition, int initialEnergy, int dayOfBirth, int genomeLength) {
+    public static Animal create(Vector2d initialPosition, int initialEnergy, int dayOfBirth, int genomeLength) {  // czemu to jest metoda statyczna?
         return new Animal(initialPosition, initialEnergy, dayOfBirth, genomeLength);
     }
 
     public Animal create(int initialEnergy, int dayOfBirth, Animal dominantAnimal, Animal reproductionPartner) {
 
         Genome newbornGenome;
-        if (fullRandomnessGenome) {
+        if (fullRandomnessGenome) {  // może bardziej do tego by się przydała fabryka?
             newbornGenome = new FullRandomnessGenome(genomeLength, minimalMutations, maximalMutations,
                     dominantAnimal.getGenome(), reproductionPartner.getGenome(),
                     (double) dominantAnimal.getEnergy() / (dominantAnimal.getEnergy() + reproductionPartner.getEnergy()));

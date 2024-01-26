@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 public abstract class AbstractGenome implements Genome {
     private final int[] genome;
     private int currentGenomeIndex;
-    protected final Random random = new Random();
+    protected final Random random = new Random();  // czemu nie private static?
 
     protected AbstractGenome(int genomeLength) {
         this.genome = generateGenome(genomeLength);
@@ -46,7 +46,7 @@ public abstract class AbstractGenome implements Genome {
     }
 
     private int[] reproducedGenome(int genomeLength, Genome dominantAnimalGenome, Genome reproductionPartnerGenome,
-                                   int minimalMutations, int maximalMutations, double dominantEnergyProportion) {
+                                   int minimalMutations, int maximalMutations, double dominantEnergyProportion) { // skoro to jest metoda niestatyczna, to po pierwsze dostaje 3 genotypy: this, dominantAnimalGenome i reproductionPartnerGenome, a po drugie, po co dostaje długość genomu i limit mutacji?
 
         int[] newbornGenome = new int[genomeLength];
 
@@ -69,7 +69,7 @@ public abstract class AbstractGenome implements Genome {
 
         int mutationsCount = random.nextInt(maximalMutations - minimalMutations + 1) + minimalMutations;
 
-        return mutateGenome(newbornGenome, mutationsCount);
+        return mutateGenome(newbornGenome, mutationsCount);  // zaburzenie poziomu abstrakcji
     }
 
     @Override
@@ -85,7 +85,7 @@ public abstract class AbstractGenome implements Genome {
             return false;
 
         for (int i = 0; i < this.genome.length; i++)
-            if (this.genome[i] != that.genome[i])
+            if (this.genome[i] != that.genome[i]) // https://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html#equals-int:A-int:A-
                 return false;
 
         return true;

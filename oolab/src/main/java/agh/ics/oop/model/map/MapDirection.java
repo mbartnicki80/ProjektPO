@@ -3,7 +3,7 @@ package agh.ics.oop.model.map;
 public enum MapDirection {
     NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST;
 
-    private static final Vector2d NORTH_VECTOR = new Vector2d(0, 1);
+    private static final Vector2d NORTH_VECTOR = new Vector2d(0, 1); // nie wygodniej to przekazać do konstruktora?
     private static final Vector2d NORTH_EAST_VECTOR = new Vector2d(1, 1);
     private static final Vector2d EAST_VECTOR = new Vector2d(1, 0);
     private static final Vector2d SOUTH_EAST_VECTOR = new Vector2d(1, -1);

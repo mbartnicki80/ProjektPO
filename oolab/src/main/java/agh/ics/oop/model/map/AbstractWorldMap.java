@@ -59,7 +59,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapWithStatistics, M
         else if (observer instanceof DayPassedListener)
             dayObservers.add((DayPassedListener) observer);
         else
-            throw new IllegalArgumentException("Observer must implement MapChangeListener or DayPassedListener");
+            throw new IllegalArgumentException("Observer must implement MapChangeListener or DayPassedListener"); // przeciążanie metod!
 
     }
 
@@ -91,7 +91,7 @@ public abstract class AbstractWorldMap implements WorldMap, MapWithStatistics, M
         if (animal.move(this)) {
             animals.get(previousPosition).remove(animal);
             if (animal.position().getXValue() == -1)
-                animal.setPosition(new Vector2d(bounds.upperRight().getXValue(), animal.position().getYValue()));
+                animal.setPosition(new Vector2d(bounds.upperRight().getXValue(), animal.position().getYValue())); // czy taki setter to dobry pomysł?
             else if (animal.position().getXValue() == bounds.upperRight().getXValue() + 1) {
                 animal.setPosition(new Vector2d(0, animal.position().getYValue()));
             }
